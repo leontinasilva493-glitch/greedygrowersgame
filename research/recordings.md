@@ -5,6 +5,11 @@ Complete recordings received: `0 / 10`
 Minimum Phase 0 gate: `REC-01` through `REC-05`  
 Gate status: **not met**
 
+Machine-readable intake status is stored in `research/evidence-manifest.json`.
+Run `npm run evidence:validate` after every evidence review. The command must
+report `OPEN` before Phase 0 is treated as complete; a structurally valid but
+empty manifest correctly reports `CLOSED`.
+
 No gameplay recording is represented as reviewed or approved below. Every row is an explicit evidence gap.
 
 ## Required recording gaps

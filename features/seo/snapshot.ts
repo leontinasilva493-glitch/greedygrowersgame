@@ -1,8 +1,36 @@
 import { dataRepository } from "@/features/data/repository";
+import {
+  currentEvidenceManifest,
+} from "@/features/evidence/current";
+import { evaluatePhaseZeroEvidence, type EvidenceManifest } from "@/features/evidence/manifest";
+import { evaluateModelEligibility } from "@/features/lightning/model-gate";
+import { getSeedCompareIndexability } from "@/features/seeds/compare";
+import type { Source } from "@/features/data/types";
 
 import type { IndexabilitySnapshot } from "./indexability";
 
 const CODES_FRESH_DAYS = 30;
+
+export function isLightningGuideVerified(
+  manifest: EvidenceManifest,
+  sources: Source[],
+) {
+  const approval = manifest.publicationApprovals;
+  if (!approval.lightningGuideReviewed) return false;
+
+  const sourceById = new Map(sources.map((source) => [source.id, source]));
+  return (
+    approval.lightningGuideSourceIds.length > 0 &&
+    approval.lightningGuideSourceIds.every((sourceId) => {
+      const source = sourceById.get(sourceId);
+      return (
+        source !== undefined &&
+        ["official", "gameplay"].includes(source.type) &&
+        source.url.startsWith("https://")
+      );
+    })
+  );
+}
 
 export async function getIndexabilitySnapshot(): Promise<IndexabilitySnapshot> {
   const [
@@ -26,15 +54,25 @@ export async function getIndexabilitySnapshot(): Promise<IndexabilitySnapshot> {
   ]);
 
   const sourceById = new Map(sources.map((source) => [source.id, source]));
-  const comparableSeedCount = indexableSeeds.filter((seed) => {
-    if (seed.cost === undefined || !seed.currency) return false;
-    const sessions = new Set(
-      measurements
-        .filter((measurement) => measurement.seedId === seed.id)
-        .map((measurement) => measurement.serverSessionId),
-    );
-    return sessions.size >= 5;
-  }).length;
+  const phaseZeroEvidenceGate = evaluatePhaseZeroEvidence(
+    currentEvidenceManifest,
+    {
+      officialSourceIds: sources
+        .filter((source) => source.type === "official")
+        .map((source) => source.id),
+    },
+  );
+  const lightningEligibility = evaluateModelEligibility({
+    currentVersion: gameVersion.version,
+    observations,
+    sources,
+  });
+  const compareGate = getSeedCompareIndexability({
+    seeds,
+    sources,
+    growthMeasurements: measurements,
+    currentVersion: gameVersion.version,
+  });
   const codeAgeMs = Date.now() - Date.parse(codes.lastChecked);
   const codesFresh =
     Number.isFinite(codeAgeMs) &&
@@ -43,8 +81,12 @@ export async function getIndexabilitySnapshot(): Promise<IndexabilitySnapshot> {
 
   return {
     currentVersion: gameVersion.version,
+    phaseZeroEvidenceReady: phaseZeroEvidenceGate.ready,
+    beginnerGuideEvidenceReady:
+      phaseZeroEvidenceGate.ready &&
+      currentEvidenceManifest.publicationApprovals.beginnerGuideReviewed,
     indexableSeedCount: indexableSeeds.length,
-    comparableSeedCount,
+    comparableSeedCount: compareGate.index ? 2 : 0,
     approvedRecordCount: observations.length + measurements.length + seeds.length,
     sourcedUpdateCount: updates.filter(
       (update) =>
@@ -53,7 +95,8 @@ export async function getIndexabilitySnapshot(): Promise<IndexabilitySnapshot> {
     ).length,
     lightningGuideVerified:
       gameVersion.version !== "unverified" &&
-      sources.some((source) => source.type === "official" && source.url.startsWith("https://")),
+      isLightningGuideVerified(currentEvidenceManifest, sources),
+    lightningModelEligible: lightningEligibility.eligible,
     codes: {
       redeemUiVerified: codes.redeemUiVerified,
       hasHttpsSource: codes.sourceIds.some((id) =>

@@ -12,6 +12,7 @@ import { dataRepository } from "@/features/data/repository";
 import { buildKaplanMeierCurve, estimateConditionalRisk } from "@/features/lightning/kaplan-meier";
 import { evaluateModelEligibility } from "@/features/lightning/model-gate";
 import { createGatedMetadata } from "@/features/seo/metadata";
+import { getPageIndexability } from "@/features/seo/indexability";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,10 +27,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function LightningPage() {
-  const [observations, sources, gameVersion] = await Promise.all([
+  const [observations, sources, gameVersion, seoSnapshot] = await Promise.all([
     dataRepository.getObservations(),
     dataRepository.getSources(),
     dataRepository.getCurrentGameVersion(),
+    getIndexabilitySnapshot(),
   ]);
 
   const eligibility = evaluateModelEligibility({
@@ -37,7 +39,7 @@ export default async function LightningPage() {
     observations,
     sources,
   });
-  const curve = eligibility.eligible
+  const curve = seoSnapshot.phaseZeroEvidenceReady && eligibility.eligible
     ? buildKaplanMeierCurve(
         observations.filter((observation) =>
           eligibility.observationIds?.includes(observation.id),
@@ -48,13 +50,14 @@ export default async function LightningPage() {
     curve.length > 0
       ? estimateConditionalRisk(curve, curve[0].ageSeconds, 30)
       : { available: false as const, reason: "Model gate is closed." };
+  const pageGate = getPageIndexability("/lightning", seoSnapshot);
 
   return (
     <ContentPage
       eyebrow="Lightning / Community evidence"
       title="Lightning risk stays evidence-gated"
       description="This page separates confirmed mechanics, raw observation counts, and model-based interval diagnostics. No official strike chance is claimed."
-      status={`Current version: ${gameVersion.version}. Page remains noindex until mechanics content and data gates are fully met.`}
+      status={`Current version: ${gameVersion.version}. Page is ${pageGate.index ? "index" : "noindex"}: ${pageGate.reason}`}
     >
       <section className="grid gap-4 lg:grid-cols-3">
         <Card>

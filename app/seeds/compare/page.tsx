@@ -8,7 +8,8 @@ import {
 } from "@/components/layout/ContentPage";
 import { SeedCompare } from "@/components/seeds";
 import { dataRepository } from "@/features/data/repository";
-import { getSeedCompareIndexability } from "@/features/seeds/compare";
+import { getPageIndexability, metadataRobots } from "@/features/seo/indexability";
+import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 async function loadSeedCompareData() {
   const [seeds, sources, growthMeasurements, gameVersion] = await Promise.all([
@@ -22,33 +23,24 @@ async function loadSeedCompareData() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { seeds, sources, growthMeasurements, gameVersion } =
-    await loadSeedCompareData();
-  const gate = getSeedCompareIndexability({
-    seeds,
-    sources,
-    growthMeasurements,
-    currentVersion: gameVersion.version,
-  });
+  const gate = getPageIndexability(
+    "/seeds/compare",
+    await getIndexabilitySnapshot(),
+  );
 
   return {
     title: "Greedy Growers Seed Compare - Source-backed Pair View",
     description:
       "Compare two Greedy Growers seeds only when current-version evidence, exact age bucket, metric definition, and session thresholds match.",
     alternates: { canonical: "/seeds/compare" },
-    robots: { index: gate.index, follow: gate.follow },
+    robots: metadataRobots(gate),
   };
 }
 
 export default async function SeedComparePage() {
-  const { seeds, sources, growthMeasurements, gameVersion } =
-    await loadSeedCompareData();
-  const gate = getSeedCompareIndexability({
-    seeds,
-    sources,
-    growthMeasurements,
-    currentVersion: gameVersion.version,
-  });
+  const [{ seeds, sources, growthMeasurements, gameVersion }, snapshot] =
+    await Promise.all([loadSeedCompareData(), getIndexabilitySnapshot()]);
+  const gate = getPageIndexability("/seeds/compare", snapshot);
 
   return (
     <ContentPage

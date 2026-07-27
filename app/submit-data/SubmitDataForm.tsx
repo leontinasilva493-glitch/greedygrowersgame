@@ -144,8 +144,16 @@ export function SubmitDataForm({
         if (!response.ok) {
           const fallback = `Submission failed with status ${response.status}.`;
           try {
-            const body = (await response.json()) as { error?: string };
-            setError(body.error ?? fallback);
+            const body = (await response.json()) as {
+              error?: string;
+              receipt?: string;
+            };
+            if (body.receipt) setReceipt(body.receipt);
+            setError(
+              body.receipt
+                ? `${body.error ?? fallback} Keep the receipt below: the upstream result may be ambiguous.`
+                : (body.error ?? fallback),
+            );
           } catch {
             setError(fallback);
           }

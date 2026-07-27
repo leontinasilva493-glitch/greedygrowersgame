@@ -26,7 +26,15 @@ export interface SeedDetailModel {
   sources: Source[];
 }
 
-export function getSeedDetailStaticParams(indexableSeeds: Seed[]) {
+export function getSeedDetailStaticParams({
+  indexableSeeds,
+  phaseZeroEvidenceReady,
+}: {
+  indexableSeeds: Seed[];
+  phaseZeroEvidenceReady: boolean;
+}) {
+  if (!phaseZeroEvidenceReady) return [];
+
   return indexableSeeds.map((seed) => ({ slug: seed.slug }));
 }
 

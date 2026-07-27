@@ -43,6 +43,7 @@ yarn-error.log*
 /.lighthouseci/
 /.superpowers/
 /.artifacts/
+/.local-data/
 
 # typescript
 *.tsbuildinfo

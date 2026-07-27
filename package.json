@@ -15,9 +15,11 @@
     "lhci": "npm run build && lhci autorun",
     "lighthouse:ci": "lhci autorun",
     "data:validate": "tsx scripts/validate-data.ts",
+    "evidence:validate": "tsx scripts/validate-evidence.ts",
+    "moderation": "tsx scripts/moderate-submissions.ts",
     "brand:check": "node scripts/check-brand.mjs",
     "audit:prod": "npm audit --omit=dev --audit-level=high",
-    "check": "npm run lint && npm run typecheck && npm run test && npm run data:validate && npm run brand:check && npm run build"
+    "check": "npm run lint && npm run typecheck && npm run test && npm run data:validate && npm run evidence:validate && npm run brand:check && npm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.5.7",

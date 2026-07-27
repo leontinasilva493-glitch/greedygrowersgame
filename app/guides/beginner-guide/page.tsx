@@ -6,13 +6,19 @@ import {
   EvidenceNote,
   InlineCta,
 } from "@/components/layout/ContentPage";
+import { createGatedMetadata } from "@/features/seo/metadata";
+import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
-export const metadata: Metadata = {
-  title: "Greedy Growers Beginner Guide – First Harvest & Progression",
-  description:
-    "Start with the confirmed Greedy Growers river, plot, growth, harvest, and lightning loop without relying on invented mechanics.",
-  alternates: { canonical: "/guides/beginner-guide" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return createGatedMetadata({
+    title: "Greedy Growers Beginner Guide – First Harvest & Progression",
+    description:
+      "Start with the confirmed Greedy Growers river, plot, growth, harvest, and lightning loop without relying on invented mechanics.",
+    canonical: "/guides/beginner-guide",
+    route: "/guides/beginner-guide",
+    snapshot: await getIndexabilitySnapshot(),
+  });
+}
 
 export default function BeginnerGuidePage() {
   return (

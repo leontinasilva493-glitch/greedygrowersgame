@@ -4,11 +4,14 @@ import { getPageIndexability, type IndexabilitySnapshot } from "./indexability";
 
 const empty: IndexabilitySnapshot = {
   currentVersion: "unverified",
+  phaseZeroEvidenceReady: false,
+  beginnerGuideEvidenceReady: false,
   indexableSeedCount: 0,
   comparableSeedCount: 0,
   approvedRecordCount: 0,
   sourcedUpdateCount: 0,
   lightningGuideVerified: false,
+  lightningModelEligible: false,
   codes: {
     redeemUiVerified: false,
     hasHttpsSource: false,
@@ -22,10 +25,11 @@ describe("getPageIndexability", () => {
     expect(getPageIndexability("/", empty).index).toBe(true);
     expect(getPageIndexability("/guides", empty).includeInSitemap).toBe(true);
     expect(getPageIndexability("/about", empty).index).toBe(true);
+    expect(getPageIndexability("/guides/beginner-guide", empty).index).toBe(false);
   });
 
   it("keeps legal and submission routes out of the index", () => {
-    for (const route of ["/contact", "/privacy", "/terms", "/submit-data"]) {
+    for (const route of ["/contact", "/privacy", "/terms", "/submit-data", "/data-status"]) {
       expect(getPageIndexability(route, empty)).toMatchObject({
         index: false,
         follow: true,
@@ -35,7 +39,7 @@ describe("getPageIndexability", () => {
   });
 
   it("keeps empty data pages noindex", () => {
-    for (const route of ["/seeds", "/seeds/compare", "/lightning", "/updates", "/data-status", "/codes"]) {
+    for (const route of ["/seeds", "/seeds/compare", "/lightning", "/updates", "/codes"]) {
       expect(getPageIndexability(route, empty).index).toBe(false);
     }
   });
@@ -44,11 +48,14 @@ describe("getPageIndexability", () => {
     const ready: IndexabilitySnapshot = {
       ...empty,
       currentVersion: "2026.07.27",
+      phaseZeroEvidenceReady: true,
+      beginnerGuideEvidenceReady: true,
       indexableSeedCount: 3,
       comparableSeedCount: 2,
       approvedRecordCount: 1,
       sourcedUpdateCount: 1,
       lightningGuideVerified: true,
+      lightningModelEligible: true,
       codes: {
         redeemUiVerified: true,
         hasHttpsSource: true,
@@ -57,11 +64,60 @@ describe("getPageIndexability", () => {
       },
     };
 
-    for (const route of ["/seeds", "/seeds/compare", "/lightning", "/updates", "/data-status", "/codes"]) {
+    for (const route of ["/seeds", "/seeds/compare", "/lightning", "/updates", "/codes"]) {
       expect(getPageIndexability(route, ready)).toMatchObject({
         index: true,
         includeInSitemap: true,
       });
     }
+    expect(getPageIndexability("/seeds/eligible-seed", ready)).toMatchObject({
+      index: true,
+      includeInSitemap: true,
+    });
+  });
+
+  it("keeps lightning noindex until both the guide and model evidence gates pass", () => {
+    expect(
+      getPageIndexability("/lightning", {
+        ...empty,
+        currentVersion: "2026.07.27",
+        lightningGuideVerified: true,
+        lightningModelEligible: false,
+      }),
+    ).toMatchObject({ index: false, includeInSitemap: false });
+  });
+
+  it("keeps evidence-driven acquisition pages closed before Phase 0 passes", () => {
+    const dataReadyButEvidenceMissing: IndexabilitySnapshot = {
+      ...empty,
+      currentVersion: "2026.07.27",
+      indexableSeedCount: 3,
+      comparableSeedCount: 2,
+      lightningGuideVerified: true,
+      lightningModelEligible: true,
+      phaseZeroEvidenceReady: false,
+    };
+
+    for (const route of [
+      "/guides/beginner-guide",
+      "/seeds",
+      "/seeds/compare",
+      "/lightning",
+    ]) {
+      expect(getPageIndexability(route, dataReadyButEvidenceMissing)).toMatchObject({
+        index: false,
+        includeInSitemap: false,
+      });
+    }
+  });
+
+  it("keeps the beginner guide closed until its evidence rewrite is reviewed", () => {
+    expect(
+      getPageIndexability("/guides/beginner-guide", {
+        ...empty,
+        phaseZeroEvidenceReady: true,
+        beginnerGuideEvidenceReady: false,
+      }),
+    ).toMatchObject({ index: false, includeInSitemap: false });
   });
 });

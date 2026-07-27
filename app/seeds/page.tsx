@@ -8,7 +8,8 @@ import {
 } from "@/components/layout/ContentPage";
 import { SeedTable } from "@/components/seeds";
 import { dataRepository } from "@/features/data/repository";
-import { getSeedsPageIndexability } from "@/features/seeds/selectors";
+import { getPageIndexability, metadataRobots } from "@/features/seo/indexability";
+import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 async function loadSeedsPageData() {
   const [seeds, sources, observations, growthMeasurements, gameVersion] =
@@ -24,22 +25,21 @@ async function loadSeedsPageData() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { seeds, sources, gameVersion } = await loadSeedsPageData();
-  const gate = getSeedsPageIndexability(seeds, sources, gameVersion.version);
+  const gate = getPageIndexability("/seeds", await getIndexabilitySnapshot());
 
   return {
     title: "Greedy Growers Seeds - Evidence Database",
     description:
       "Browse sourced Greedy Growers seed records with current-version counts, observed value ranges, and evidence links.",
     alternates: { canonical: "/seeds" },
-    robots: { index: gate.index, follow: gate.follow },
+    robots: metadataRobots(gate),
   };
 }
 
 export default async function SeedsPage() {
-  const { seeds, sources, observations, growthMeasurements, gameVersion } =
-    await loadSeedsPageData();
-  const gate = getSeedsPageIndexability(seeds, sources, gameVersion.version);
+  const [{ seeds, sources, observations, growthMeasurements, gameVersion }, snapshot] =
+    await Promise.all([loadSeedsPageData(), getIndexabilitySnapshot()]);
+  const gate = getPageIndexability("/seeds", snapshot);
 
   return (
     <ContentPage

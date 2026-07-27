@@ -8,6 +8,7 @@ import {
   InlineCta,
 } from "@/components/layout/ContentPage";
 import { createGatedMetadata } from "@/features/seo/metadata";
+import { getPageIndexability } from "@/features/seo/indexability";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,13 +22,15 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function UpdatesPage() {
+export default async function UpdatesPage() {
+  const gate = getPageIndexability("/updates", await getIndexabilitySnapshot());
+
   return (
     <ContentPage
       eyebrow="Updates / Empty approved log"
       title="Game and data updates"
       description="Game changes and changes to this site's evidence are different records. Neither should be inferred from a generic page timestamp."
-      status="No approved sourced update · Page is noindex"
+      status={`${gate.reason} Page is ${gate.index ? "index" : "noindex"}.`}
     >
       <section className="border border-survey-line bg-surface p-5 sm:p-7" aria-labelledby="updates-zero-state">
         <FileClock aria-hidden="true" className="size-8 text-lightning" />

@@ -1,10 +1,13 @@
 export interface IndexabilitySnapshot {
   currentVersion: string;
+  phaseZeroEvidenceReady: boolean;
+  beginnerGuideEvidenceReady: boolean;
   indexableSeedCount: number;
   comparableSeedCount: number;
   approvedRecordCount: number;
   sourcedUpdateCount: number;
   lightningGuideVerified: boolean;
+  lightningModelEligible: boolean;
   codes: {
     redeemUiVerified: boolean;
     hasHttpsSource: boolean;
@@ -25,7 +28,6 @@ const INDEXED_FIXED_ROUTES = new Set([
   "/",
   "/about",
   "/guides",
-  "/guides/beginner-guide",
   "/guides/when-to-harvest",
 ]);
 
@@ -34,6 +36,7 @@ const NOINDEX_FIXED_ROUTES = new Set([
   "/privacy",
   "/terms",
   "/submit-data",
+  "/data-status",
 ]);
 
 function decision(index: boolean, reason: string): PageIndexability {
@@ -52,31 +55,32 @@ export function getPageIndexability(
   }
 
   switch (route) {
+    case "/guides/beginner-guide":
+      return decision(
+        snapshot.phaseZeroEvidenceReady && snapshot.beginnerGuideEvidenceReady,
+        "Requires completed gameplay field verification before indexing.",
+      );
     case "/seeds":
       return decision(
-        snapshot.indexableSeedCount >= 3,
+        snapshot.phaseZeroEvidenceReady && snapshot.indexableSeedCount >= 3,
         "Requires at least three evidence-eligible seeds.",
       );
     case "/seeds/compare":
       return decision(
-        snapshot.comparableSeedCount >= 2,
+        snapshot.phaseZeroEvidenceReady && snapshot.comparableSeedCount >= 2,
         "Requires at least two directly comparable evidence-eligible seeds.",
       );
     case "/lightning":
       return decision(
-        snapshot.lightningGuideVerified,
-        "Requires a unique, source-backed mechanics and methodology guide.",
+        snapshot.phaseZeroEvidenceReady &&
+          snapshot.lightningGuideVerified &&
+          snapshot.lightningModelEligible,
+        "Requires a source-backed guide and an eligible current-version observation model.",
       );
     case "/updates":
       return decision(
         snapshot.sourcedUpdateCount >= 1,
         "Requires at least one approved sourced update.",
-      );
-    case "/data-status":
-      return decision(
-        snapshot.currentVersion !== "unverified" &&
-          snapshot.approvedRecordCount >= 1,
-        "Requires a verified current version and approved public data.",
       );
     case "/codes": {
       const codes = snapshot.codes;
@@ -89,6 +93,12 @@ export function getPageIndexability(
       );
     }
     default:
+      if (/^\/seeds\/[^/]+$/.test(route)) {
+        return decision(
+          snapshot.phaseZeroEvidenceReady && snapshot.indexableSeedCount >= 1,
+          "Requires Phase 0 plus an evidence-eligible current-version seed record.",
+        );
+      }
       return decision(false, "Unknown or entity route without an explicit evidence gate.");
   }
 }

@@ -32,7 +32,16 @@ const missing = await fetch(new URL("/seeds/not-a-real-seed", base));
 if (missing.status !== 404) failures.push(`/seeds/not-a-real-seed: expected 404, got ${missing.status}`);
 
 const sitemap = await (await fetch(new URL("/sitemap.xml", base))).text();
-for (const forbidden of ["/submit-data", "/seeds/compare", "/privacy", "/terms"]) {
+for (const forbidden of [
+  "/submit-data",
+  "/seeds/compare",
+  "/seeds</loc>",
+  "/lightning</loc>",
+  "/guides/beginner-guide",
+  "/data-status</loc>",
+  "/privacy",
+  "/terms",
+]) {
   if (sitemap.includes(forbidden)) failures.push(`sitemap unexpectedly contains ${forbidden}`);
 }
 

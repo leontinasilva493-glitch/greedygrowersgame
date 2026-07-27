@@ -12,6 +12,15 @@ This runbook governs pending evidence intake, approval, rejection, deletion, exp
 - The receipt ID is the deletion lookup key. Do not require an email address.
 - A receipt must map to the original pending payload, review notes, and final disposition.
 
+For local workflow testing only, set `MODERATION_INBOX_DRIVER=file`. Records
+are written under ignored `.local-data/moderation/records/`; production refuses
+this driver and must use the private webhook inbox. Use `npm run moderation --
+show <receipt>`, `review`, and `purge` to exercise the receipt lifecycle. A
+local `approved` decision never edits canonical `data/` files.
+Every raw local-inbox payload, including an approved one, is deleted when its
+`expiresAt` timestamp passes. Promote accepted facts to reviewed canonical data
+before that deadline; the canonical changelog is the durable audit record.
+
 ## Review flow
 
 1. Locate the pending item by receipt ID.
@@ -65,7 +74,9 @@ Review the JSON diff before deployment. Confirm pending or rejected items did no
 
 - Pending items expire after the owner-approved retention window.
 - Rejected items should be purged after the retention window unless legal or abuse review requires a shorter hold.
-- Approved public records remain versioned until superseded, redacted, or rolled back.
+- Approved raw inbox payloads expire on the same configured deadline as other
+  submissions. Approved public records in canonical `data/` remain versioned
+  until superseded, redacted, or rolled back.
 
 ## Minor-safety escalation
 

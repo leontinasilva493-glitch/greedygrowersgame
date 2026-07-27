@@ -1,0 +1,14 @@
+{
+  "auditDate": "2026-07-27",
+  "versionBasis": {
+    "kind": "unverified",
+    "label": "unverified",
+    "sourceIds": []
+  },
+  "publicationApprovals": {
+    "beginnerGuideReviewed": false,
+    "lightningGuideReviewed": false,
+    "lightningGuideSourceIds": []
+  },
+  "recordings": []
+}

@@ -26,10 +26,21 @@ describe("seed detail model", () => {
     const publicObservations = await repository.getPublicObservations();
     const publicGrowthMeasurements = await repository.getPublicGrowthMeasurements();
 
-    expect(getSeedDetailStaticParams(indexableSeeds)).toEqual([
+    expect(
+      getSeedDetailStaticParams({
+        indexableSeeds,
+        phaseZeroEvidenceReady: true,
+      }),
+    ).toEqual([
       { slug: "eligible-seed-1" },
       { slug: "eligible-seed-2" },
     ]);
+    expect(
+      getSeedDetailStaticParams({
+        indexableSeeds,
+        phaseZeroEvidenceReady: false,
+      }),
+    ).toEqual([]);
 
     const eligibleModel = buildSeedDetailModel({
       currentVersion: bundle.gameVersion.version,
@@ -66,5 +77,23 @@ describe("seed detail model", () => {
     });
 
     expect(ineligibleModel).toBeNull();
+
+    const factualOnlyModel = buildSeedDetailModel({
+      currentVersion: bundle.gameVersion.version,
+      indexableSeeds,
+      publicObservations: [],
+      publicGrowthMeasurements: [],
+      seedSlug: "eligible-seed-1",
+      sources: bundle.sources,
+      computedAt: "2026-07-26T12:00:00.000Z",
+    });
+
+    expect(factualOnlyModel).toMatchObject({
+      factualPageEligible: true,
+      growthRangeGate: false,
+      growthChartGate: false,
+      rawObservationCount: 0,
+      rawGrowthMeasurementCount: 0,
+    });
   });
 });

@@ -7,6 +7,7 @@ import {
 } from "@/components/layout/ContentPage";
 
 import { SubmitDataForm } from "./SubmitDataForm";
+import { createLocalInboxConfig } from "@/features/submissions/local-inbox";
 
 export const metadata: Metadata = {
   title: "Submit Greedy Growers Evidence",
@@ -16,14 +17,28 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-function getSubmissionConfig() {
-  const webhookUrl = process.env.DATA_SUBMISSION_WEBHOOK_URL?.trim();
-  const webhookToken = process.env.DATA_SUBMISSION_WEBHOOK_TOKEN?.trim();
-  const retentionDays = process.env.SUBMISSION_RETENTION_DAYS?.trim() ?? null;
+export function getSubmissionConfig({
+  cwd = process.cwd(),
+  environment = process.env,
+  nodeEnv = process.env.NODE_ENV,
+}: {
+  cwd?: string;
+  environment?: Record<string, string | undefined>;
+  nodeEnv?: string;
+} = {}) {
+  const webhookUrl = environment.DATA_SUBMISSION_WEBHOOK_URL?.trim();
+  const webhookToken = environment.DATA_SUBMISSION_WEBHOOK_TOKEN?.trim();
+  const retentionDays = environment.SUBMISSION_RETENTION_DAYS?.trim() ?? null;
+  const localInbox = createLocalInboxConfig({
+    cwd,
+    driver: environment.MODERATION_INBOX_DRIVER,
+    nodeEnv,
+    retentionDays: environment.SUBMISSION_RETENTION_DAYS,
+  });
 
   const missing: string[] = [];
 
-  if (!webhookUrl || !webhookToken) {
+  if (!localInbox && (!webhookUrl || !webhookToken)) {
     missing.push("webhook delivery");
   }
   if (!retentionDays) {

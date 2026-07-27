@@ -8,6 +8,7 @@ import {
   InlineCta,
 } from "@/components/layout/ContentPage";
 import { createGatedMetadata } from "@/features/seo/metadata";
+import { getPageIndexability } from "@/features/seo/indexability";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,13 +22,15 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function CodesPage() {
+export default async function CodesPage() {
+  const gate = getPageIndexability("/codes", await getIndexabilitySnapshot());
+
   return (
     <ContentPage
       eyebrow="Codes / Evidence gate closed"
       title="Greedy Growers codes"
       description="A useful codes page starts by proving that the current game has a redemption interface. That evidence is not available yet."
-      status="No verified redemption UI · Page is noindex"
+      status={`${gate.reason} Page is ${gate.index ? "index" : "noindex"}.`}
     >
       <section className="border border-survey-line bg-surface p-5 sm:p-7" aria-labelledby="codes-zero-state">
         <ClipboardX aria-hidden="true" className="size-8 text-lightning" />

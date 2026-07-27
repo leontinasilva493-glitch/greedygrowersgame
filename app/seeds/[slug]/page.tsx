@@ -20,10 +20,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { dataRepository } from "@/features/data/repository";
+import { getPageIndexability, metadataRobots } from "@/features/seo/indexability";
+import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 export const dynamicParams = false;
 
 async function loadSeedDetailModel(seedSlug: string) {
+  const snapshot = await getIndexabilitySnapshot();
+  if (!snapshot.phaseZeroEvidenceReady) return null;
+
   const [indexableSeeds, publicObservations, publicGrowthMeasurements, sources, gameVersion] =
     await Promise.all([
       dataRepository.getIndexableSeeds(),
@@ -45,7 +50,15 @@ async function loadSeedDetailModel(seedSlug: string) {
 }
 
 export async function generateStaticParams() {
-  return getSeedDetailStaticParams(await dataRepository.getIndexableSeeds());
+  const [indexableSeeds, snapshot] = await Promise.all([
+    dataRepository.getIndexableSeeds(),
+    getIndexabilitySnapshot(),
+  ]);
+
+  return getSeedDetailStaticParams({
+    indexableSeeds,
+    phaseZeroEvidenceReady: snapshot.phaseZeroEvidenceReady,
+  });
 }
 
 export async function generateMetadata({
@@ -54,7 +67,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const model = await loadSeedDetailModel(slug);
+  const [model, snapshot] = await Promise.all([
+    loadSeedDetailModel(slug),
+    getIndexabilitySnapshot(),
+  ]);
 
   if (!model) {
     return {
@@ -67,6 +83,9 @@ export async function generateMetadata({
     title: `${model.seed.name} - Value, Growth & Harvest Time`,
     description: `Evidence-first facts, raw observations, and growth gates for ${model.seed.name} in Greedy Growers.`,
     alternates: { canonical: `/seeds/${model.seed.slug}` },
+    robots: metadataRobots(
+      getPageIndexability(`/seeds/${model.seed.slug}`, snapshot),
+    ),
   };
 }
 

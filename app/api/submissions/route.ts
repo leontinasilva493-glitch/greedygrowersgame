@@ -1,4 +1,8 @@
 import { submissionSchema } from "../../../features/submissions/schema";
+import {
+  createLocalInboxConfig,
+  writeLocalSubmission,
+} from "../../../features/submissions/local-inbox";
 
 const MAX_REQUEST_BYTES = 16 * 1024;
 const WEBHOOK_TIMEOUT_MS = 8_000;
@@ -50,10 +54,17 @@ export async function POST(request: Request) {
   }
 
   const retention = retentionDays();
+  const localInbox = createLocalInboxConfig({
+    cwd: process.cwd(),
+    driver: process.env.MODERATION_INBOX_DRIVER,
+    nodeEnv: process.env.NODE_ENV,
+    retentionDays: process.env.SUBMISSION_RETENTION_DAYS,
+  });
   if (
-    !process.env.DATA_SUBMISSION_WEBHOOK_URL ||
-    !process.env.DATA_SUBMISSION_WEBHOOK_TOKEN ||
-    retention === null
+    !localInbox &&
+    (!process.env.DATA_SUBMISSION_WEBHOOK_URL ||
+      !process.env.DATA_SUBMISSION_WEBHOOK_TOKEN ||
+      retention === null)
   ) {
     return json(503, { error: "Submission inbox is unavailable." });
   }
@@ -80,6 +91,23 @@ export async function POST(request: Request) {
   }
 
   const receipt = crypto.randomUUID();
+  const submittedAt = new Date().toISOString();
+  const envelope = {
+    receipt,
+    retentionDays: localInbox?.retentionDays ?? retention!,
+    submittedAt,
+    payload: parsed.data,
+  };
+
+  if (localInbox) {
+    try {
+      await writeLocalSubmission(localInbox, envelope);
+      return json(202, { receipt, status: "pending_review" });
+    } catch {
+      return json(500, { error: "Local submission inbox write failed." });
+    }
+  }
+
   const abortController = new AbortController();
   const timeout = setTimeout(() => abortController.abort(), WEBHOOK_TIMEOUT_MS);
 
@@ -91,16 +119,13 @@ export async function POST(request: Request) {
         Authorization: `Bearer ${process.env.DATA_SUBMISSION_WEBHOOK_TOKEN}`,
       },
       body: JSON.stringify({
-        receipt,
-        retentionDays: retention,
-        submittedAt: new Date().toISOString(),
-        payload: parsed.data,
+        ...envelope,
       }),
       signal: abortController.signal,
     });
 
     if (!response.ok) {
-      return json(502, { error: "Submission relay failed." });
+      return json(502, { error: "Submission relay failed.", receipt });
     }
 
     return json(202, { receipt, status: "pending_review" });
@@ -109,9 +134,9 @@ export async function POST(request: Request) {
       error instanceof DOMException &&
       (error.name === "TimeoutError" || error.name === "AbortError")
     ) {
-      return json(504, { error: "Submission relay timed out." });
+      return json(504, { error: "Submission relay timed out.", receipt });
     }
-    return json(502, { error: "Submission relay failed." });
+    return json(502, { error: "Submission relay failed.", receipt });
   } finally {
     clearTimeout(timeout);
   }

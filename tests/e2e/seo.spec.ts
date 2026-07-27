@@ -44,6 +44,26 @@ test("robots and sitemap expose only eligible production URLs", async ({ request
   expect(xml).toContain("/guides");
   expect(xml).not.toContain("/submit-data");
   expect(xml).not.toContain("/seeds/compare");
+  expect(xml).not.toContain("/guides/beginner-guide");
+  expect(xml).not.toContain("/seeds</loc>");
+  expect(xml).not.toContain("/lightning</loc>");
+  expect(xml).not.toContain("/data-status</loc>");
+});
+
+test("evidence-driven pages remain noindex while Phase 0 is closed", async ({ page }) => {
+  for (const route of [
+    "/guides/beginner-guide",
+    "/seeds",
+    "/seeds/compare",
+    "/lightning",
+    "/data-status",
+  ]) {
+    await page.goto(route);
+    await expect(page.locator('meta[name="robots"]'), route).toHaveAttribute(
+      "content",
+      /noindex/i,
+    );
+  }
 });
 
 test("homepage JSON-LD is valid and contains no rating schema", async ({ page }) => {

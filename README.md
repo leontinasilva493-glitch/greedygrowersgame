@@ -24,6 +24,7 @@ npm run check
 npm run test:e2e
 npm run audit:prod
 npm run lhci
+npm run evidence:validate
 ```
 
 `npm run check` runs ESLint, TypeScript, unit/integration tests, canonical data validation, brand contamination checks, and the production build.
@@ -35,9 +36,26 @@ npm run lhci
 - `NEXT_PUBLIC_SUPPORT_EMAIL`: real support/deletion contact; leave unset rather than using a placeholder.
 - `DATA_SUBMISSION_WEBHOOK_URL` and `DATA_SUBMISSION_WEBHOOK_TOKEN`: server-only moderation inbox.
 - `SUBMISSION_RETENTION_DAYS`: approved pending-submission retention. The form stays disabled when it is absent.
+- `MODERATION_INBOX_DRIVER=file`: optional local-development inbox stored under ignored `.local-data/`; production deliberately refuses this driver.
 - `GREEDY_DATASET=fixtures`: development/E2E only; production use throws.
 
 Never commit `.env.local` or real secrets.
+
+For a local end-to-end moderation test, set `MODERATION_INBOX_DRIVER=file` and
+`SUBMISSION_RETENTION_DAYS` in `.env.local`, restart the app, and submit through
+`/submit-data`. Review by receipt from PowerShell:
+
+```powershell
+$env:SUBMISSION_RETENTION_DAYS='30'
+npm run moderation -- show <receipt>
+npm run moderation -- review <receipt> rejected local-reviewer 'Evidence is incomplete'
+npm run moderation -- purge
+```
+
+An `approved` local inbox decision records review state only. It never edits or
+publishes files under `data/`; canonical promotion remains a separate reviewed
+commit. `npm run moderation -- purge` deletes every expired raw inbox payload,
+including approved submissions after their canonical promotion.
 
 ## Route map and SEO decisions
 
@@ -52,6 +70,19 @@ Never commit `.env.local` or real secrets.
 Public canonical records live under `data/` and are validated against `features/data/schemas.ts`. Submissions never write to those files. Promotion is manual and receipt-based; see [docs/data-moderation-runbook.md](docs/data-moderation-runbook.md).
 
 Current production data intentionally keeps `gameVersion: unverified` until gameplay/version evidence is supplied. Do not fabricate values, codes, mechanics, probabilities, or detail pages to unlock indexing.
+
+Phase 0 recording state lives in `research/evidence-manifest.json`. Raw videos
+remain private; only reviewed, privacy-safe evidence URLs belong in the
+manifest. `REC-01` through `REC-05` must all be approved in independent server
+sessions before the evidence gate opens.
+After REC-01 through REC-05 pass, rewrite and review the Beginner Guide before
+setting `publicationApprovals.beginnerGuideReviewed` to `true`. Seed, compare,
+growth, and lightning routes still have their own record/model thresholds; the
+Phase 0 flag alone cannot index them.
+An official version basis must reference source IDs that exist as `official`
+records in `data/sources.json`; an observational basis may reference only
+approved recording IDs. The Lightning Guide additionally requires
+`lightningGuideReviewed: true` and explicit `lightningGuideSourceIds`.
 
 ## Analytics and privacy
 
