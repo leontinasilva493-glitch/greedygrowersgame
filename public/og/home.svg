@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Greedy Growers Calculator</title>
+  <desc id="desc">A dark field manual cover with a growing tree, survey lines, and a lightning risk marker</desc>
+  <defs>
+    <pattern id="rain" width="54" height="54" patternUnits="userSpaceOnUse" patternTransform="rotate(14)">
+      <path d="M0 8h54M0 36h54" stroke="#aab7ad" stroke-opacity=".055" stroke-width="2"/>
+    </pattern>
+    <linearGradient id="field" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08110f"/>
+      <stop offset="1" stop-color="#101d19"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#field)"/>
+  <rect width="1200" height="630" fill="url(#rain)"/>
+  <path d="M0 503c180-38 321-35 476 0s300 37 724-8v135H0Z" fill="#172821"/>
+  <g fill="none" stroke="#33473e" stroke-width="2">
+    <path d="M0 527c175-34 324-26 472 10s358 26 728-14"/>
+    <path d="M0 568c193-27 342-15 500 12s352 18 700-20"/>
+  </g>
+  <g transform="translate(908 118)">
+    <path d="M99 0 23 111h67l-25 106L175 77h-72L126 0Z" fill="#f4c95d"/>
+    <path d="M74 335v-94c0-51-31-79-87-79 0 54 31 86 87 86m0 43c7-62 48-98 112-98 0 60-43 98-112 98" fill="none" stroke="#59d17d" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
+  </g>
+  <text x="78" y="100" fill="#59d17d" font-family="Consolas,monospace" font-size="21" letter-spacing="5">FIELD DECISION TOOL / FAN-MADE</text>
+  <text x="74" y="205" fill="#f4f0e3" font-family="Georgia,serif" font-size="72" font-weight="700">Greedy Growers</text>
+  <text x="76" y="285" fill="#f4c95d" font-family="Georgia,serif" font-size="72" font-weight="700">Calculator</text>
+  <text x="80" y="354" fill="#aab7ad" font-family="Segoe UI,sans-serif" font-size="28">Harvest now—or risk waiting for more?</text>
+  <g transform="translate(80 420)">
+    <path d="M0 35h670" stroke="#33473e" stroke-width="3"/>
+    <circle cx="0" cy="35" r="9" fill="#ff6b5f"/>
+    <circle cx="670" cy="35" r="9" fill="#59d17d"/>
+    <path d="m414 4-19 28h17l-7 27 29-36h-19l7-19Z" fill="#f4c95d"/>
+    <text y="78" fill="#ff6b5f" font-family="Consolas,monospace" font-size="18" letter-spacing="2">HARVEST</text>
+    <text x="614" y="78" fill="#59d17d" font-family="Consolas,monospace" font-size="18" letter-spacing="2">WAIT</text>
+  </g>
+</svg>

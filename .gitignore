@@ -41,6 +41,8 @@ yarn-error.log*
 /playwright-report/
 /test-results/
 /.lighthouseci/
+/.superpowers/
+/.artifacts/
 
 # typescript
 *.tsbuildinfo

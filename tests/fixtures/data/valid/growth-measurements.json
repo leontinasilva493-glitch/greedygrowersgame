@@ -1,0 +1,4 @@
+[
+  {"id":"growth-1","seedId":"eligible-seed-1","treeInstanceId":"tree-1","serverSessionId":"session-1","gameVersion":"2026-07-27","treeAgeSeconds":30,"value":100,"currency":"coins","observedAt":"2026-07-27T00:00:30.000Z","sourceId":"source-observation","evidenceUrl":"https://example.com/growth-1","status":"observed","reviewState":"approved","reviewedAt":"2026-07-27T01:00:00.000Z","lastVerified":"2026-07-27T01:00:00.000Z"},
+  {"id":"growth-pending","seedId":"eligible-seed-1","treeInstanceId":"tree-6","serverSessionId":"session-6","gameVersion":"2026-07-27","treeAgeSeconds":30,"value":90,"currency":"coins","observedAt":"2026-07-27T00:06:30.000Z","sourceId":"source-observation","evidenceUrl":"https://example.com/growth-2","status":"observed","reviewState":"pending","lastVerified":"2026-07-27T01:00:00.000Z"}
+]

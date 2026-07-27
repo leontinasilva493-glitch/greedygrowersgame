@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Greedy Growers Calculator
 
-## Getting Started
+English-first, fan-made Greedy Growers harvest calculator and evidence-backed data site. The product works with player-supplied estimates before community data exists; unverified data pages remain transparent and noindex.
 
-First, run the development server:
+## Local setup
 
-```bash
+```powershell
+npm ci
+Copy-Item .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Production-like local run:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```powershell
+npm run build
+npm start -- --hostname 127.0.0.1 --port 3421
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Quality gates
 
-## Learn More
+```powershell
+npm run check
+npm run test:e2e
+npm run audit:prod
+npm run lhci
+```
 
-To learn more about Next.js, take a look at the following resources:
+`npm run check` runs ESLint, TypeScript, unit/integration tests, canonical data validation, brand contamination checks, and the production build.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `NEXT_PUBLIC_SITE_URL`: canonical production origin; HTTPS is required when `VERCEL_ENV=production`.
+- `NEXT_PUBLIC_GA_ID`: optional consent-gated GA property.
+- `NEXT_PUBLIC_SUPPORT_EMAIL`: real support/deletion contact; leave unset rather than using a placeholder.
+- `DATA_SUBMISSION_WEBHOOK_URL` and `DATA_SUBMISSION_WEBHOOK_TOKEN`: server-only moderation inbox.
+- `SUBMISSION_RETENTION_DAYS`: approved pending-submission retention. The form stays disabled when it is absent.
+- `GREEDY_DATASET=fixtures`: development/E2E only; production use throws.
 
-## Deploy on Vercel
+Never commit `.env.local` or real secrets.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Route map and SEO decisions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `/`: canonical calculator, indexable.
+- `/guides/**` and `/about`: verified editorial pages, indexable.
+- `/seeds`, `/seeds/[slug]`, `/seeds/compare`, `/lightning`, `/codes`, `/updates`, `/data-status`: evidence-gated; empty production states are noindex or absent from the sitemap.
+- `/submit-data`, `/contact`, `/privacy`, `/terms`: useful public utility/legal pages, noindex.
+- `/calculator`: exact 301 to `/`.
+
+## Data workflow
+
+Public canonical records live under `data/` and are validated against `features/data/schemas.ts`. Submissions never write to those files. Promotion is manual and receipt-based; see [docs/data-moderation-runbook.md](docs/data-moderation-runbook.md).
+
+Current production data intentionally keeps `gameVersion: unverified` until gameplay/version evidence is supplied. Do not fabricate values, codes, mechanics, probabilities, or detail pages to unlock indexing.
+
+## Analytics and privacy
+
+Analytics consent is denied by default. Events contain event names only, not calculator values, evidence URLs, receipts, or identifiers. The submission form collects pseudonymous tree/session IDs and evidence fields, not names, handles, or email addresses.
+
+## Deployment and rollback
+
+1. Run all quality gates locally.
+2. Deploy a preview with production canonicals; previews return `X-Robots-Tag: noindex, nofollow`.
+3. Verify HTTPS, canonical, robots, sitemap, JSON-LD, consented analytics and the moderation receipt flow.
+4. Enable the submission form only after the hosting firewall proves the 11th controlled request is rate-limited (`429`).
+5. Verify Search Console ownership and submit the production sitemap.
+
+Rollback data with `git revert <data-commit>` and rerun the full gate. Roll back deployment to the previous known-good release, then recheck canonical, robots and sitemap. Never rewrite shared history.

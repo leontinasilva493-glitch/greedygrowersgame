@@ -1,0 +1,7 @@
+[
+  {"id":"source-image","type":"gameplay","title":"Seed image","url":"https://example.com/image","capturedAt":"2026-07-27T00:00:00.000Z","gameVersion":"2026-07-27"},
+  {"id":"source-fact-1","type":"gameplay","title":"Fact 1","url":"https://example.com/fact-1","capturedAt":"2026-07-27T00:00:00.000Z","gameVersion":"2026-07-27"},
+  {"id":"source-fact-2","type":"gameplay","title":"Fact 2","url":"https://example.com/fact-2","capturedAt":"2026-07-27T00:00:00.000Z","gameVersion":"2026-07-27"},
+  {"id":"source-fact-3","type":"gameplay","title":"Fact 3","url":"https://example.com/fact-3","capturedAt":"2026-07-27T00:00:00.000Z","gameVersion":"2026-07-27"},
+  {"id":"source-observation","type":"gameplay","title":"Observation","url":"https://example.com/observation","capturedAt":"2026-07-27T00:00:00.000Z","gameVersion":"2026-07-27"}
+]

@@ -1,0 +1,21 @@
+[
+  {
+    "id":"eligible-seed-1","slug":"eligible-seed-1","name":"Eligible Seed One","imageUrl":"https://example.com/seed-1.webp","imageSourceId":"source-image","acquisition":"River","facts":[
+      {"key":"origin","value":"River","sourceIds":["source-fact-1"]},
+      {"key":"planting","value":"Plot","sourceIds":["source-fact-2"]},
+      {"key":"growth","value":"Tree","sourceIds":["source-fact-3"]}
+    ],"status":"verified","gameVersion":"2026-07-27","lastVerified":"2026-07-27T00:00:00.000Z","sourceIds":["source-image","source-fact-1","source-fact-2","source-fact-3"],"indexing":"index","indexingReason":"Three sourced facts"
+  },
+  {
+    "id":"eligible-seed-2","slug":"eligible-seed-2","name":"Eligible Seed Two","imageUrl":"https://example.com/seed-2.webp","imageSourceId":"source-image","cost":10,"currency":"coins","facts":[
+      {"key":"origin","value":"River","sourceIds":["source-fact-1"]},
+      {"key":"planting","value":"Plot","sourceIds":["source-fact-2"]},
+      {"key":"growth","value":"Tree","sourceIds":["source-fact-3"]}
+    ],"status":"observed","gameVersion":"2026-07-27","lastVerified":"2026-07-27T00:00:00.000Z","sourceIds":["source-image","source-fact-1","source-fact-2","source-fact-3"],"indexing":"index","indexingReason":"Three sourced facts"
+  },
+  {
+    "id":"ineligible-seed","slug":"ineligible-seed","name":"Ineligible Seed","facts":[
+      {"key":"origin","value":"Unknown","sourceIds":["source-fact-1"]}
+    ],"status":"unknown","gameVersion":"2026-07-27","lastVerified":"2026-07-27T00:00:00.000Z","sourceIds":["source-fact-1"],"indexing":"noindex","indexingReason":"Insufficient evidence"
+  }
+]

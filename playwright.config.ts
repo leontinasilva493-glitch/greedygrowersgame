@@ -18,6 +18,14 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
+    {
+      name: "mobile-chromium",
+      use: {
+        viewport: { width: 375, height: 812 },
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
   ],
   webServer: {
     command: "npm run dev -- --hostname 127.0.0.1 --port 3100",
