@@ -47,6 +47,37 @@ async function readGtagCalls(page: Page) {
   });
 }
 
+test("shows a calculated example on first load and updates it only after submission", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  await expect(page.getByLabel("Current harvest value")).toHaveValue("100");
+  await expect(page.getByLabel("Value after waiting")).toHaveValue("600");
+  await expect(page.getByLabel("Wait time in seconds")).toHaveValue("6");
+  await expect(page.getByLabel("Lightning risk for this wait")).toHaveValue(
+    "24.34",
+  );
+
+  const result = page.getByRole("region", { name: "Harvest decision" });
+  await expect(result.getByText("WAIT", { exact: true })).toBeVisible();
+  await expect(result.getByTestId("harvest-ev")).toHaveText("100");
+  await expect(result.getByTestId("wait-ev")).toHaveText("453.96");
+  await expect(result.getByTestId("wait-advantage")).toHaveText("+353.96");
+  await expect(result.getByTestId("break-even-risk")).toHaveText("83.33%");
+  await expect(result).toContainText("6 seconds");
+
+  await page.getByLabel("Value after waiting").fill("100");
+  await expect(result.getByTestId("wait-ev")).toHaveText("453.96");
+
+  await page.getByRole("button", { name: "Calculate" }).click();
+  await expect(
+    result.getByText("HARVEST NOW", { exact: true }),
+  ).toBeVisible();
+  await expect(result.getByTestId("wait-ev")).toHaveText("75.66");
+  await expect(result.getByTestId("wait-advantage")).toHaveText("-24.34");
+});
+
 test("calculates a WAIT result with advanced assumptions and a transparent decision strip", async ({
   page,
 }) => {

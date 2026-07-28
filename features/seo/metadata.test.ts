@@ -48,4 +48,40 @@ describe("createGatedMetadata", () => {
 
     expect(metadata.robots).toMatchObject({ index: false, follow: true });
   });
+
+  it("returns route-specific social metadata when an image is supplied", () => {
+    const metadata = createGatedMetadata({
+      title: "Lightning evidence",
+      description: "Evidence-led lightning notes.",
+      canonical: "/lightning",
+      route: "/lightning",
+      snapshot: openSnapshot,
+      socialImage: {
+        url: "/media/greedy-growers/og/lightning.png",
+        width: 1200,
+        height: 630,
+        alt: "A fan-made illustration of a tree facing a lightning storm",
+      },
+    });
+
+    expect(metadata.openGraph).toMatchObject({
+      siteName: "Greedy Growers Calculator",
+      locale: "en_US",
+      url: "/lightning",
+      title: "Lightning evidence",
+      description: "Evidence-led lightning notes.",
+      images: [
+        {
+          url: "/media/greedy-growers/og/lightning.png",
+          width: 1200,
+          height: 630,
+          alt: "A fan-made illustration of a tree facing a lightning storm",
+        },
+      ],
+    });
+    expect(metadata.twitter).toMatchObject({
+      card: "summary_large_image",
+      images: ["/media/greedy-growers/og/lightning.png"],
+    });
+  });
 });

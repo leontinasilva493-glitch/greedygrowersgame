@@ -6,10 +6,13 @@ import {
   EvidenceNote,
   InlineCta,
 } from "@/components/layout/ContentPage";
+import { GameScene } from "@/components/game/GameScene";
 import { SeedTable } from "@/components/seeds";
 import { dataRepository } from "@/features/data/repository";
-import { getPageIndexability, metadataRobots } from "@/features/seo/indexability";
+import { getPageIndexability } from "@/features/seo/indexability";
+import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
+import { gameSceneAssets } from "@/features/visuals/assets";
 
 async function loadSeedsPageData() {
   const [seeds, sources, observations, growthMeasurements, gameVersion] =
@@ -25,15 +28,20 @@ async function loadSeedsPageData() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const gate = getPageIndexability("/seeds", await getIndexabilitySnapshot());
-
-  return {
+  return createGatedMetadata({
     title: "Greedy Growers Seeds - Evidence Database",
     description:
       "Browse sourced Greedy Growers seed records with current-version counts, observed value ranges, and evidence links.",
-    alternates: { canonical: "/seeds" },
-    robots: metadataRobots(gate),
-  };
+    canonical: "/seeds",
+    route: "/seeds",
+    snapshot: await getIndexabilitySnapshot(),
+    socialImage: {
+      url: "/media/greedy-growers/og/seeds.png",
+      width: 1200,
+      height: 630,
+      alt: gameSceneAssets.seeds.alt,
+    },
+  });
 }
 
 export default async function SeedsPage() {
@@ -47,6 +55,7 @@ export default async function SeedsPage() {
       title="Greedy Growers seeds"
       description="This list stays useful even before every seed earns a detail page. Search, filter, and compare only what the current evidence can support."
       status={`${gate.reason} Page is ${gate.index ? "index" : "noindex"}.`}
+      visual={<GameScene asset={gameSceneAssets.seeds} preload />}
     >
       <SeedTable
         seeds={seeds}

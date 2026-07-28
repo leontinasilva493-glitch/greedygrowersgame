@@ -6,8 +6,10 @@ import {
   EvidenceNote,
   InlineCta,
 } from "@/components/layout/ContentPage";
+import { GameScene } from "@/components/game/GameScene";
 import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
+import { gameSceneAssets } from "@/features/visuals/assets";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
@@ -17,6 +19,12 @@ export async function generateMetadata(): Promise<Metadata> {
     canonical: "/guides/beginner-guide",
     route: "/guides/beginner-guide",
     snapshot: await getIndexabilitySnapshot(),
+    socialImage: {
+      url: "/media/greedy-growers/og/beginner-guide.png",
+      width: 1200,
+      height: 630,
+      alt: gameSceneAssets.beginner.alt,
+    },
   });
 }
 
@@ -27,6 +35,7 @@ export default function BeginnerGuidePage() {
       title="A careful first loop in Greedy Growers"
       description="The creator's public description confirms only a compact loop. This guide stays inside that boundary and marks everything the current evidence cannot answer."
       status="Source: official Roblox experience description · Captured 2026-07-26"
+      visual={<GameScene asset={gameSceneAssets.beginner} preload />}
     >
       <ContentSection title="The confirmed loop">
         <ol className="grid gap-3 pl-5 marker:font-mono marker:text-lightning">

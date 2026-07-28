@@ -1,9 +1,11 @@
 export const LOCAL_DEVELOPMENT_ORIGIN = "http://localhost:3000";
+export const PRODUCTION_ORIGIN = "https://greedygrowersgame.com";
 export const OFFICIAL_ROBLOX_GAME_URL =
   "https://www.roblox.com/games/74102906764176/Greedy-Growers";
 
 export interface SiteEnvironment {
   readonly [key: string]: string | undefined;
+  NODE_ENV?: string;
   NEXT_PUBLIC_SITE_URL?: string;
   NEXT_PUBLIC_SUPPORT_EMAIL?: string;
   VERCEL_ENV?: string;
@@ -45,17 +47,13 @@ export function assertBrandSafeCopy(value: string): void {
 }
 
 function resolveOrigin(environment: SiteEnvironment): string {
-  const isProduction = environment.VERCEL_ENV === "production";
+  const isProduction =
+    environment.NODE_ENV === "production" ||
+    environment.VERCEL_ENV === "production";
   const configuredOrigin = environment.NEXT_PUBLIC_SITE_URL?.trim();
 
   if (!configuredOrigin) {
-    if (isProduction) {
-      throw new Error(
-        "NEXT_PUBLIC_SITE_URL is required for a Vercel production build.",
-      );
-    }
-
-    return LOCAL_DEVELOPMENT_ORIGIN;
+    return isProduction ? PRODUCTION_ORIGIN : LOCAL_DEVELOPMENT_ORIGIN;
   }
 
   let url: URL;

@@ -21,9 +21,12 @@ describe("createSiteConfig", () => {
     expect(config.origin).toBe("http://localhost:3000");
   });
 
-  it("requires an explicit site URL in Vercel production", () => {
-    expect(() => createSiteConfig({ VERCEL_ENV: "production" })).toThrow(
-      /NEXT_PUBLIC_SITE_URL is required/i,
+  it.each([
+    { NODE_ENV: "production" },
+    { VERCEL_ENV: "production" },
+  ])("uses the official domain when production has no URL override", (environment) => {
+    expect(createSiteConfig(environment).origin).toBe(
+      "https://greedygrowersgame.com",
     );
   });
 

@@ -11,6 +11,7 @@ import { ChevronRight, NotebookPen, Sprout, Zap } from "lucide-react";
 
 import { Analytics } from "../analytics/Analytics";
 import { AnalyticsConsent } from "../analytics/AnalyticsConsent";
+import { GameScene } from "../game/GameScene";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
@@ -19,6 +20,7 @@ import { Label } from "../ui/label";
 import { track } from "../../features/analytics/events";
 import { calculateHarvestDecision } from "../../features/calculator/engine";
 import type { CalculatorResult } from "../../features/calculator/types";
+import { gameSceneAssets } from "../../features/visuals/assets";
 import { RecommendationCard } from "./RecommendationCard";
 
 type FieldName =
@@ -42,10 +44,10 @@ const fieldOrder: FieldName[] = [
 ];
 
 const defaultValues: FormState = {
-  currentValue: "",
-  futureValue: "",
-  waitSeconds: "",
-  lightningRiskPercent: "",
+  currentValue: "100",
+  futureValue: "600",
+  waitSeconds: "6",
+  lightningRiskPercent: "24.34",
   residualValue: "0",
   waitCost: "0",
 };
@@ -58,10 +60,20 @@ function parseInput(rawValue: string): number {
   return Number(trimmed);
 }
 
+const defaultResult = calculateHarvestDecision({
+  currentValue: parseInput(defaultValues.currentValue),
+  futureValue: parseInput(defaultValues.futureValue),
+  waitSeconds: parseInput(defaultValues.waitSeconds),
+  lightningProbability:
+    parseInput(defaultValues.lightningRiskPercent) / 100,
+  residualValue: parseInput(defaultValues.residualValue),
+  waitCost: parseInput(defaultValues.waitCost),
+});
+
 export function CalculatorExperience() {
   const [values, setValues] = useState<FormState>(defaultValues);
   const [errors, setErrors] = useState<ErrorState>({});
-  const [result, setResult] = useState<CalculatorResult | null>(null);
+  const [result, setResult] = useState<CalculatorResult | null>(defaultResult);
   const [attemptNumber, setAttemptNumber] = useState(0);
   const inputRefs = useRef<Partial<Record<FieldName, HTMLInputElement | null>>>({});
 
@@ -149,6 +161,13 @@ export function CalculatorExperience() {
                 expected value of waiting, the break-even risk, and the exact
                 assumptions behind the recommendation.
               </p>
+
+              <GameScene
+                asset={gameSceneAssets.home}
+                preload
+                compact
+                className="mt-6"
+              />
 
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 <FactPill

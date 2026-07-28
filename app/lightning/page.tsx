@@ -7,6 +7,7 @@ import {
   InlineCta,
 } from "@/components/layout/ContentPage";
 import { SurvivalCurve } from "@/components/charts/SurvivalCurve";
+import { GameScene } from "@/components/game/GameScene";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { dataRepository } from "@/features/data/repository";
 import { buildKaplanMeierCurve, estimateConditionalRisk } from "@/features/lightning/kaplan-meier";
@@ -14,6 +15,7 @@ import { evaluateModelEligibility } from "@/features/lightning/model-gate";
 import { createGatedMetadata } from "@/features/seo/metadata";
 import { getPageIndexability } from "@/features/seo/indexability";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
+import { gameSceneAssets } from "@/features/visuals/assets";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
@@ -23,6 +25,12 @@ export async function generateMetadata(): Promise<Metadata> {
     canonical: "/lightning",
     route: "/lightning",
     snapshot: await getIndexabilitySnapshot(),
+    socialImage: {
+      url: "/media/greedy-growers/og/lightning.png",
+      width: 1200,
+      height: 630,
+      alt: gameSceneAssets.lightning.alt,
+    },
   });
 }
 
@@ -58,6 +66,7 @@ export default async function LightningPage() {
       title="Lightning risk stays evidence-gated"
       description="This page separates confirmed mechanics, raw observation counts, and model-based interval diagnostics. No official strike chance is claimed."
       status={`Current version: ${gameVersion.version}. Page is ${pageGate.index ? "index" : "noindex"}: ${pageGate.reason}`}
+      visual={<GameScene asset={gameSceneAssets.lightning} preload />}
     >
       <section className="grid gap-4 lg:grid-cols-3">
         <Card>

@@ -31,7 +31,7 @@ npm run evidence:validate
 
 ## Environment variables
 
-- `NEXT_PUBLIC_SITE_URL`: canonical production origin; HTTPS is required when `VERCEL_ENV=production`.
+- `NEXT_PUBLIC_SITE_URL`: optional canonical-origin override. Production builds default to `https://greedygrowersgame.com`; any production override must use HTTPS.
 - `NEXT_PUBLIC_GA_ID`: optional consent-gated GA property.
 - `NEXT_PUBLIC_SUPPORT_EMAIL`: real support/deletion contact; leave unset rather than using a placeholder.
 - `DATA_SUBMISSION_WEBHOOK_URL` and `DATA_SUBMISSION_WEBHOOK_TOKEN`: server-only moderation inbox.

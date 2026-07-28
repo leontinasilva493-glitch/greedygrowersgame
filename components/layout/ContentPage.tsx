@@ -8,6 +8,7 @@ interface ContentPageProps {
   description: string;
   children: ReactNode;
   status?: string;
+  visual?: ReactNode;
 }
 
 export function ContentPage({
@@ -16,6 +17,7 @@ export function ContentPage({
   description,
   children,
   status,
+  visual,
 }: ContentPageProps) {
   return (
     <main className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 sm:py-14">
@@ -39,6 +41,7 @@ export function ContentPage({
             {status}
           </p>
         ) : null}
+        {visual ? <div className="relative z-10 mt-7 max-w-4xl">{visual}</div> : null}
       </header>
       <div className="mt-8 min-w-0">{children}</div>
     </main>

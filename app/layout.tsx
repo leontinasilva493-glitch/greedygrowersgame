@@ -24,10 +24,10 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [
       {
-        url: "/og/home.png",
+        url: "/media/greedy-growers/og/home.png",
         width: 1200,
         height: 630,
-        alt: "Greedy Growers Calculator field-note cover with a lightning marker",
+        alt: "Fan-made illustration of growth versus lightning risk for Greedy Growers",
       },
     ],
   },
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
-    images: ["/og/home.png"],
+    images: ["/media/greedy-growers/og/home.png"],
   },
   icons: {
     icon: [{ url: "/brand/icon.svg", type: "image/svg+xml" }],
