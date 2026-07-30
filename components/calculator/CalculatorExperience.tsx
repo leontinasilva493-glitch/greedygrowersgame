@@ -7,20 +7,18 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
-import { ChevronRight, NotebookPen, Sprout, Zap } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { Analytics } from "../analytics/Analytics";
 import { AnalyticsConsent } from "../analytics/AnalyticsConsent";
-import { GameScene } from "../game/GameScene";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { track } from "../../features/analytics/events";
 import { calculateHarvestDecision } from "../../features/calculator/engine";
 import type { CalculatorResult } from "../../features/calculator/types";
-import { gameSceneAssets } from "../../features/visuals/assets";
 import { RecommendationCard } from "./RecommendationCard";
 
 type FieldName =
@@ -70,7 +68,13 @@ const defaultResult = calculateHarvestDecision({
   waitCost: parseInput(defaultValues.waitCost),
 });
 
-export function CalculatorExperience() {
+export function CalculatorExperience({
+  intro,
+  supportingContext,
+}: {
+  intro: ReactNode;
+  supportingContext: ReactNode;
+}) {
   const [values, setValues] = useState<FormState>(defaultValues);
   const [errors, setErrors] = useState<ErrorState>({});
   const [result, setResult] = useState<CalculatorResult | null>(defaultResult);
@@ -146,54 +150,19 @@ export function CalculatorExperience() {
   return (
     <>
       <Analytics />
-      <main className="mx-auto flex w-full max-w-[1180px] flex-1 flex-col px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
-        <section className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)] lg:items-start">
-          <div className="min-w-0">
-            <div className="border border-survey-line bg-surface px-5 py-6 shadow-[inset_0_1px_0_rgb(244_240_227_/_0.04)] sm:px-6">
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-lightning">
-                Greedy Growers harvest calculator
-              </p>
-              <h1 className="mt-4 max-w-3xl font-display text-4xl font-semibold leading-[1.04] tracking-[-0.04em] text-foreground sm:text-5xl">
-                Compare one certain harvest with one risky wait.
-              </h1>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-                This page does not predict lightning for you. It shows the
-                expected value of waiting, the break-even risk, and the exact
-                assumptions behind the recommendation.
-              </p>
+      <section className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)] lg:items-start">
+        <div className="min-w-0">
+          {intro}
 
-              <GameScene
-                asset={gameSceneAssets.home}
-                preload
-                compact
-                className="mt-6"
-              />
-
-              <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                <FactPill
-                  icon={<Sprout aria-hidden="true" className="size-4" />}
-                  title="Use visible values"
-                  body="Current value, future value, and wait time should come from what you can read in game."
-                />
-                <FactPill
-                  icon={<Zap aria-hidden="true" className="size-4" />}
-                  title="Risk is your call"
-                  body="Enter your own lightning percentage for just this wait window."
-                />
-                <FactPill
-                  icon={<NotebookPen aria-hidden="true" className="size-4" />}
-                  title="Assumptions stay visible"
-                  body="Residual value and waiting cost are optional, but never hidden."
-                />
-              </div>
-            </div>
-
-            <Card className="mt-6 overflow-hidden">
+          <Card className="mt-6 overflow-hidden">
               <CardHeader>
-                <CardTitle>Run your custom scenario</CardTitle>
+                <h2 className="font-display text-xl font-semibold leading-tight tracking-[-0.015em] text-foreground">
+                  Run the Greedy Growers Calculator
+                </h2>
                 <CardDescription>
-                  Every required field is marked as {noteText.toLowerCase()}.
-                  The recommendation favors harvest when both options are equal.
+                  Enter your current harvest value, expected value after
+                  waiting, wait time, and lightning-risk estimate. The result
+                  favors harvesting when both choices have equal expected value.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -203,6 +172,7 @@ export function CalculatorExperience() {
                       field="currentValue"
                       label="Current harvest value"
                       note={noteText}
+                      description="Enter the value you would receive if you harvested now."
                       value={values.currentValue}
                       error={errors.currentValue}
                       onChange={updateValue}
@@ -214,6 +184,7 @@ export function CalculatorExperience() {
                       field="futureValue"
                       label="Value after waiting"
                       note={noteText}
+                      description="Enter the value you expect the same tree to reach after this wait."
                       value={values.futureValue}
                       error={errors.futureValue}
                       onChange={updateValue}
@@ -228,6 +199,7 @@ export function CalculatorExperience() {
                       field="waitSeconds"
                       label="Wait time in seconds"
                       note={noteText}
+                      description="Enter the exact number of seconds you plan to wait before checking again."
                       value={values.waitSeconds}
                       error={errors.waitSeconds}
                       onChange={updateValue}
@@ -348,39 +320,17 @@ export function CalculatorExperience() {
                   </div>
                 </form>
               </CardContent>
-            </Card>
+          </Card>
 
-            <AnalyticsConsent />
-          </div>
+          {supportingContext}
+          <AnalyticsConsent />
+        </div>
 
-          <div className="min-w-0 lg:sticky lg:top-[92px]">
-            <RecommendationCard result={result} waitSeconds={waitSecondsValue} />
-          </div>
-        </section>
-      </main>
+        <div className="min-w-0 lg:sticky lg:top-[92px]">
+          <RecommendationCard result={result} waitSeconds={waitSecondsValue} />
+        </div>
+      </section>
     </>
-  );
-}
-
-function FactPill({
-  icon,
-  title,
-  body,
-}: {
-  icon: ReactNode;
-  title: string;
-  body: string;
-}) {
-  return (
-    <div className="border border-survey-line bg-surface-raised px-4 py-4">
-      <div className="flex size-9 items-center justify-center rounded-[4px] border border-lightning/40 bg-background text-lightning">
-        {icon}
-      </div>
-      <p className="mt-3 font-display text-lg font-semibold text-foreground">
-        {title}
-      </p>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">{body}</p>
-    </div>
   );
 }
 
@@ -399,7 +349,7 @@ function NumberField({
   note: string;
   value: string;
   error?: string;
-  description?: string;
+  description: string;
   inputRef: (node: HTMLInputElement | null) => void;
   onChange: (field: FieldName, nextValue: string) => void;
 }) {
@@ -415,8 +365,7 @@ function NumberField({
         </span>
       </div>
       <p id={noteId} className="mt-1 text-sm leading-6 text-muted-foreground">
-        {description ??
-          "Use the number you can currently justify from your own field notes."}
+        {description}
       </p>
       <Input
         ref={inputRef}

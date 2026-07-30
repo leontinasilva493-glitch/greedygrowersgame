@@ -6,6 +6,8 @@ import { siteConfig } from "@/config/site";
 
 import "./globals.css";
 
+const homepageUrl = `${siteConfig.origin}/`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.origin),
   title: {
@@ -14,11 +16,11 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
-  alternates: { canonical: "/" },
+  alternates: { canonical: homepageUrl },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "/",
+    url: homepageUrl,
     siteName: siteConfig.name,
     title: siteConfig.title,
     description: siteConfig.description,

@@ -68,6 +68,17 @@ describe("createSiteConfig", () => {
     expect(config.supportEmail).toBeNull();
   });
 
+  it("uses the approved calculator-first homepage metadata", () => {
+    const config = createSiteConfig({});
+
+    expect(config.title).toBe(
+      "Greedy Growers Calculator: Harvest Now or Wait?",
+    );
+    expect(config.description).toBe(
+      "Use the Greedy Growers Calculator to compare harvest value, wait value, and lightning risk, see the break-even point, and decide whether to harvest or wait.",
+    );
+  });
+
   it("rejects an invalid configured support email", () => {
     expect(() =>
       createSiteConfig({ NEXT_PUBLIC_SUPPORT_EMAIL: "support.example.com" }),

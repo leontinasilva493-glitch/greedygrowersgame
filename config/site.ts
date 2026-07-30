@@ -115,9 +115,9 @@ export function createSiteConfig(
 ): SiteConfig {
   const config: SiteConfig = {
     name: "Greedy Growers Calculator",
-    title: "Greedy Growers Calculator – Harvest Before Lightning",
+    title: "Greedy Growers Calculator: Harvest Now or Wait?",
     description:
-      "A fan-made Greedy Growers decision calculator using your estimates and clearly sourced community evidence.",
+      "Use the Greedy Growers Calculator to compare harvest value, wait value, and lightning risk, see the break-even point, and decide whether to harvest or wait.",
     origin: resolveOrigin(environment),
     locale: "en",
     themeColor: "#08110F",

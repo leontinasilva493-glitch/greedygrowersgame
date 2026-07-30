@@ -178,6 +178,22 @@ test("keeps the calculator within a 375px viewport", async ({ page }) => {
   );
 });
 
+test("keeps the calculator entry point in the first viewport", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const formHeading = page.getByRole("heading", {
+    level: 2,
+    name: "Run the Greedy Growers Calculator",
+  });
+  const box = await formHeading.boundingBox();
+  const viewportHeight = await page.evaluate(() => window.innerHeight);
+
+  expect(box).not.toBeNull();
+  expect(box?.y).toBeLessThan(viewportHeight);
+});
+
 test("keeps analytics denied by default and emits deduplicated value-free events only after consent", async ({
   page,
 }) => {
