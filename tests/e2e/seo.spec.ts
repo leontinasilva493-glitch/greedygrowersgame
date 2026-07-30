@@ -77,6 +77,66 @@ test("homepage JSON-LD is valid and contains no rating schema", async ({ page })
   expect(blocks.join(" ")).not.toContain("AggregateRating");
 });
 
+test("homepage exposes focused metadata, a sequential outline, and substantial server-rendered guidance", async ({
+  page,
+}) => {
+  const response = await page.goto("/");
+  expect(response?.status()).toBe(200);
+  expect(await response?.text()).toContain(
+    "How the Greedy Growers Calculator Works",
+  );
+
+  await expect(page).toHaveTitle(
+    "Greedy Growers Calculator: Harvest Now or Wait?",
+  );
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    "content",
+    "Use the Greedy Growers Calculator to compare harvest value, wait value, and lightning risk, see the break-even point, and decide whether to harvest or wait.",
+  );
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://greedygrowersgame.com",
+  );
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+    "content",
+    "https://greedygrowersgame.com",
+  );
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Greedy Growers Calculator: Harvest Now or Wait?",
+  );
+  await expect(
+    page.getByRole("heading", {
+      level: 2,
+      name: "Run the Greedy Growers Calculator",
+    }),
+  ).toBeVisible();
+
+  const outline = await page.locator("main h1, main h2, main h3").evaluateAll(
+    (headings) =>
+      headings.map((heading) => ({
+        level: Number(heading.tagName.slice(1)),
+        text: heading.textContent?.trim() ?? "",
+      })),
+  );
+  expect(outline[0]).toEqual({
+    level: 1,
+    text: "Greedy Growers Calculator: Harvest Now or Wait?",
+  });
+  for (let index = 1; index < outline.length; index += 1) {
+    expect(
+      outline[index].level - outline[index - 1].level,
+      `${outline[index - 1].text} -> ${outline[index].text}`,
+    ).toBeLessThanOrEqual(1);
+  }
+
+  const mainText = await page.locator("main").innerText();
+  const wordCount = mainText.trim().split(/\s+/).length;
+  expect(wordCount).toBeGreaterThanOrEqual(1200);
+  expect(mainText).toContain(
+    "These examples use illustrative numbers, not official Greedy Growers values or lightning probabilities.",
+  );
+});
+
 test("page has no horizontal overflow at the active viewport", async ({ page }) => {
   await page.goto("/");
   const dimensions = await page.evaluate(() => ({
