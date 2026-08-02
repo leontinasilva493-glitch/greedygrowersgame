@@ -126,7 +126,7 @@ export function createSiteConfig(
     disclaimer:
       "This fan-made resource is not affiliated with Roblox Corporation or the creators of Greedy Growers.",
     navigation: [
-      { label: "Calculator", href: "/" },
+      { label: "Calculator", href: "/#calculator" },
       { label: "Seeds", href: "/seeds" },
       { label: "Lightning", href: "/lightning" },
       { label: "Guides", href: "/guides" },

@@ -3,6 +3,7 @@ import { ExternalLink, Menu, Sprout } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import { MobileNavigationLink } from "./MobileNavigationLink";
 
 const mobilePrimaryLinks = siteConfig.navigation.filter(({ label }) =>
   ["Calculator", "Seeds", "Guides"].includes(label),
@@ -49,25 +50,25 @@ export function SiteHeader() {
           <div className="absolute right-0 top-[calc(100%+0.5rem)] max-h-[calc(100vh-6rem)] w-[min(19rem,calc(100vw-2rem))] overflow-auto rounded-[6px] border border-survey-line bg-surface-raised p-3 shadow-[0_18px_50px_rgb(0_0_0_/_0.35)]">
             <nav aria-label="Mobile navigation" className="grid gap-1">
               {mobilePrimaryLinks.map((item) => (
-                <Link
+                <MobileNavigationLink
                   key={item.href}
                   href={item.href}
                   className="flex min-h-11 items-center rounded-[4px] px-3 font-semibold text-foreground transition-colors hover:bg-surface hover:text-lightning focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/30 motion-reduce:transition-none"
                 >
                   {item.label}
-                </Link>
+                </MobileNavigationLink>
               ))}
               <p className="mt-2 border-t border-dashed border-survey-line px-3 pt-3 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-muted-foreground">
                 More field notes
               </p>
               {mobileMoreLinks.map((item) => (
-                <Link
+                <MobileNavigationLink
                   key={item.href}
                   href={item.href}
                   className="flex min-h-11 items-center rounded-[4px] px-3 font-semibold text-foreground transition-colors hover:bg-surface hover:text-lightning focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/30 motion-reduce:transition-none"
                 >
                   {item.label}
-                </Link>
+                </MobileNavigationLink>
               ))}
             </nav>
           </div>

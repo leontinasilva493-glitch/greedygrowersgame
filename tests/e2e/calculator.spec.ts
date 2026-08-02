@@ -194,6 +194,58 @@ test("keeps the calculator entry point in the first viewport", async ({
   expect(box?.y).toBeLessThan(viewportHeight);
 });
 
+test("Calculator navigation moves the homepage to the calculator section", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/");
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+
+  await page
+    .getByRole("navigation", { name: "Primary navigation" })
+    .getByRole("link", { name: "Calculator" })
+    .click();
+
+  await expect(page).toHaveURL(/\/#calculator$/);
+
+  const target = page.locator("#calculator");
+  await expect(target).toBeVisible();
+
+  const headerBottom = await page
+    .locator("header")
+    .evaluate((header) => header.getBoundingClientRect().bottom);
+
+  await expect
+    .poll(() => target.evaluate((element) => element.getBoundingClientRect().top))
+    .toBeGreaterThanOrEqual(headerBottom - 1);
+
+  const calculatorTop = await target.evaluate(
+    (element) => element.getBoundingClientRect().top,
+  );
+  expect(calculatorTop).toBeLessThan(headerBottom + 40);
+});
+
+test("mobile Calculator navigation closes the menu after moving to the section", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/");
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+
+  await page.locator("header summary").click();
+  const mobileMenu = page.locator("header details");
+  await expect(mobileMenu).toHaveAttribute("open", "");
+
+  await page
+    .getByRole("navigation", { name: "Mobile navigation" })
+    .getByRole("link", { name: "Calculator" })
+    .click();
+
+  await expect(page).toHaveURL(/\/#calculator$/);
+  await expect(mobileMenu).not.toHaveAttribute("open", "");
+  await expect(page.locator("#calculator")).toBeInViewport();
+});
+
 test("keeps analytics denied by default and emits deduplicated value-free events only after consent", async ({
   page,
 }) => {

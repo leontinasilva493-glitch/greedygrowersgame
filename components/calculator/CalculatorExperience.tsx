@@ -154,7 +154,7 @@ export function CalculatorExperience({
         <div className="min-w-0">
           {intro}
 
-          <Card className="mt-6 overflow-hidden">
+          <Card id="calculator" className="mt-6 scroll-mt-24 overflow-hidden">
               <CardHeader>
                 <h2 className="font-display text-xl font-semibold leading-tight tracking-[-0.015em] text-foreground">
                   Run the Greedy Growers Calculator
