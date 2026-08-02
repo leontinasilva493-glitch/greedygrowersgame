@@ -60,7 +60,8 @@ including approved submissions after their canonical promotion.
 ## Route map and SEO decisions
 
 - `/`: canonical calculator, indexable.
-- `/guides/**` and `/about`: verified editorial pages, indexable.
+- `/guides`, `/guides/beginner-guide`, `/guides/when-to-harvest`, and `/about`:
+  evidence-bounded editorial pages, indexable without Phase 0 gameplay recordings.
 - `/seeds`, `/seeds/[slug]`, `/seeds/compare`, `/lightning`, `/codes`, `/updates`, `/data-status`: evidence-gated; empty production states are noindex or absent from the sitemap.
 - `/submit-data`, `/contact`, `/privacy`, `/terms`: useful public utility/legal pages, noindex.
 - `/calculator`: exact 301 to `/`.
@@ -75,10 +76,12 @@ Phase 0 recording state lives in `research/evidence-manifest.json`. Raw videos
 remain private; only reviewed, privacy-safe evidence URLs belong in the
 manifest. `REC-01` through `REC-05` must all be approved in independent server
 sessions before the evidence gate opens.
-After REC-01 through REC-05 pass, rewrite and review the Beginner Guide before
-setting `publicationApprovals.beginnerGuideReviewed` to `true`. Seed, compare,
-growth, and lightning routes still have their own record/model thresholds; the
-Phase 0 flag alone cannot index them.
+The Beginner Guide is an indexable editorial page because it stays within the
+official public description and labels all unknowns. Its
+`publicationApprovals.beginnerGuideReviewed` field remains an evidence-workflow
+audit flag, not an indexing gate. Seed, compare, growth, and lightning routes
+still have their own record/model thresholds; the Phase 0 flag alone cannot
+index them.
 An official version basis must reference source IDs that exist as `official`
 records in `data/sources.json`; an observational basis may reference only
 approved recording IDs. The Lightning Guide additionally requires

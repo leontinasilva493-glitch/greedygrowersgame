@@ -28,6 +28,7 @@ const INDEXED_FIXED_ROUTES = new Set([
   "/",
   "/about",
   "/guides",
+  "/guides/beginner-guide",
   "/guides/when-to-harvest",
 ]);
 
@@ -55,11 +56,6 @@ export function getPageIndexability(
   }
 
   switch (route) {
-    case "/guides/beginner-guide":
-      return decision(
-        snapshot.phaseZeroEvidenceReady && snapshot.beginnerGuideEvidenceReady,
-        "Requires completed gameplay field verification before indexing.",
-      );
     case "/seeds":
       return decision(
         snapshot.phaseZeroEvidenceReady && snapshot.indexableSeedCount >= 3,

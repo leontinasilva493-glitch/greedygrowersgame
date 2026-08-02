@@ -25,7 +25,11 @@ describe("getPageIndexability", () => {
     expect(getPageIndexability("/", empty).index).toBe(true);
     expect(getPageIndexability("/guides", empty).includeInSitemap).toBe(true);
     expect(getPageIndexability("/about", empty).index).toBe(true);
-    expect(getPageIndexability("/guides/beginner-guide", empty).index).toBe(false);
+    expect(getPageIndexability("/guides/beginner-guide", empty)).toMatchObject({
+      index: true,
+      follow: true,
+      includeInSitemap: true,
+    });
   });
 
   it("keeps legal and submission routes out of the index", () => {
@@ -98,12 +102,7 @@ describe("getPageIndexability", () => {
       phaseZeroEvidenceReady: false,
     };
 
-    for (const route of [
-      "/guides/beginner-guide",
-      "/seeds",
-      "/seeds/compare",
-      "/lightning",
-    ]) {
+    for (const route of ["/seeds", "/seeds/compare", "/lightning"]) {
       expect(getPageIndexability(route, dataReadyButEvidenceMissing)).toMatchObject({
         index: false,
         includeInSitemap: false,
@@ -111,13 +110,13 @@ describe("getPageIndexability", () => {
     }
   });
 
-  it("keeps the beginner guide closed until its evidence rewrite is reviewed", () => {
+  it("keeps the editorial beginner guide open without Phase 0 recordings", () => {
     expect(
       getPageIndexability("/guides/beginner-guide", {
         ...empty,
-        phaseZeroEvidenceReady: true,
+        phaseZeroEvidenceReady: false,
         beginnerGuideEvidenceReady: false,
       }),
-    ).toMatchObject({ index: false, includeInSitemap: false });
+    ).toMatchObject({ index: true, follow: true, includeInSitemap: true });
   });
 });

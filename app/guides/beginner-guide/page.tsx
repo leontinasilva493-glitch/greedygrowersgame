@@ -34,7 +34,7 @@ export default function BeginnerGuidePage() {
       eyebrow="Guide 01 / Beginner"
       title="A careful first loop in Greedy Growers"
       description="The creator's public description confirms only a compact loop. This guide stays inside that boundary and marks everything the current evidence cannot answer."
-      status="Source: official Roblox experience description · Captured 2026-07-26"
+      status="Source: official Roblox experience description · Reviewed 2026-08-02"
       visual={<GameScene asset={gameSceneAssets.beginner} preload />}
     >
       <ContentSection title="The confirmed loop">
@@ -87,11 +87,14 @@ export default function BeginnerGuidePage() {
           answer. Enter what you can observe or reasonably estimate, then test
           how much risk the extra growth would justify.
         </p>
-        <InlineCta href="/">Calculate a harvest decision</InlineCta>
+        <InlineCta href="/#calculator">Calculate a harvest decision</InlineCta>
         <div className="mt-4">
           <InlineCta href="/guides/when-to-harvest">
             See the formula behind the decision
           </InlineCta>
+        </div>
+        <div className="mt-4">
+          <InlineCta href="/guides">Browse all Greedy Growers guides</InlineCta>
         </div>
       </ContentSection>
     </ContentPage>

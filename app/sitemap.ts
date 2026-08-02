@@ -6,6 +6,11 @@ import { getPageIndexability } from "@/features/seo/indexability";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 const CONTENT_UPDATED = new Date("2026-07-26T00:00:00.000Z");
+const ROUTE_LAST_MODIFIED = new Map<string, Date>([
+  ["/guides", new Date("2026-08-02T00:00:00.000Z")],
+  ["/guides/beginner-guide", new Date("2026-08-02T00:00:00.000Z")],
+  ["/guides/when-to-harvest", new Date("2026-08-02T00:00:00.000Z")],
+]);
 const ROUTES = [
   "/",
   "/about",
@@ -50,7 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       (route === "/updates" ? latestUpdate : undefined) ??
       (["/seeds", "/seeds/compare", "/lightning", "/data-status"].includes(route)
         ? gameVersion.checkedAt
-        : CONTENT_UPDATED),
+        : ROUTE_LAST_MODIFIED.get(route) ?? CONTENT_UPDATED),
     changeFrequency: route === "/" ? "weekly" : "monthly",
     priority: route === "/" ? 1 : 0.7,
   }));

@@ -42,9 +42,9 @@ test("robots and sitemap expose only eligible production URLs", async ({ request
   const sitemap = await request.get("/sitemap.xml");
   const xml = await sitemap.text();
   expect(xml).toContain("/guides");
+  expect(xml).toContain("/guides/beginner-guide");
   expect(xml).not.toContain("/submit-data");
   expect(xml).not.toContain("/seeds/compare");
-  expect(xml).not.toContain("/guides/beginner-guide");
   expect(xml).not.toContain("/seeds</loc>");
   expect(xml).not.toContain("/lightning</loc>");
   expect(xml).not.toContain("/data-status</loc>");
@@ -52,7 +52,6 @@ test("robots and sitemap expose only eligible production URLs", async ({ request
 
 test("evidence-driven pages remain noindex while Phase 0 is closed", async ({ page }) => {
   for (const route of [
-    "/guides/beginner-guide",
     "/seeds",
     "/seeds/compare",
     "/lightning",
@@ -64,6 +63,44 @@ test("evidence-driven pages remain noindex while Phase 0 is closed", async ({ pa
       /noindex/i,
     );
   }
+});
+
+test("beginner guide is indexable without publishing unverified game data", async ({ page }) => {
+  await page.goto("/guides/beginner-guide");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    /index, follow/i,
+  );
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://greedygrowersgame.com/guides/beginner-guide",
+  );
+
+  const mainText = await page.locator("main").innerText();
+  expect(mainText).toContain("No seed name, rarity, price, currency, or ranking is verified.");
+  expect(mainText).not.toMatch(/\b\d+(?:\.\d+)?% lightning chance\b/i);
+});
+
+test("guide hub and harvest guide provide substantial reading paths", async ({ page }) => {
+  await page.goto("/guides");
+  const guideHubText = await page.locator("main").innerText();
+  expect(guideHubText.trim().split(/\s+/).length).toBeGreaterThanOrEqual(400);
+  expect(guideHubText.trim().split(/\s+/).length).toBeLessThanOrEqual(650);
+  await expect(page.locator('main a[href="/#calculator"]')).toHaveCount(1);
+  await expect(page.locator('main a[href="/guides/beginner-guide"]')).toHaveCount(2);
+  await expect(page.locator('main a[href="/guides/when-to-harvest"]')).toHaveCount(2);
+
+  await page.goto("/guides/when-to-harvest");
+  const harvestText = await page.locator("main").innerText();
+  expect(harvestText.trim().split(/\s+/).length).toBeGreaterThanOrEqual(600);
+  expect(harvestText.trim().split(/\s+/).length).toBeLessThanOrEqual(950);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Three risk scenarios" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 2, name: "When to harvest immediately" }),
+  ).toBeVisible();
+  await expect(page.locator('main a[href="/#calculator"]')).toHaveCount(1);
 });
 
 test("homepage JSON-LD is valid and contains no rating schema", async ({ page }) => {
