@@ -106,6 +106,23 @@ describe("phase zero evidence manifest", () => {
     expect(result.success).toBe(false);
   });
 
+  it("requires both a reviewed video and editorial source before a mutations guide can be reviewed", () => {
+    const result = evidenceManifestSchema.safeParse({
+      auditDate: "2026-08-04",
+      versionBasis: { kind: "unverified", label: "unverified", sourceIds: [] },
+      publicationApprovals: {
+        beginnerGuideReviewed: false,
+        lightningGuideReviewed: false,
+        lightningGuideSourceIds: [],
+        mutationsGuideReviewed: true,
+        mutationsGuideSourceIds: ["mutations-video"],
+      },
+      recordings: [],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it("rejects approved evidence without review metadata", () => {
     const result = evidenceManifestSchema.safeParse({
       auditDate: "2026-07-27",

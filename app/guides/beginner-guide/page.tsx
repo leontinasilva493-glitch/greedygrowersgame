@@ -7,13 +7,15 @@ import {
   InlineCta,
 } from "@/components/layout/ContentPage";
 import { GameScene } from "@/components/game/GameScene";
+import { VideoEvidenceCard } from "@/components/content/VideoEvidenceCard";
+import { lightningLossVideo } from "@/features/guides/video-evidence";
 import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 import { gameSceneAssets } from "@/features/visuals/assets";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
-    title: "Greedy Growers Beginner Guide – First Harvest & Progression",
+    title: "Greedy Growers Beginner Guide: First Harvest & Lightning Risk",
     description:
       "Start with the confirmed Greedy Growers river, plot, growth, harvest, and lightning loop without relying on invented mechanics.",
     canonical: "/guides/beginner-guide",
@@ -32,8 +34,8 @@ export default function BeginnerGuidePage() {
   return (
     <ContentPage
       eyebrow="Guide 01 / Beginner"
-      title="A careful first loop in Greedy Growers"
-      description="The creator's public description confirms only a compact loop. This guide stays inside that boundary and marks everything the current evidence cannot answer."
+      title="Greedy Growers beginner guide: your first seed-to-harvest loop"
+      description="Learn the confirmed first loop, see why lightning changes the decision, and use a simple method for choosing when to collect."
       status="Source: official Roblox experience description · Reviewed 2026-08-02"
       visual={<GameScene asset={gameSceneAssets.beginner} preload />}
     >
@@ -51,9 +53,26 @@ export default function BeginnerGuidePage() {
         </p>
       </ContentSection>
 
+      <ContentSection title="See one lightning-loss outcome before you make your first big wait">
+        <p>
+          This third-party player recording shows the emotional side of the core
+          loop: a tree can look worth waiting for until the risk becomes real.
+          Watch it for context, then make your own decision with values you can
+          see in your session.
+        </p>
+        <p>
+          One player video is not a lightning-rate sample. It cannot prove a
+          universal harvest timer, a safe multiplier, or what every strike
+          leaves behind.
+        </p>
+        <div className="mt-5">
+          <VideoEvidenceCard video={lightningLossVideo} />
+        </div>
+      </ContentSection>
+
       <ContentSection title="What to observe before making a decision">
         <p>
-          Look for values the current game interface actually exposes. The
+          After seeing the risk in a real player session, look for values the current game interface actually exposes. The
           public evidence does not yet establish whether current harvest value,
           tree age, height, seed cost, or a timer can be read in game.
         </p>

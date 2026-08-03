@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "id": "official-game-page",
+    "type": "official",
+    "title": "Greedy Growers official Roblox experience page",
+    "url": "https://www.roblox.com/games/74102906764176/Greedy-Growers",
+    "capturedAt": "2026-08-04T00:00:00.000Z",
+    "notes": "Source for the creator-published seed, plot, growth, harvest, and lightning loop."
+  },
+  {
+    "id": "lightning-loss-video",
+    "type": "gameplay",
+    "title": "I Lost EVERYTHING to Lightning Greedy Growers Roblox",
+    "url": "https://www.youtube.com/watch?v=2WQha2gqexw",
+    "capturedAt": "2026-08-04T00:00:00.000Z",
+    "notes": "Third-party player video. Context only; not a probability sample."
+  },
+  {
+    "id": "mutations-guide-video",
+    "type": "gameplay",
+    "title": "ALL MUTATIONS GUIDE in Greedy Growers Roblox",
+    "url": "https://www.youtube.com/watch?v=vFpqQJvbbBA",
+    "capturedAt": "2026-08-04T00:00:00.000Z",
+    "notes": "Third-party walkthrough used to locate reported mutation claims."
+  },
+  {
+    "id": "mutations-pgg-report",
+    "type": "editorial",
+    "title": "Greedy Growers Mutations - Multipliers & How to Get",
+    "url": "https://progameguides.com/roblox/greedy-growers-mutations-multipliers-how-to-get/",
+    "capturedAt": "2026-08-04T00:00:00.000Z",
+    "notes": "Third-party editorial report published July 28, 2026. Reported values require independent current-version review."
+  }
+]

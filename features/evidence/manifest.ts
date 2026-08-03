@@ -85,6 +85,10 @@ export const evidenceManifestSchema = z
         lightningGuideSourceIds: z
           .array(z.string().trim().min(1))
           .default([]),
+        mutationsGuideReviewed: z.boolean().default(false),
+        mutationsGuideSourceIds: z
+          .array(z.string().trim().min(1))
+          .default([]),
       })
       .superRefine((approval, context) => {
         if (
@@ -97,11 +101,23 @@ export const evidenceManifestSchema = z
             message: "A reviewed lightning guide must bind explicit evidence sources.",
           });
         }
+        if (
+          approval.mutationsGuideReviewed &&
+          new Set(approval.mutationsGuideSourceIds).size < 2
+        ) {
+          context.addIssue({
+            code: "custom",
+            path: ["mutationsGuideSourceIds"],
+            message: "A reviewed mutations guide must bind independent video and editorial sources.",
+          });
+        }
       })
       .default({
         beginnerGuideReviewed: false,
         lightningGuideReviewed: false,
         lightningGuideSourceIds: [],
+        mutationsGuideReviewed: false,
+        mutationsGuideSourceIds: [],
       }),
     recordings: z.array(recordingSchema),
   })

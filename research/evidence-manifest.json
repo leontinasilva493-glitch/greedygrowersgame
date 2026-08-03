@@ -1,5 +1,5 @@
 {
-  "auditDate": "2026-07-27",
+  "auditDate": "2026-08-04",
   "versionBasis": {
     "kind": "unverified",
     "label": "unverified",
@@ -8,7 +8,9 @@
   "publicationApprovals": {
     "beginnerGuideReviewed": false,
     "lightningGuideReviewed": false,
-    "lightningGuideSourceIds": []
+    "lightningGuideSourceIds": [],
+    "mutationsGuideReviewed": false,
+    "mutationsGuideSourceIds": []
   },
   "recordings": []
 }

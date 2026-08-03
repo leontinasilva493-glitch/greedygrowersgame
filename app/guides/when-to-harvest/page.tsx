@@ -67,6 +67,24 @@ export default function WhenToHarvestPage() {
         </p>
       </ContentSection>
 
+      <ContentSection title="A video can show a loss. It cannot predict your next strike.">
+        <p>
+          A player recording makes the downside of waiting easy to understand.
+          It does not tell you the chance of lightning during your next 30
+          seconds, and it does not know your tree&apos;s current value.
+        </p>
+        <p>
+          That is why this guide starts with a smaller question: is one specific
+          wait worth it under your assumptions? Enter a current value, an
+          estimated future value, a wait interval, and a risk range. If the
+          answer changes across that range, harvest or shorten the wait instead
+          of pretending the uncertainty is precise.
+        </p>
+        <Link href="/guides/beginner-guide" className={linkClassName}>
+          See the lightning-loss example in the beginner guide
+        </Link>
+      </ContentSection>
+
       <ContentSection title="Three risk scenarios">
         <div className="space-y-6">
           <div>
@@ -206,7 +224,12 @@ export default function WhenToHarvestPage() {
           <Link href="/guides" className={linkClassName}>
             Greedy Growers guide hub
           </Link>{" "}
-          for the recommended reading order.
+          for the recommended reading order. If you are comparing a strike with
+          a reported mutation outcome, read the{" "}
+          <Link href="/guides/mutations" className={linkClassName}>
+            mutations field notes
+          </Link>{" "}
+          before assuming that a strike always means a total loss.
         </p>
         <InlineCta href="/#calculator">Open the harvest calculator</InlineCta>
       </ContentSection>

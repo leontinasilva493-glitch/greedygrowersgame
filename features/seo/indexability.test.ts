@@ -12,6 +12,7 @@ const empty: IndexabilitySnapshot = {
   sourcedUpdateCount: 0,
   lightningGuideVerified: false,
   lightningModelEligible: false,
+  mutationsGuideVerified: false,
   codes: {
     redeemUiVerified: false,
     hasHttpsSource: false,
@@ -117,6 +118,24 @@ describe("getPageIndexability", () => {
         phaseZeroEvidenceReady: false,
         beginnerGuideEvidenceReady: false,
       }),
+    ).toMatchObject({ index: true, follow: true, includeInSitemap: true });
+  });
+
+  it("keeps the mutations guide noindex until its independent video and editorial sources are reviewed", () => {
+    expect(
+      getPageIndexability("/guides/mutations", {
+        ...empty,
+        currentVersion: "2026.08.03",
+        mutationsGuideVerified: false,
+      } as IndexabilitySnapshot),
+    ).toMatchObject({ index: false, follow: true, includeInSitemap: false });
+
+    expect(
+      getPageIndexability("/guides/mutations", {
+        ...empty,
+        currentVersion: "2026.08.03",
+        mutationsGuideVerified: true,
+      } as IndexabilitySnapshot),
     ).toMatchObject({ index: true, follow: true, includeInSitemap: true });
   });
 });

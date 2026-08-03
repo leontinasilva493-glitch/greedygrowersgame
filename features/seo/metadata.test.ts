@@ -13,6 +13,7 @@ const openSnapshot: IndexabilitySnapshot = {
   sourcedUpdateCount: 2,
   lightningGuideVerified: true,
   lightningModelEligible: true,
+  mutationsGuideVerified: true,
   codes: {
     redeemUiVerified: true,
     hasHttpsSource: true,

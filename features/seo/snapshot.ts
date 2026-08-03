@@ -32,6 +32,32 @@ export function isLightningGuideVerified(
   );
 }
 
+export function isMutationsGuideVerified(
+  manifest: EvidenceManifest,
+  sources: Source[],
+  currentVersion: string,
+) {
+  const approval = manifest.publicationApprovals;
+  if (
+    currentVersion === "unverified" ||
+    !approval.mutationsGuideReviewed ||
+    new Set(approval.mutationsGuideSourceIds).size < 2
+  ) {
+    return false;
+  }
+
+  const sourceById = new Map(sources.map((source) => [source.id, source]));
+  const boundSources = approval.mutationsGuideSourceIds.map((sourceId) =>
+    sourceById.get(sourceId),
+  );
+
+  return (
+    boundSources.every((source) => source?.url.startsWith("https://")) &&
+    boundSources.some((source) => source?.type === "gameplay") &&
+    boundSources.some((source) => source?.type === "editorial")
+  );
+}
+
 export async function getIndexabilitySnapshot(): Promise<IndexabilitySnapshot> {
   const [
     gameVersion,
@@ -97,6 +123,11 @@ export async function getIndexabilitySnapshot(): Promise<IndexabilitySnapshot> {
       gameVersion.version !== "unverified" &&
       isLightningGuideVerified(currentEvidenceManifest, sources),
     lightningModelEligible: lightningEligibility.eligible,
+    mutationsGuideVerified: isMutationsGuideVerified(
+      currentEvidenceManifest,
+      sources,
+      gameVersion.version,
+    ),
     codes: {
       redeemUiVerified: codes.redeemUiVerified,
       hasHttpsSource: codes.sourceIds.some((id) =>

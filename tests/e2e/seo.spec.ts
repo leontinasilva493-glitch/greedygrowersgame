@@ -5,6 +5,7 @@ const publicRoutes = [
   "/about",
   "/guides",
   "/guides/beginner-guide",
+  "/guides/mutations",
   "/guides/when-to-harvest",
   "/codes",
   "/updates",
@@ -47,6 +48,7 @@ test("robots and sitemap expose only eligible production URLs", async ({ request
   expect(xml).not.toContain("/seeds/compare");
   expect(xml).not.toContain("/seeds</loc>");
   expect(xml).not.toContain("/lightning</loc>");
+  expect(xml).not.toContain("/guides/mutations</loc>");
   expect(xml).not.toContain("/data-status</loc>");
 });
 
@@ -55,6 +57,7 @@ test("evidence-driven pages remain noindex while Phase 0 is closed", async ({ pa
     "/seeds",
     "/seeds/compare",
     "/lightning",
+    "/guides/mutations",
     "/data-status",
   ]) {
     await page.goto(route);
@@ -79,6 +82,25 @@ test("beginner guide is indexable without publishing unverified game data", asyn
   const mainText = await page.locator("main").innerText();
   expect(mainText).toContain("No seed name, rarity, price, currency, or ranking is verified.");
   expect(mainText).not.toMatch(/\b\d+(?:\.\d+)?% lightning chance\b/i);
+});
+
+test("beginner video loads only after an explicit player action", async ({ page }) => {
+  await page.goto("/guides/beginner-guide");
+  await expect(page.getByText("Third-party gameplay reference")).toBeVisible();
+  await expect(page.locator("iframe")).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Load video from YouTube" }).click();
+  await expect(page.locator('iframe[title="I Lost EVERYTHING to Lightning Greedy Growers Roblox"]')).toHaveCount(1);
+});
+
+test("mutations guide keeps reported values out of the search index", async ({ page }) => {
+  await page.goto("/guides/mutations");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/i);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "reported effects, separated from verified facts",
+  );
+  await expect(page.getByText("Reported by one editorial source").first()).toBeVisible();
+  await expect(page.getByText("not calculator defaults")).toBeVisible();
 });
 
 test("guide hub and harvest guide provide substantial reading paths", async ({ page }) => {

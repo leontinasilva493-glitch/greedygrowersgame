@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BookOpen, Calculator, CloudLightning } from "lucide-react";
+import { BookOpen, Calculator, CloudLightning, Sparkles } from "lucide-react";
 
 import {
   ContentPage,
@@ -16,9 +16,9 @@ import {
 } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Greedy Growers Guides — Beginner and Harvest Strategy",
+  title: "Greedy Growers Guides: Beginner, Harvest and Mutation Notes",
   description:
-    "Start Greedy Growers with an evidence-bounded beginner guide, a transparent harvest calculator, and practical risk scenarios.",
+    "Start Greedy Growers with evidence-bounded beginner, harvest, and mutation guides plus a transparent calculator.",
   alternates: { canonical: "/guides" },
 };
 
@@ -47,6 +47,14 @@ const guides = [
       "Compare a certain harvest with an uncertain wait using your own values, risk interval, and explicit assumptions.",
     action: "Read harvest guide",
   },
+  {
+    href: "/guides/mutations",
+    icon: Sparkles,
+    title: "Mutation field notes",
+    description:
+      "Compare current third-party mutation reports with their source limits before treating a claimed multiplier as game data.",
+    action: "Review mutation notes",
+  },
 ] as const;
 
 const linkClassName = "font-semibold text-lightning hover:underline";
@@ -71,7 +79,7 @@ export default function GuidesPage() {
           matches what you need now, then return to the other guides when your
           next decision changes.
         </p>
-        <div className="mt-5 grid gap-4 md:grid-cols-3">
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {guides.map(({ href, icon: Icon, title, description, action }) => (
             <Card key={href} className="flex h-full flex-col">
               <CardHeader>
@@ -137,6 +145,15 @@ export default function GuidesPage() {
             Run those assumptions through the calculator, then change one input
             at a time. A result is useful because its assumptions are visible,
             not because it predicts the next lightning strike.
+          </li>
+          <li>
+            <span className="font-semibold text-foreground">Check reported outcomes.</span>{" "}
+            Read the{" "}
+            <Link href="/guides/mutations" className={linkClassName}>
+              mutation field notes
+            </Link>{" "}
+            when a claimed weather or lightning effect would change the value you
+            enter. Reported multipliers do not become calculator defaults.
           </li>
         </ol>
       </ContentSection>

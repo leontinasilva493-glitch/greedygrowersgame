@@ -10,6 +10,7 @@ const ROUTE_LAST_MODIFIED = new Map<string, Date>([
   ["/guides", new Date("2026-08-02T00:00:00.000Z")],
   ["/guides/beginner-guide", new Date("2026-08-02T00:00:00.000Z")],
   ["/guides/when-to-harvest", new Date("2026-08-02T00:00:00.000Z")],
+  ["/guides/mutations", new Date("2026-08-04T00:00:00.000Z")],
 ]);
 const ROUTES = [
   "/",
@@ -17,6 +18,7 @@ const ROUTES = [
   "/guides",
   "/guides/beginner-guide",
   "/guides/when-to-harvest",
+  "/guides/mutations",
   "/seeds",
   "/seeds/compare",
   "/lightning",

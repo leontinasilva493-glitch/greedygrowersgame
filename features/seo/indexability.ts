@@ -8,6 +8,7 @@ export interface IndexabilitySnapshot {
   sourcedUpdateCount: number;
   lightningGuideVerified: boolean;
   lightningModelEligible: boolean;
+  mutationsGuideVerified: boolean;
   codes: {
     redeemUiVerified: boolean;
     hasHttpsSource: boolean;
@@ -72,6 +73,11 @@ export function getPageIndexability(
           snapshot.lightningGuideVerified &&
           snapshot.lightningModelEligible,
         "Requires a source-backed guide and an eligible current-version observation model.",
+      );
+    case "/guides/mutations":
+      return decision(
+        snapshot.mutationsGuideVerified,
+        "Requires independently reviewed current-version gameplay and editorial sources.",
       );
     case "/updates":
       return decision(
