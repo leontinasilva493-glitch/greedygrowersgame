@@ -4,6 +4,7 @@ import {
   CalculatorGuide,
   CalculatorIntro,
 } from "@/components/calculator";
+import { RelatedGameGuides } from "@/components/recommendations/RelatedGameGuides";
 import { webApplicationSchema, websiteSchema } from "@/features/seo/schema";
 
 function jsonLd(value: unknown) {
@@ -27,6 +28,7 @@ export default function Home() {
           supportingContext={<CalculatorContext />}
         />
         <CalculatorGuide />
+        <RelatedGameGuides />
       </main>
     </>
   );
