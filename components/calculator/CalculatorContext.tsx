@@ -15,13 +15,13 @@ const facts: ReadonlyArray<{
   },
   {
     icon: Zap,
-    title: "Set your own risk",
-    body: "Estimate lightning risk for that wait window. The calculator never inserts an official probability.",
+    title: "Use the boundary first",
+    body: "Read the maximum tolerable risk before adding your own estimate. Seconds never generate hidden odds.",
   },
   {
     icon: NotebookPen,
-    title: "Audit every assumption",
-    body: "Residual value and waiting cost stay visible, so you can see exactly why the result changes.",
+    title: "Count every failed run",
+    body: "Run profit includes lost attempts and elapsed time instead of showing only the final successful harvest.",
   },
 ];
 

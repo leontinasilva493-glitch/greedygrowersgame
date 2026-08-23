@@ -2,6 +2,16 @@ import Link from "next/link";
 import { ExternalLink, Sprout } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
+import { currentEvidenceManifest } from "@/features/evidence/current";
+
+const evidenceAuditDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+}).format(
+  new Date(`${currentEvidenceManifest.auditDate}T00:00:00.000Z`),
+);
 
 const footerGroups = [
   {
@@ -91,7 +101,7 @@ export function SiteFooter() {
 
         <div className="grid gap-3 pt-6 text-xs leading-5 text-muted-foreground sm:grid-cols-[1fr_auto] sm:items-end">
           <p className="max-w-3xl">{siteConfig.disclaimer}</p>
-          <p className="font-mono">Evidence audit: 2026-07-26</p>
+          <p className="font-mono">Evidence audit: {evidenceAuditDate}</p>
         </div>
       </div>
     </footer>

@@ -7,6 +7,51 @@ export interface CalculatorInput {
   waitCost: number;
 }
 
+export interface HarvestThresholdInput {
+  currentValue: number;
+  futureValue: number;
+  residualValue: number;
+  waitCost: number;
+}
+
+export type HarvestThresholdResult =
+  | {
+      status: "valid";
+      harvestEv: number;
+      waitEvAtZeroRisk: number;
+      breakEvenProbability: number | null;
+      canWaitingBeatHarvest: boolean;
+    }
+  | {
+      status: "invalid";
+      errors: string[];
+    };
+
+export interface ObservedRunInput {
+  attemptCost: number;
+  harvestValue: number;
+  failedAttempts: number;
+  elapsedMinutes: number;
+}
+
+export type ObservedRunResult =
+  | {
+      status: "valid";
+      outcome: "PROFITABLE" | "BREAK_EVEN" | "LOSS";
+      attempts: number;
+      totalCost: number;
+      cleanProfit: number;
+      netAfterFailures: number;
+      netPerMinute: number;
+      cleanRoiPercent: number | null;
+      breakEvenHarvest: number;
+      recoverableFailedAttempts: number | null;
+    }
+  | {
+      status: "invalid";
+      errors: string[];
+    };
+
 export type CalculatorResult =
   | {
       status: "valid";

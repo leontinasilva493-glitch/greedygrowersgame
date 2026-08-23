@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { calculateHarvestDecision } from "./engine";
+import {
+  calculateHarvestDecision,
+  calculateHarvestThreshold,
+} from "./engine";
 
 const baseInput = {
   currentValue: 100,
@@ -121,6 +124,40 @@ describe("calculateHarvestDecision", () => {
     expect(above).toMatchObject({
       status: "valid",
       recommendation: "HARVEST_NOW",
+    });
+  });
+});
+
+describe("calculateHarvestThreshold", () => {
+  it("returns the maximum tolerable risk without requiring a risk estimate", () => {
+    expect(
+      calculateHarvestThreshold({
+        currentValue: 100,
+        futureValue: 200,
+        residualValue: 0,
+        waitCost: 0,
+      }),
+    ).toMatchObject({
+      status: "valid",
+      harvestEv: 100,
+      waitEvAtZeroRisk: 200,
+      breakEvenProbability: 0.5,
+      canWaitingBeatHarvest: true,
+    });
+  });
+
+  it("reports that waiting cannot win when the future value is already too low", () => {
+    expect(
+      calculateHarvestThreshold({
+        currentValue: 150,
+        futureValue: 140,
+        residualValue: 0,
+        waitCost: 0,
+      }),
+    ).toMatchObject({
+      status: "valid",
+      breakEvenProbability: null,
+      canWaitingBeatHarvest: false,
     });
   });
 });
