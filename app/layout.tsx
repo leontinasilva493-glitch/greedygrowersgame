@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { Analytics } from "@/components/analytics/Analytics";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { siteConfig } from "@/config/site";
@@ -59,6 +60,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="flex min-h-full flex-col">
+        <Analytics />
         <a
           href="#main-content"
           className="fixed left-4 top-3 z-[100] -translate-y-20 rounded-[4px] bg-lightning px-4 py-2 font-semibold text-ink transition-transform focus:translate-y-0"

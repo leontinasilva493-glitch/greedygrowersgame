@@ -8,15 +8,14 @@ export function CalculatorIntro() {
         Greedy Growers Calculator: Harvest Now or Wait?
       </h1>
       <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-        Compare the certain value of harvesting now with the expected value of
-        waiting. Enter the values you can see in Greedy Growers, choose a
-        lightning-risk estimate for your wait window, and see which option has
-        the stronger expected value.
+        Choose Harvest timing to find the risk boundary between collecting now
+        and waiting, or Run profit to include the real cost of failed attempts
+        in one completed session. Both tools update as you type.
       </p>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
         This fan-made calculator does not predict the next lightning strike or
-        apply an official risk percentage. Every recommendation comes from the
-        estimates you enter, and every assumption remains visible.
+        apply official seed economics. It starts blank, uses only values you
+        enter, and keeps every assumption visible.
       </p>
     </div>
   );

@@ -1,72 +1,145 @@
 "use client";
 
 import {
-  useState,
-  useRef,
+  useEffect,
   useMemo,
-  type FormEvent,
+  useRef,
+  useState,
   type ReactNode,
 } from "react";
-import { ChevronRight } from "lucide-react";
+import {
+  Clipboard,
+  Link2,
+  RotateCcw,
+  Save,
+  Sparkles,
+} from "lucide-react";
 
-import { Analytics } from "../analytics/Analytics";
 import { AnalyticsConsent } from "../analytics/AnalyticsConsent";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { track } from "../../features/analytics/events";
-import { calculateHarvestDecision } from "../../features/calculator/engine";
-import type { CalculatorResult } from "../../features/calculator/types";
+import {
+  calculateHarvestDecision,
+  calculateHarvestThreshold,
+} from "../../features/calculator/engine";
+import { calculateObservedRun } from "../../features/calculator/run-engine";
+import {
+  parseCalculatorShareState,
+  serializeCalculatorShareState,
+  type HarvestShareValues,
+  type ProfitShareValues,
+} from "../../features/calculator/share-state";
+import type {
+  CalculatorResult,
+  HarvestThresholdResult,
+  ObservedRunResult,
+} from "../../features/calculator/types";
+import { CalculatorStatusStrip } from "./CalculatorStatusStrip";
+import { ProfitResultCard } from "./ProfitResultCard";
 import { RecommendationCard } from "./RecommendationCard";
 
-type FieldName =
-  | "currentValue"
-  | "futureValue"
-  | "waitSeconds"
-  | "lightningRiskPercent"
-  | "residualValue"
-  | "waitCost";
+type CalculatorTool = "harvest" | "profit";
 
-type FormState = Record<FieldName, string>;
-type ErrorState = Partial<Record<FieldName, string>>;
+interface SavedScenario {
+  id: string;
+  label: string;
+  tool: CalculatorTool;
+  primary: string;
+  secondary: string;
+}
 
-const fieldOrder: FieldName[] = [
-  "currentValue",
-  "futureValue",
-  "waitSeconds",
-  "lightningRiskPercent",
-  "residualValue",
-  "waitCost",
-];
+const SESSION_STORAGE_KEY = "greedy-growers-scenarios-v1";
 
-const defaultValues: FormState = {
-  currentValue: "100",
-  futureValue: "600",
-  waitSeconds: "6",
-  lightningRiskPercent: "24.34",
+const emptyHarvestValues: HarvestShareValues = {
+  currentValue: "",
+  futureValue: "",
+  waitSeconds: "",
+  lightningRiskPercent: "",
   residualValue: "0",
   waitCost: "0",
 };
 
-const noteText = "Your estimate";
+const harvestExample: HarvestShareValues = {
+  currentValue: "100",
+  futureValue: "200",
+  waitSeconds: "30",
+  lightningRiskPercent: "25",
+  residualValue: "0",
+  waitCost: "0",
+};
 
-function parseInput(rawValue: string): number {
-  const trimmed = rawValue.trim();
-  if (!trimmed) return Number.NaN;
-  return Number(trimmed);
+const emptyProfitValues: ProfitShareValues = {
+  attemptCost: "",
+  harvestValue: "",
+  failedAttempts: "0",
+  elapsedMinutes: "",
+};
+
+const profitExample: ProfitShareValues = {
+  attemptCost: "100",
+  harvestValue: "600",
+  failedAttempts: "2",
+  elapsedMinutes: "10",
+};
+
+const numberFormatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+});
+
+function formatNumber(value: number) {
+  return numberFormatter.format(value);
 }
 
-const defaultResult = calculateHarvestDecision({
-  currentValue: parseInput(defaultValues.currentValue),
-  futureValue: parseInput(defaultValues.futureValue),
-  waitSeconds: parseInput(defaultValues.waitSeconds),
-  lightningProbability:
-    parseInput(defaultValues.lightningRiskPercent) / 100,
-  residualValue: parseInput(defaultValues.residualValue),
-  waitCost: parseInput(defaultValues.waitCost),
-});
+function formatSigned(value: number) {
+  return value > 0 ? `+${formatNumber(value)}` : formatNumber(value);
+}
+
+function parseNonNegative(rawValue: string): number | null {
+  if (!rawValue.trim()) return null;
+  const value = Number(rawValue);
+  return Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER
+    ? value
+    : null;
+}
+
+function parsePositive(rawValue: string): number | null {
+  const value = parseNonNegative(rawValue);
+  return value !== null && value > 0 ? value : null;
+}
+
+function parseWholeNumber(rawValue: string): number | null {
+  const value = parseNonNegative(rawValue);
+  return value !== null && Number.isInteger(value) ? value : null;
+}
+
+function readSavedScenarios(): SavedScenario[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const parsed = JSON.parse(window.sessionStorage.getItem(SESSION_STORAGE_KEY) ?? "[]");
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter(
+        (item): item is SavedScenario =>
+          typeof item?.id === "string" &&
+          typeof item?.label === "string" &&
+          (item?.tool === "harvest" || item?.tool === "profit") &&
+          typeof item?.primary === "string" &&
+          typeof item?.secondary === "string",
+      )
+      .slice(0, 5);
+  } catch {
+    return [];
+  }
+}
 
 export function CalculatorExperience({
   intro,
@@ -75,310 +148,647 @@ export function CalculatorExperience({
   intro: ReactNode;
   supportingContext: ReactNode;
 }) {
-  const [values, setValues] = useState<FormState>(defaultValues);
-  const [errors, setErrors] = useState<ErrorState>({});
-  const [result, setResult] = useState<CalculatorResult | null>(defaultResult);
-  const [attemptNumber, setAttemptNumber] = useState(0);
-  const inputRefs = useRef<Partial<Record<FieldName, HTMLInputElement | null>>>({});
+  const [tool, setTool] = useState<CalculatorTool>("harvest");
+  const [harvestValues, setHarvestValues] =
+    useState<HarvestShareValues>(emptyHarvestValues);
+  const [profitValues, setProfitValues] =
+    useState<ProfitShareValues>(emptyProfitValues);
+  const [exampleLoaded, setExampleLoaded] = useState(false);
+  const [scenarioName, setScenarioName] = useState("");
+  const [savedScenarios, setSavedScenarios] = useState<SavedScenario[]>([]);
+  const [storageReady, setStorageReady] = useState(false);
+  const [actionStatus, setActionStatus] = useState<string | null>(null);
+  const [copyFallback, setCopyFallback] = useState<string | null>(null);
+  const trackedTools = useRef(new Set<CalculatorTool>());
 
-  const waitSecondsValue = useMemo(() => {
-    const parsed = parseInput(values.waitSeconds);
-    return Number.isFinite(parsed) ? parsed : null;
-  }, [values.waitSeconds]);
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const shared = parseCalculatorShareState(
+        new URLSearchParams(window.location.search),
+      );
+      if (shared?.tool === "harvest") {
+        setTool("harvest");
+        setHarvestValues(shared.values);
+      } else if (shared?.tool === "profit") {
+        setTool("profit");
+        setProfitValues(shared.values);
+      }
 
-  const updateValue = (field: FieldName, nextValue: string) => {
-    setValues((current) => ({ ...current, [field]: nextValue }));
-    setErrors((current) => {
-      if (!current[field]) return current;
-
-      const nextErrors = { ...current };
-      delete nextErrors[field];
-      return nextErrors;
+      setSavedScenarios(readSavedScenarios());
+      setStorageReady(true);
     });
-  };
 
-  const submit = (event?: FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
-    const parsed = {
-      currentValue: parseInput(values.currentValue),
-      futureValue: parseInput(values.futureValue),
-      waitSeconds: parseInput(values.waitSeconds),
-      lightningProbability: parseInput(values.lightningRiskPercent) / 100,
-      residualValue: parseInput(values.residualValue),
-      waitCost: parseInput(values.waitCost),
-    };
+  useEffect(() => {
+    if (!storageReady) return;
+    window.sessionStorage.setItem(
+      SESSION_STORAGE_KEY,
+      JSON.stringify(savedScenarios.slice(0, 5)),
+    );
+  }, [savedScenarios, storageReady]);
 
-    const nextErrors = validateFields(parsed);
-    if (Object.keys(nextErrors).length > 0) {
-      setErrors(nextErrors);
+  const harvestAnalysis = useMemo(() => {
+    const currentValue = parseNonNegative(harvestValues.currentValue);
+    const futureValue = parseNonNegative(harvestValues.futureValue);
+    const waitSeconds = parsePositive(harvestValues.waitSeconds);
+    const residualValue = parseNonNegative(harvestValues.residualValue);
+    const waitCost = parseNonNegative(harvestValues.waitCost);
 
-      const firstInvalid = fieldOrder.find((field) => nextErrors[field]);
-      if (firstInvalid) inputRefs.current[firstInvalid]?.focus();
+    if (
+      currentValue === null ||
+      futureValue === null ||
+      waitSeconds === null ||
+      residualValue === null ||
+      waitCost === null ||
+      residualValue > futureValue
+    ) {
+      return {
+        threshold: null,
+        decision: null,
+        waitSeconds,
+      } satisfies {
+        threshold: HarvestThresholdResult | null;
+        decision: CalculatorResult | null;
+        waitSeconds: number | null;
+      };
+    }
 
-      setResult({
-        status: "invalid",
-        recommendation: "NOT_ENOUGH_INPUT",
-        errors: fieldOrder
-          .map((field) => nextErrors[field])
-          .filter((message): message is string => Boolean(message)),
-      });
+    const threshold = calculateHarvestThreshold({
+      currentValue,
+      futureValue,
+      residualValue,
+      waitCost,
+    });
+    const riskPercent = harvestValues.lightningRiskPercent.trim()
+      ? parseNonNegative(harvestValues.lightningRiskPercent)
+      : null;
+    const decision =
+      riskPercent !== null && riskPercent <= 100
+        ? calculateHarvestDecision({
+            currentValue,
+            futureValue,
+            waitSeconds,
+            lightningProbability: riskPercent / 100,
+            residualValue,
+            waitCost,
+          })
+        : null;
+
+    return { threshold, decision, waitSeconds };
+  }, [harvestValues]);
+
+  const profitResult = useMemo<ObservedRunResult | null>(() => {
+    const attemptCost = parseNonNegative(profitValues.attemptCost);
+    const harvestValue = parseNonNegative(profitValues.harvestValue);
+    const failedAttempts = parseWholeNumber(profitValues.failedAttempts);
+    const elapsedMinutes = parsePositive(profitValues.elapsedMinutes);
+
+    if (
+      attemptCost === null ||
+      harvestValue === null ||
+      failedAttempts === null ||
+      elapsedMinutes === null
+    ) {
+      return null;
+    }
+
+    return calculateObservedRun({
+      attemptCost,
+      harvestValue,
+      failedAttempts,
+      elapsedMinutes,
+    });
+  }, [profitValues]);
+
+  const activeResultValid =
+    tool === "harvest"
+      ? harvestAnalysis.threshold?.status === "valid"
+      : profitResult?.status === "valid";
+
+  useEffect(() => {
+    if (!activeResultValid || trackedTools.current.has(tool)) return;
+    const dedupeKey = `live-${tool}`;
+    const started = track("calculator_started", { dedupeKey });
+    const completed = track("calculator_completed", { dedupeKey });
+    if (started || completed) trackedTools.current.add(tool);
+  }, [activeResultValid, tool]);
+
+  useEffect(() => {
+    if (
+      tool !== "harvest" ||
+      harvestAnalysis.decision?.status !== "valid"
+    ) {
       return;
     }
 
-    const nextAttempt = attemptNumber + 1;
-    setAttemptNumber(nextAttempt);
-    const dedupeKey = `attempt-${nextAttempt}`;
+    track(
+      harvestAnalysis.decision.recommendation === "WAIT"
+        ? "recommendation_wait"
+        : "recommendation_harvest",
+      { dedupeKey: `live-harvest-${harvestAnalysis.decision.recommendation}` },
+    );
+  }, [harvestAnalysis.decision, tool]);
 
-    track("calculator_started", { dedupeKey });
+  const updateHarvestValue = (
+    field: keyof HarvestShareValues,
+    value: string,
+  ) => {
+    setHarvestValues((current) => ({ ...current, [field]: value }));
+    setExampleLoaded(false);
+    setActionStatus(null);
+    setCopyFallback(null);
+  };
 
-    const nextResult = calculateHarvestDecision(parsed);
-    setErrors({});
-    setResult(nextResult);
+  const updateProfitValue = (
+    field: keyof ProfitShareValues,
+    value: string,
+  ) => {
+    setProfitValues((current) => ({ ...current, [field]: value }));
+    setExampleLoaded(false);
+    setActionStatus(null);
+    setCopyFallback(null);
+  };
 
-    track("calculator_completed", { dedupeKey });
-    if (nextResult.status === "valid") {
-      track(
-        nextResult.recommendation === "WAIT"
-          ? "recommendation_wait"
-          : "recommendation_harvest",
-        { dedupeKey },
-      );
+  const switchTool = (nextTool: CalculatorTool) => {
+    setTool(nextTool);
+    setExampleLoaded(false);
+    setActionStatus(null);
+    setCopyFallback(null);
+    setScenarioName("");
+  };
+
+  const loadExample = () => {
+    if (tool === "harvest") setHarvestValues(harvestExample);
+    else setProfitValues(profitExample);
+    setExampleLoaded(true);
+    setActionStatus("Example values loaded. Edit any field to make this your run.");
+    setCopyFallback(null);
+  };
+
+  const reset = () => {
+    if (tool === "harvest") setHarvestValues(emptyHarvestValues);
+    else setProfitValues(emptyProfitValues);
+    setExampleLoaded(false);
+    setScenarioName("");
+    setActionStatus("Inputs reset.");
+    setCopyFallback(null);
+    window.history.replaceState(null, "", `${window.location.pathname}#calculator`);
+  };
+
+  const resultSummary = useMemo(() => {
+    if (tool === "harvest") {
+      const threshold = harvestAnalysis.threshold;
+      if (threshold?.status !== "valid") return null;
+      const boundary =
+        threshold.breakEvenProbability === null
+          ? "unavailable"
+          : `${formatNumber(threshold.breakEvenProbability * 100)}%`;
+      const directCall =
+        harvestAnalysis.decision?.status === "valid"
+          ? harvestAnalysis.decision.recommendation.replace("_", " ")
+          : "Add a risk estimate for a direct call";
+      return `Greedy Growers harvest timing: ${directCall}. Maximum tolerable lightning risk: ${boundary}. Wait interval: ${harvestAnalysis.waitSeconds ?? "--"} seconds. Player inputs only; no official strike probability.`;
     }
+
+    if (profitResult?.status !== "valid") return null;
+    return `Greedy Growers observed run: ${profitResult.outcome.replace("_", " ")}. Net after failures: ${formatSigned(profitResult.netAfterFailures)}. Net per minute: ${formatSigned(profitResult.netPerMinute)}. Break-even harvest: ${formatNumber(profitResult.breakEvenHarvest)}. Player-entered run, not a forecast.`;
+  }, [harvestAnalysis, profitResult, tool]);
+
+  const copyText = async (text: string, successMessage: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setActionStatus(successMessage);
+      setCopyFallback(null);
+    } catch {
+      setActionStatus("Clipboard unavailable. Copy the text shown below.");
+      setCopyFallback(text);
+    }
+  };
+
+  const copyResult = async () => {
+    if (!resultSummary) return;
+    await copyText(resultSummary, "Result copied.");
+  };
+
+  const copyShareLink = async () => {
+    if (!activeResultValid) return;
+    const query = serializeCalculatorShareState(
+      tool === "harvest"
+        ? { tool, values: harvestValues }
+        : { tool, values: profitValues },
+    );
+    const url = `${window.location.origin}${window.location.pathname}?${query}#calculator`;
+    await copyText(url, "Share link copied.");
+  };
+
+  const saveScenario = () => {
+    const label = scenarioName.trim();
+    if (!label || !resultSummary) return;
+
+    let primary = "";
+    let secondary = "";
+    if (tool === "harvest" && harvestAnalysis.threshold?.status === "valid") {
+      primary =
+        harvestAnalysis.threshold.breakEvenProbability === null
+          ? "Risk boundary unavailable"
+          : `${formatNumber(harvestAnalysis.threshold.breakEvenProbability * 100)}% max risk`;
+      secondary =
+        harvestAnalysis.decision?.status === "valid"
+          ? harvestAnalysis.decision.recommendation.replace("_", " ")
+          : `${harvestAnalysis.waitSeconds ?? "--"} sec interval`;
+    } else if (tool === "profit" && profitResult?.status === "valid") {
+      primary = `${formatSigned(profitResult.netPerMinute)} / min`;
+      secondary = `${formatSigned(profitResult.netAfterFailures)} net`;
+    }
+
+    const saved: SavedScenario = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      label,
+      tool,
+      primary,
+      secondary,
+    };
+    setSavedScenarios((current) => [saved, ...current].slice(0, 5));
+    setScenarioName("");
+    setActionStatus("Scenario saved in this browser tab.");
   };
 
   return (
     <>
-      <Analytics />
-      <section className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)] lg:items-start">
-        <div className="min-w-0">
-          {intro}
+      {intro}
+      <CalculatorStatusStrip />
 
-          <Card id="calculator" className="mt-6 scroll-mt-24 overflow-hidden">
-              <CardHeader>
-                <h2 className="font-display text-xl font-semibold leading-tight tracking-[-0.015em] text-foreground">
-                  Run the Greedy Growers Calculator
-                </h2>
-                <CardDescription>
-                  Enter your current harvest value, expected value after
-                  waiting, wait time, and lightning-risk estimate. The result
-                  favors harvesting when both choices have equal expected value.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form className="space-y-5" onSubmit={submit} noValidate>
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <NumberField
-                      field="currentValue"
-                      label="Current harvest value"
-                      note={noteText}
-                      description="Enter the value you would receive if you harvested now."
-                      value={values.currentValue}
-                      error={errors.currentValue}
-                      onChange={updateValue}
-                      inputRef={(node) => {
-                        inputRefs.current.currentValue = node;
-                      }}
-                    />
-                    <NumberField
-                      field="futureValue"
-                      label="Value after waiting"
-                      note={noteText}
-                      description="Enter the value you expect the same tree to reach after this wait."
-                      value={values.futureValue}
-                      error={errors.futureValue}
-                      onChange={updateValue}
-                      inputRef={(node) => {
-                        inputRefs.current.futureValue = node;
-                      }}
-                    />
-                  </div>
+      <Card id="calculator" className="mt-6 scroll-mt-24 overflow-hidden">
+        <CardHeader className="border-b border-survey-line">
+          <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-lightning">
+            Two player-input tools
+          </p>
+          <h2 className="mt-2 font-display text-2xl font-semibold leading-tight tracking-[-0.02em] text-foreground">
+            Run the Greedy Growers Calculator
+          </h2>
+          <CardDescription>
+            Find a harvest-risk boundary or calculate one completed run after
+            recorded failures. Every valid input updates its result immediately.
+          </CardDescription>
 
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <NumberField
-                      field="waitSeconds"
-                      label="Wait time in seconds"
-                      note={noteText}
-                      description="Enter the exact number of seconds you plan to wait before checking again."
-                      value={values.waitSeconds}
-                      error={errors.waitSeconds}
-                      onChange={updateValue}
-                      inputRef={(node) => {
-                        inputRefs.current.waitSeconds = node;
-                      }}
-                    />
+          <div
+            role="tablist"
+            aria-label="Calculator modes"
+            className="mt-4 grid gap-2 sm:grid-cols-2"
+          >
+            <Button
+              id="harvest-tool-tab"
+              type="button"
+              role="tab"
+              aria-selected={tool === "harvest"}
+              aria-controls="harvest-tool-panel"
+              variant={tool === "harvest" ? "default" : "outline"}
+              onClick={() => switchTool("harvest")}
+            >
+              Harvest timing
+            </Button>
+            <Button
+              id="profit-tool-tab"
+              type="button"
+              role="tab"
+              aria-selected={tool === "profit"}
+              aria-controls="profit-tool-panel"
+              variant={tool === "profit" ? "growth" : "outline"}
+              onClick={() => switchTool("profit")}
+            >
+              Run profit
+            </Button>
+          </div>
+        </CardHeader>
 
-                    <div className="min-w-0">
-                      <div className="flex items-center justify-between gap-3">
-                        <Label htmlFor="lightningRiskPercent">
-                          Lightning risk for this wait
-                        </Label>
-                        <span className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-lightning">
-                          {noteText}
-                        </span>
-                      </div>
-                      <p
-                        id="lightningRiskPercent-note"
-                        className="mt-1 text-sm leading-6 text-muted-foreground"
-                      >
-                        Enter a percentage from 0 to 100 for this interval only.
-                      </p>
-                      <div className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,1fr)_7rem]">
-                        <RiskSlider
-                          value={values.lightningRiskPercent}
-                          onChange={(nextValue) =>
-                            updateValue("lightningRiskPercent", nextValue)
-                          }
-                        />
-                        <Input
-                          ref={(node) => {
-                            inputRefs.current.lightningRiskPercent = node;
-                          }}
-                          id="lightningRiskPercent"
-                          name="lightningRiskPercent"
-                          type="number"
-                          inputMode="decimal"
-                          min="0"
-                          max="100"
-                          step="0.01"
-                          value={values.lightningRiskPercent}
-                          aria-invalid={errors.lightningRiskPercent ? "true" : "false"}
-                          aria-describedby={
-                            errors.lightningRiskPercent
-                              ? "lightningRiskPercent-note lightningRiskPercent-error"
-                              : "lightningRiskPercent-note"
-                          }
-                          onChange={(event) =>
-                            updateValue("lightningRiskPercent", event.target.value)
-                          }
-                        />
-                      </div>
-                      <div className="mt-2 flex items-start justify-between gap-3">
-                        <p className="text-sm leading-6 text-muted-foreground">
-                          Example: enter 25 if you think the chance of losing the
-                          wait is one in four.
-                        </p>
-                        <p className="font-mono text-sm text-lightning">
-                          {values.lightningRiskPercent.trim() || "0"}%
-                        </p>
-                      </div>
-                      {errors.lightningRiskPercent ? (
-                        <p
-                          id="lightningRiskPercent-error"
-                          className="mt-2 text-sm font-semibold text-risk"
-                        >
-                          {errors.lightningRiskPercent}
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
+        <CardContent className="grid gap-6 py-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)] lg:items-start">
+          <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+            {tool === "harvest" ? (
+              <HarvestForm values={harvestValues} onChange={updateHarvestValue} />
+            ) : (
+              <ProfitForm values={profitValues} onChange={updateProfitValue} />
+            )}
+          </div>
 
-                  <Accordion type="single" collapsible>
-                    <AccordionItem value="advanced">
-                      <AccordionTrigger>Advanced assumptions</AccordionTrigger>
-                      <AccordionContent className="pt-4">
-                        <div className="grid gap-5 sm:grid-cols-2">
-                          <NumberField
-                            field="residualValue"
-                            label="Residual value after lightning"
-                            note={noteText}
-                            value={values.residualValue}
-                            error={errors.residualValue}
-                            onChange={updateValue}
-                            inputRef={(node) => {
-                              inputRefs.current.residualValue = node;
-                            }}
-                            description="Use 0 if you believe the tree value fully disappears after a strike."
-                          />
-                          <NumberField
-                            field="waitCost"
-                            label="Cost of waiting"
-                            note={noteText}
-                            value={values.waitCost}
-                            error={errors.waitCost}
-                            onChange={updateValue}
-                            inputRef={(node) => {
-                              inputRefs.current.waitCost = node;
-                            }}
-                            description="Optional opportunity cost, fertilizer spend, or another wait penalty."
-                          />
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+          <div className="min-w-0 lg:sticky lg:top-[92px] lg:col-start-2 lg:row-start-1">
+            {tool === "harvest" ? (
+              <RecommendationCard
+                result={harvestAnalysis.decision}
+                thresholdResult={harvestAnalysis.threshold}
+                waitSeconds={harvestAnalysis.waitSeconds}
+              />
+            ) : (
+              <ProfitResultCard result={profitResult} />
+            )}
+          </div>
 
-                  <div className="flex flex-col gap-3 border-t border-dashed border-survey-line pt-5 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="max-w-xl text-sm leading-6 text-muted-foreground">
-                      Press Enter in any field or run the button below. The result
-                      panel updates in place and announces changes for screen
-                      readers.
-                    </p>
-                    <Button type="submit" className="w-full sm:w-auto">
-                      Calculate
-                      <ChevronRight aria-hidden="true" className="size-4" />
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-          </Card>
+          <div className="min-w-0 lg:col-start-1">
+            <ScenarioActions
+              activeResultValid={activeResultValid}
+              exampleLoaded={exampleLoaded}
+              scenarioName={scenarioName}
+              actionStatus={actionStatus}
+              copyFallback={copyFallback}
+              onScenarioNameChange={setScenarioName}
+              onLoadExample={loadExample}
+              onReset={reset}
+              onCopyResult={copyResult}
+              onCopyShareLink={copyShareLink}
+              onSaveScenario={saveScenario}
+            />
+            <SavedScenarioList
+              scenarios={savedScenarios}
+              onClear={() => {
+                setSavedScenarios([]);
+                setActionStatus("Saved scenarios cleared.");
+              }}
+            />
+            {supportingContext}
+          </div>
+        </CardContent>
+      </Card>
 
-          {supportingContext}
-          <AnalyticsConsent />
-        </div>
-
-        <div className="min-w-0 lg:sticky lg:top-[92px]">
-          <RecommendationCard result={result} waitSeconds={waitSecondsValue} />
-        </div>
-      </section>
+      <AnalyticsConsent />
     </>
   );
 }
 
-function NumberField({
-  field,
-  label,
-  note,
-  value,
-  error,
-  description,
-  inputRef,
+function HarvestForm({
+  values,
   onChange,
 }: {
-  field: Exclude<FieldName, "lightningRiskPercent">;
-  label: string;
-  note: string;
-  value: string;
-  error?: string;
-  description: string;
-  inputRef: (node: HTMLInputElement | null) => void;
-  onChange: (field: FieldName, nextValue: string) => void;
+  values: HarvestShareValues;
+  onChange: (field: keyof HarvestShareValues, value: string) => void;
 }) {
-  const noteId = `${field}-note`;
-  const errorId = `${field}-error`;
+  const currentError =
+    values.currentValue.trim() && parseNonNegative(values.currentValue) === null
+      ? "Enter a non-negative current value."
+      : undefined;
+  const futureError =
+    values.futureValue.trim() && parseNonNegative(values.futureValue) === null
+      ? "Enter a non-negative future value."
+      : undefined;
+  const waitError =
+    values.waitSeconds.trim() && parsePositive(values.waitSeconds) === null
+      ? "Enter a wait interval greater than zero."
+      : undefined;
+  const residual = parseNonNegative(values.residualValue);
+  const future = parseNonNegative(values.futureValue);
+  const residualError =
+    residual !== null && future !== null && residual > future
+      ? "Residual value cannot exceed future value."
+      : undefined;
+  const risk = values.lightningRiskPercent.trim()
+    ? parseNonNegative(values.lightningRiskPercent)
+    : null;
+  const riskError =
+    values.lightningRiskPercent.trim() && (risk === null || risk > 100)
+      ? "Enter a lightning risk from 0 to 100."
+      : undefined;
+
+  return (
+    <div
+      id="harvest-tool-panel"
+      role="tabpanel"
+      aria-labelledby="harvest-tool-tab"
+    >
+      <form
+        aria-label="Harvest timing inputs"
+        onSubmit={(event) => event.preventDefault()}
+        noValidate
+      >
+      <div className="border border-survey-line bg-background px-4 py-4 sm:px-5">
+        <p className="font-mono text-xs uppercase tracking-[0.14em] text-grow">
+          Tool 01 · Decision boundary
+        </p>
+        <h3 className="mt-2 font-display text-xl font-semibold text-foreground">
+          Harvest now or define one wait
+        </h3>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          The wait interval labels your scenario; it never creates a lightning
+          probability. Add risk only if you want a direct WAIT or HARVEST call.
+        </p>
+      </div>
+
+      <div className="mt-5 grid gap-5 sm:grid-cols-2">
+        <NumberField
+          id="currentValue"
+          label="Current harvest value"
+          value={values.currentValue}
+          description="What you can collect now."
+          required
+          error={currentError}
+          onChange={(value) => onChange("currentValue", value)}
+        />
+        <NumberField
+          id="futureValue"
+          label="Value after waiting"
+          value={values.futureValue}
+          description="Your target for this exact wait interval."
+          required
+          error={futureError}
+          onChange={(value) => onChange("futureValue", value)}
+        />
+        <NumberField
+          id="waitSeconds"
+          label="Wait interval in seconds"
+          value={values.waitSeconds}
+          description="Context only; seconds do not generate hidden odds."
+          required
+          min="0.01"
+          error={waitError}
+          onChange={(value) => onChange("waitSeconds", value)}
+        />
+        <NumberField
+          id="lightningRiskPercent"
+          label="Optional lightning risk"
+          value={values.lightningRiskPercent}
+          description="Your estimate for this interval, from 0 to 100%."
+          error={riskError}
+          max="100"
+          onChange={(value) => onChange("lightningRiskPercent", value)}
+        />
+      </div>
+
+      <Accordion type="single" collapsible className="mt-5">
+        <AccordionItem value="advanced">
+          <AccordionTrigger>Advanced assumptions</AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <NumberField
+                id="residualValue"
+                label="Residual value after lightning"
+                value={values.residualValue}
+                description="Keep 0 when your scenario assumes a full loss."
+                error={residualError}
+                onChange={(value) => onChange("residualValue", value)}
+              />
+              <NumberField
+                id="waitCost"
+                label="Cost of waiting"
+                value={values.waitCost}
+                description="Optional opportunity cost in the same value unit."
+                onChange={(value) => onChange("waitCost", value)}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+      </form>
+    </div>
+  );
+}
+
+function ProfitForm({
+  values,
+  onChange,
+}: {
+  values: ProfitShareValues;
+  onChange: (field: keyof ProfitShareValues, value: string) => void;
+}) {
+  const attemptCostError =
+    values.attemptCost.trim() && parseNonNegative(values.attemptCost) === null
+      ? "Enter a non-negative attempt cost."
+      : undefined;
+  const harvestValueError =
+    values.harvestValue.trim() &&
+    parseNonNegative(values.harvestValue) === null
+      ? "Enter a non-negative harvest value."
+      : undefined;
+  const elapsedMinutesError =
+    values.elapsedMinutes.trim() &&
+    parsePositive(values.elapsedMinutes) === null
+      ? "Enter elapsed minutes greater than zero."
+      : undefined;
+  const failures = values.failedAttempts.trim()
+    ? parseWholeNumber(values.failedAttempts)
+    : null;
+  const failuresError =
+    values.failedAttempts.trim() && failures === null
+      ? "Enter a whole number of failed attempts."
+      : undefined;
+
+  return (
+    <div
+      id="profit-tool-panel"
+      role="tabpanel"
+      aria-labelledby="profit-tool-tab"
+    >
+      <form
+        aria-label="Observed run inputs"
+        onSubmit={(event) => event.preventDefault()}
+        noValidate
+      >
+      <div className="border border-survey-line bg-background px-4 py-4 sm:px-5">
+        <p className="font-mono text-xs uppercase tracking-[0.14em] text-grow">
+          Tool 02 · Completed run
+        </p>
+        <h3 className="mt-2 font-display text-xl font-semibold text-foreground">
+          Profit after real failed attempts
+        </h3>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          Record one finished run. Lightning appears only as failures you
+          actually counted, never as a predicted probability.
+        </p>
+      </div>
+
+      <div className="mt-5 grid gap-5 sm:grid-cols-2">
+        <NumberField
+          id="attemptCost"
+          label="Attempt cost"
+          value={values.attemptCost}
+          description="Seed, fertilizer, or other cost paid per attempt."
+          required
+          error={attemptCostError}
+          onChange={(value) => onChange("attemptCost", value)}
+        />
+        <NumberField
+          id="harvestValue"
+          label="Successful harvest value"
+          value={values.harvestValue}
+          description="The value from the successful run you observed."
+          required
+          error={harvestValueError}
+          onChange={(value) => onChange("harvestValue", value)}
+        />
+        <NumberField
+          id="failedAttempts"
+          label="Failed attempts before success"
+          value={values.failedAttempts}
+          description="Whole attempts already lost before this harvest."
+          required
+          step="1"
+          error={failuresError}
+          onChange={(value) => onChange("failedAttempts", value)}
+        />
+        <NumberField
+          id="elapsedMinutes"
+          label="Total elapsed minutes"
+          value={values.elapsedMinutes}
+          description="Include the successful run and recorded failures."
+          required
+          min="0.01"
+          error={elapsedMinutesError}
+          onChange={(value) => onChange("elapsedMinutes", value)}
+        />
+      </div>
+      </form>
+    </div>
+  );
+}
+
+function NumberField({
+  id,
+  label,
+  value,
+  description,
+  error,
+  required = false,
+  min = "0",
+  max,
+  step = "0.01",
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  description: string;
+  error?: string;
+  required?: boolean;
+  min?: string;
+  max?: string;
+  step?: string;
+  onChange: (value: string) => void;
+}) {
+  const noteId = `${id}-note`;
+  const errorId = `${id}-error`;
 
   return (
     <div className="min-w-0">
       <div className="flex items-center justify-between gap-3">
-        <Label htmlFor={field}>{label}</Label>
-        <span className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-lightning">
-          {note}
+        <Label htmlFor={id}>{label}</Label>
+        <span className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-lightning">
+          {required ? "Your input" : "Optional"}
         </span>
       </div>
-      <p id={noteId} className="mt-1 text-sm leading-6 text-muted-foreground">
+      <p id={noteId} className="mt-1 min-h-12 text-sm leading-6 text-muted-foreground">
         {description}
       </p>
       <Input
-        ref={inputRef}
-        id={field}
-        name={field}
+        id={id}
+        name={id}
         type="number"
         inputMode="decimal"
-        min="0"
-        step="0.01"
+        min={min}
+        max={max}
+        step={step}
         value={value}
+        required={required}
         aria-invalid={error ? "true" : "false"}
         aria-describedby={error ? `${noteId} ${errorId}` : noteId}
-        onChange={(event) => onChange(field, event.target.value)}
+        onChange={(event) => onChange(event.target.value)}
       />
       {error ? (
         <p id={errorId} className="mt-2 text-sm font-semibold text-risk">
@@ -389,80 +799,148 @@ function NumberField({
   );
 }
 
-function RiskSlider({
-  value,
-  onChange,
+function ScenarioActions({
+  activeResultValid,
+  exampleLoaded,
+  scenarioName,
+  actionStatus,
+  copyFallback,
+  onScenarioNameChange,
+  onLoadExample,
+  onReset,
+  onCopyResult,
+  onCopyShareLink,
+  onSaveScenario,
 }: {
-  value: string;
-  onChange: (nextValue: string) => void;
+  activeResultValid: boolean;
+  exampleLoaded: boolean;
+  scenarioName: string;
+  actionStatus: string | null;
+  copyFallback: string | null;
+  onScenarioNameChange: (value: string) => void;
+  onLoadExample: () => void;
+  onReset: () => void;
+  onCopyResult: () => void;
+  onCopyShareLink: () => void;
+  onSaveScenario: () => void;
 }) {
-  const safeValue = (() => {
-    const parsed = parseInput(value);
-    if (!Number.isFinite(parsed)) return 0;
-    return Math.min(100, Math.max(0, parsed));
-  })();
-
   return (
-    <div className="flex min-h-11 items-center">
-      <input
-        aria-label="Lightning risk slider"
-        type="range"
-        min="0"
-        max="100"
-        step="0.01"
-        value={safeValue}
-        onChange={(event) => onChange(event.target.value)}
-        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-survey-line accent-[var(--lightning)]"
-      />
-    </div>
+    <section className="mt-6 border border-survey-line bg-background px-4 py-5 sm:px-5">
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" size="sm" variant="outline" onClick={onLoadExample}>
+          <Sparkles aria-hidden="true" className="size-4" />
+          Load example
+        </Button>
+        <Button type="button" size="sm" variant="ghost" onClick={onReset}>
+          <RotateCcw aria-hidden="true" className="size-4" />
+          Reset
+        </Button>
+        <Button type="button" size="sm" variant="outline" disabled={!activeResultValid} onClick={onCopyResult}>
+          <Clipboard aria-hidden="true" className="size-4" />
+          Copy result
+        </Button>
+        <Button type="button" size="sm" variant="outline" disabled={!activeResultValid} onClick={onCopyShareLink}>
+          <Link2 aria-hidden="true" className="size-4" />
+          Copy share link
+        </Button>
+      </div>
+
+      {exampleLoaded ? (
+        <p className="mt-3 border-l-2 border-lightning pl-3 text-sm leading-6 text-foreground">
+          Example mode is active. These are illustrative values, not official game data.
+        </p>
+      ) : null}
+
+      <div className="mt-5 grid gap-3 border-t border-dashed border-survey-line pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+        <div>
+          <Label htmlFor="scenarioName">Scenario name</Label>
+          <p id="scenarioName-note" className="mt-1 text-sm text-muted-foreground">
+            Save up to five results in this browser tab for quick comparison.
+          </p>
+          <Input
+            id="scenarioName"
+            value={scenarioName}
+            maxLength={60}
+            aria-describedby="scenarioName-note"
+            placeholder="Example: two lightning losses"
+            onChange={(event) => onScenarioNameChange(event.target.value)}
+          />
+        </div>
+        <Button
+          type="button"
+          variant="growth"
+          disabled={!activeResultValid || !scenarioName.trim()}
+          onClick={onSaveScenario}
+        >
+          <Save aria-hidden="true" className="size-4" />
+          Save scenario
+        </Button>
+      </div>
+
+      <p aria-live="polite" className="mt-3 min-h-6 text-sm font-semibold text-lightning">
+        {actionStatus}
+      </p>
+      {copyFallback ? (
+        <textarea
+          aria-label="Copy fallback"
+          readOnly
+          value={copyFallback}
+          className="mt-2 min-h-24 w-full resize-y border border-survey-line bg-surface px-3 py-2 text-sm text-foreground"
+        />
+      ) : null}
+    </section>
   );
 }
 
-function validateFields(input: {
-  currentValue: number;
-  futureValue: number;
-  waitSeconds: number;
-  lightningProbability: number;
-  residualValue: number;
-  waitCost: number;
-}): ErrorState {
-  const errors: ErrorState = {};
+function SavedScenarioList({
+  scenarios,
+  onClear,
+}: {
+  scenarios: SavedScenario[];
+  onClear: () => void;
+}) {
+  return (
+    <section
+      aria-label="Saved scenarios"
+      className="mt-6 border border-survey-line bg-background px-4 py-5 sm:px-5"
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="font-mono text-xs uppercase tracking-[0.14em] text-grow">
+            Session comparison
+          </p>
+          <h3 className="mt-1 font-display text-xl font-semibold text-foreground">
+            Saved scenarios
+          </h3>
+        </div>
+        <Button type="button" size="sm" variant="ghost" disabled={scenarios.length === 0} onClick={onClear}>
+          Clear all
+        </Button>
+      </div>
 
-  if (!Number.isFinite(input.currentValue) || input.currentValue < 0) {
-    errors.currentValue = "Enter a non-negative current value.";
-  }
-
-  if (!Number.isFinite(input.futureValue) || input.futureValue < 0) {
-    errors.futureValue = "Enter a non-negative future value.";
-  }
-
-  if (!Number.isFinite(input.waitSeconds) || input.waitSeconds < 0) {
-    errors.waitSeconds = "Enter a non-negative wait time.";
-  }
-
-  if (
-    !Number.isFinite(input.lightningProbability) ||
-    input.lightningProbability < 0 ||
-    input.lightningProbability > 1
-  ) {
-    errors.lightningRiskPercent = "Enter a lightning risk from 0 to 100.";
-  }
-
-  if (!Number.isFinite(input.residualValue) || input.residualValue < 0) {
-    errors.residualValue = "Enter a non-negative residual value.";
-  }
-
-  if (!Number.isFinite(input.waitCost) || input.waitCost < 0) {
-    errors.waitCost = "Enter a non-negative waiting cost.";
-  }
-
-  if (
-    errors.residualValue === undefined &&
-    Number.isFinite(input.futureValue) &&
-    input.residualValue > input.futureValue
-  ) {
-    errors.residualValue = "Residual value cannot exceed future value.";
-  }
-
-  return errors;
+      {scenarios.length === 0 ? (
+        <p className="mt-4 text-sm leading-6 text-muted-foreground">
+          Save a result to compare it here. Scenarios remain in this tab only
+          and never become site data or calculator presets.
+        </p>
+      ) : (
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {scenarios.map((scenario) => (
+            <article key={scenario.id} className="border border-survey-line bg-surface px-4 py-4">
+              <p className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-lightning">
+                {scenario.tool === "harvest" ? "Harvest timing" : "Run profit"}
+              </p>
+              <h4 className="mt-2 font-display text-lg font-semibold text-foreground">
+                {scenario.label}
+              </h4>
+              <p className="mt-3 font-mono text-base font-semibold text-grow">
+                {scenario.primary}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">{scenario.secondary}</p>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
 }

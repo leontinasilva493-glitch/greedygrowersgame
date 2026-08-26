@@ -1,9 +1,13 @@
 import { AlertTriangle, Check, Gauge, Minus, Timer, Zap } from "lucide-react";
 
-import type { CalculatorResult } from "../../features/calculator/types";
+import type {
+  CalculatorResult,
+  HarvestThresholdResult,
+} from "../../features/calculator/types";
 
 interface RecommendationCardProps {
   result: CalculatorResult | null;
+  thresholdResult?: HarvestThresholdResult | null;
   waitSeconds: number | null;
   communityModel?: CommunityModel;
 }
@@ -39,13 +43,14 @@ function formatSigned(value: number) {
 
 export function RecommendationCard({
   result,
+  thresholdResult,
   waitSeconds,
   communityModel,
 }: RecommendationCardProps) {
-  if (!result) {
+  if (!result && thresholdResult?.status !== "valid") {
     return (
       <section
-        aria-label="Harvest decision"
+        aria-label="Harvest timing result"
         aria-live="polite"
         className="flex min-h-[28rem] flex-col justify-between border border-survey-line bg-surface px-5 py-6 sm:px-6"
       >
@@ -54,24 +59,97 @@ export function RecommendationCard({
             Decision pending
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold text-foreground">
-            Ready for your field notes
+            Add your values
           </h2>
           <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">
-            Enter what you can see in game and your own risk estimate. The
-            result compares immediate value with the expected value of waiting.
+            Enter the current value, a future target, and one wait interval.
+            The tool will reveal the break-even risk before asking you to make
+            a direct risk call.
           </p>
         </div>
         <p className="border-t border-dashed border-survey-line pt-5 text-sm text-muted-foreground">
-          No community lightning probability is applied automatically.
+          No example values or community lightning probability are applied automatically.
         </p>
       </section>
     );
   }
 
+  if (!result && thresholdResult?.status === "valid") {
+    const breakEvenPercent =
+      thresholdResult.breakEvenProbability === null
+        ? null
+        : thresholdResult.breakEvenProbability * 100;
+
+    return (
+      <section
+        aria-label="Harvest timing result"
+        aria-live="polite"
+        className="min-h-[28rem] border border-lightning/70 bg-surface px-5 py-6 sm:px-6"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex size-11 items-center justify-center rounded-[4px] border border-lightning/60 bg-lightning/10 text-lightning">
+            <Gauge aria-hidden="true" className="size-6" />
+          </div>
+          <span className="font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground">
+            Player-input boundary
+          </span>
+        </div>
+
+        <p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          Your maximum tolerable lightning risk
+        </p>
+        <h2
+          data-testid="break-even-risk"
+          className="mt-1 font-display text-4xl font-semibold tracking-[-0.025em] text-lightning"
+        >
+          {breakEvenPercent === null
+            ? "Unavailable"
+            : `${formatNumber(breakEvenPercent)}%`}
+        </h2>
+
+        {thresholdResult.canWaitingBeatHarvest && breakEvenPercent !== null ? (
+          <>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              For this {waitSeconds === null ? "defined" : `${formatNumber(waitSeconds)}-second`} wait,
+              waiting has the stronger expected value only while your estimated
+              lightning risk stays below this boundary.
+            </p>
+            <p className="mt-4 border border-dashed border-survey-line bg-background px-4 py-3 text-sm font-semibold text-foreground">
+              Add your risk estimate for a direct call.
+            </p>
+          </>
+        ) : (
+          <p className="mt-3 border border-risk/50 bg-risk/10 px-4 py-3 text-sm leading-6 text-foreground">
+            Waiting cannot beat the current harvest under these values, even at
+            zero lightning risk. Harvesting now is the defensible baseline.
+          </p>
+        )}
+
+        <dl className="mt-6 grid grid-cols-2 gap-px border border-survey-line bg-survey-line">
+          <Metric
+            label="Harvest now"
+            value={formatNumber(thresholdResult.harvestEv)}
+          />
+          <Metric
+            label="Wait EV at 0% risk"
+            value={formatNumber(thresholdResult.waitEvAtZeroRisk)}
+          />
+        </dl>
+
+        <p className="mt-6 border-t border-dashed border-survey-line pt-4 text-sm leading-6 text-muted-foreground">
+          The interval is context only. This tool never converts seconds into an
+          official strike probability.
+        </p>
+      </section>
+    );
+  }
+
+  if (!result) return null;
+
   if (result.status === "invalid") {
     return (
       <section
-        aria-label="Harvest decision"
+        aria-label="Harvest timing result"
         aria-live="polite"
         className="min-h-[28rem] border border-risk/70 bg-surface px-5 py-6 sm:px-6"
       >
@@ -107,7 +185,7 @@ export function RecommendationCard({
 
   return (
     <section
-      aria-label="Harvest decision"
+      aria-label="Harvest timing result"
       aria-live="polite"
       className={`min-h-[28rem] border bg-surface px-5 py-6 sm:px-6 ${
         isWaiting ? "border-grow/70" : "border-risk/70"
@@ -145,6 +223,13 @@ export function RecommendationCard({
       <p className="mt-2 text-sm leading-6 text-muted-foreground">
         {result.reason}
       </p>
+
+      {breakEvenPercent !== null ? (
+        <p className="mt-4 border border-dashed border-survey-line bg-background px-4 py-3 text-sm leading-6 text-foreground">
+          The maximum tolerable lightning risk is {formatNumber(breakEvenPercent)}%.
+          Risk below this boundary favors waiting; risk at or above it favors harvesting.
+        </p>
+      ) : null}
 
       <dl className="mt-6 grid grid-cols-2 gap-px border border-survey-line bg-survey-line">
         <Metric

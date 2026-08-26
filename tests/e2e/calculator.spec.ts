@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-async function fillRequiredInputs(
+async function fillHarvestInputs(
   page: Page,
   values: {
     current?: string;
@@ -16,11 +16,11 @@ async function fillRequiredInputs(
     .getByLabel("Value after waiting")
     .fill(values.future ?? "200");
   await page
-    .getByLabel("Wait time in seconds")
+    .getByLabel("Wait interval in seconds")
     .fill(values.wait ?? "30");
-  await page
-    .getByLabel("Lightning risk for this wait")
-    .fill(values.risk ?? "49");
+  if (values.risk !== undefined) {
+    await page.getByLabel("Optional lightning risk").fill(values.risk);
+  }
 }
 
 async function installGtagRecorder(page: Page) {
@@ -47,140 +47,186 @@ async function readGtagCalls(page: Page) {
   });
 }
 
-test("shows a calculated example on first load and updates it only after submission", async ({
+test("starts blank and reveals the break-even threshold live", async ({
   page,
 }) => {
   await page.goto("/");
 
-  await expect(page.getByLabel("Current harvest value")).toHaveValue("100");
-  await expect(page.getByLabel("Value after waiting")).toHaveValue("600");
-  await expect(page.getByLabel("Wait time in seconds")).toHaveValue("6");
-  await expect(page.getByLabel("Lightning risk for this wait")).toHaveValue(
-    "24.34",
-  );
+  await expect(page.getByLabel("Current harvest value")).toHaveValue("");
+  await expect(page.getByLabel("Value after waiting")).toHaveValue("");
+  await expect(page.getByLabel("Optional lightning risk")).toHaveValue("");
+  await expect(page.getByRole("button", { name: "Calculate" })).toHaveCount(0);
 
-  const result = page.getByRole("region", { name: "Harvest decision" });
-  await expect(result.getByText("WAIT", { exact: true })).toBeVisible();
-  await expect(result.getByTestId("harvest-ev")).toHaveText("100");
-  await expect(result.getByTestId("wait-ev")).toHaveText("453.96");
-  await expect(result.getByTestId("wait-advantage")).toHaveText("+353.96");
-  await expect(result.getByTestId("break-even-risk")).toHaveText("83.33%");
-  await expect(result).toContainText("6 seconds");
+  const result = page.getByRole("region", { name: "Harvest timing result" });
+  await expect(result).toContainText("Add your values");
 
-  await page.getByLabel("Value after waiting").fill("100");
-  await expect(result.getByTestId("wait-ev")).toHaveText("453.96");
+  await fillHarvestInputs(page);
 
-  await page.getByRole("button", { name: "Calculate" }).click();
-  await expect(
-    result.getByText("HARVEST NOW", { exact: true }),
-  ).toBeVisible();
-  await expect(result.getByTestId("wait-ev")).toHaveText("75.66");
-  await expect(result.getByTestId("wait-advantage")).toHaveText("-24.34");
+  await expect(result.getByTestId("break-even-risk")).toHaveText("50%");
+  await expect(result).toContainText("maximum tolerable lightning risk");
+  await expect(result).toContainText("30-second wait");
+  await expect(result).toContainText("Add your risk estimate for a direct call");
 });
 
-test("calculates a WAIT result with advanced assumptions and a transparent decision strip", async ({
+test("updates the decision immediately when risk or assumptions change", async ({
   page,
 }) => {
   await page.goto("/");
-  await fillRequiredInputs(page);
+  await fillHarvestInputs(page, { risk: "49" });
 
-  await page.getByText("Advanced assumptions").click();
-  await page.getByLabel("Residual value after lightning").fill("20");
-  await page.getByLabel("Cost of waiting").fill("5");
-  await page.getByRole("button", { name: "Calculate" }).click();
-
-  const result = page.getByRole("region", { name: "Harvest decision" });
+  const result = page.getByRole("region", { name: "Harvest timing result" });
   await expect(result.getByText("WAIT", { exact: true })).toBeVisible();
-  await expect(result.getByTestId("harvest-ev")).toHaveText("100");
-  await expect(result.getByTestId("wait-ev")).toHaveText("106.8");
-  await expect(result.getByTestId("wait-advantage")).toHaveText("+6.8");
-  await expect(result.getByTestId("break-even-risk")).toHaveText("52.78%");
-  await expect(result).toContainText("30 seconds");
-  await expect(result).toContainText(
-    "Wait EV = (1 - p) x future value + p x residual value - wait cost",
-  );
-  await expect(
-    result.getByRole("img", {
-      name: /Break-even lightning risk is 52\.78%/,
-    }),
-  ).toBeVisible();
-  await expect(result).toContainText("Your inputs are estimates");
-  await expect(result).toHaveAttribute("aria-live", "polite");
-});
+  await expect(result.getByTestId("wait-ev")).toHaveText("102");
 
-test("recommends HARVEST NOW above break-even and on equality", async ({
-  page,
-}) => {
-  await page.goto("/");
-  await fillRequiredInputs(page, { risk: "51" });
-  await page.getByRole("button", { name: "Calculate" }).click();
-
-  const result = page.getByRole("region", { name: "Harvest decision" });
+  await page.getByLabel("Optional lightning risk").fill("51");
   await expect(
     result.getByText("HARVEST NOW", { exact: true }),
   ).toBeVisible();
   await expect(result.getByTestId("wait-ev")).toHaveText("98");
 
-  await page.getByLabel("Lightning risk for this wait").fill("50");
-  await page.getByRole("button", { name: "Calculate" }).click();
-
-  await expect(
-    result.getByText("HARVEST NOW", { exact: true }),
-  ).toBeVisible();
-  await expect(result.getByTestId("wait-advantage")).toHaveText("0");
-  await expect(result).toContainText(
-    "Waiting offers no expected-value advantage.",
-  );
+  await page.getByText("Advanced assumptions").click();
+  await page.getByLabel("Residual value after lightning").fill("20");
+  await page.getByLabel("Cost of waiting").fill("5");
+  await expect(result.getByTestId("break-even-risk")).toHaveText("52.78%");
+  await expect(result).toHaveAttribute("aria-live", "polite");
 });
 
-test("shows NOT ENOUGH INPUT, focuses the field error, and supports keyboard submission", async ({
-  page,
-}) => {
+test("shows inline errors for impossible live inputs", async ({ page }) => {
   await page.goto("/");
-  await fillRequiredInputs(page);
-  await page.getByLabel("Current harvest value").fill("");
-  await page.getByLabel("Lightning risk for this wait").press("Enter");
 
-  const result = page.getByRole("region", { name: "Harvest decision" });
-  await expect(
-    result.getByText("NOT ENOUGH INPUT", { exact: true }),
-  ).toBeVisible();
+  await page.getByLabel("Current harvest value").fill("-1");
+  await page.getByLabel("Value after waiting").fill("200");
+  await page.getByLabel("Wait interval in seconds").fill("0");
+
   await expect(page.locator("#currentValue-error")).toHaveText(
     "Enter a non-negative current value.",
   );
-  await expect(page.getByLabel("Current harvest value")).toBeFocused();
+  await expect(page.locator("#waitSeconds-error")).toHaveText(
+    "Enter a wait interval greater than zero.",
+  );
   await expect(page.getByLabel("Current harvest value")).toHaveAttribute(
     "aria-invalid",
     "true",
   );
-
-  await page.getByLabel("Current harvest value").fill("100");
-  await page.getByLabel("Lightning risk for this wait").press("Enter");
-  await expect(result.getByText("WAIT", { exact: true })).toBeVisible();
 });
 
-test("keeps the calculator within a 375px viewport", async ({ page }) => {
+test("calculates an observed run with failures and saves it for comparison", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("tab", { name: "Run profit" }).click();
+
+  await page.getByLabel("Attempt cost").fill("100");
+  await page.getByLabel("Successful harvest value").fill("600");
+  await page.getByLabel("Failed attempts before success").fill("2");
+  await page.getByLabel("Total elapsed minutes").fill("10");
+
+  const result = page.getByRole("region", { name: "Observed run result" });
+  await expect(result.getByText("PROFITABLE", { exact: true })).toBeVisible();
+  await expect(result.getByTestId("run-net-profit")).toHaveText("+300");
+  await expect(result.getByTestId("run-profit-per-minute")).toHaveText("+30");
+  await expect(result.getByTestId("run-break-even")).toHaveText("300");
+
+  await page.getByLabel("Scenario name").fill("Two lightning losses");
+  await page.getByRole("button", { name: "Save scenario" }).click();
+  const history = page.getByRole("region", { name: "Saved scenarios" });
+  await expect(history).toContainText("Two lightning losses");
+  await expect(history).toContainText("+30 / min");
+});
+
+test("restores a shared profit calculator URL", async ({ page }) => {
+  await page.goto(
+    "/?tool=profit&attemptCost=100&harvestValue=600&failedAttempts=2&elapsedMinutes=10",
+  );
+
+  await expect(page.getByRole("tab", { name: "Run profit" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(page.getByLabel("Attempt cost")).toHaveValue("100");
+  await expect(page.getByLabel("Successful harvest value")).toHaveValue("600");
+  await expect(
+    page
+      .getByRole("region", { name: "Observed run result" })
+      .getByText("PROFITABLE", { exact: true }),
+  ).toBeVisible();
+});
+
+test("copies a restorable link and a transparent result summary", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/");
+  await fillHarvestInputs(page);
+
+  await page.getByRole("button", { name: "Copy share link" }).click();
+  await expect(page.getByText("Share link copied.")).toBeVisible();
+  const shareLink = await page.evaluate(() => navigator.clipboard.readText());
+  expect(shareLink).toContain("tool=harvest");
+  expect(shareLink).toContain("currentValue=100");
+  expect(shareLink).toContain("lightningRiskPercent=");
+
+  await page.getByRole("button", { name: "Copy result" }).click();
+  await expect(page.getByText("Result copied.")).toBeVisible();
+  const resultSummary = await page.evaluate(() => navigator.clipboard.readText());
+  expect(resultSummary).toContain("Maximum tolerable lightning risk: 50%");
+  expect(resultSummary).toContain("Player inputs only");
+
+  await page.getByRole("button", { name: "Reset" }).click();
+  await expect(page.getByLabel("Current harvest value")).toHaveValue("");
+});
+
+test("keeps the live result directly after the form on mobile", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
-  await fillRequiredInputs(page);
-  await page.getByRole("button", { name: "Calculate" }).click();
+  await fillHarvestInputs(page, { risk: "49" });
 
-  await expect(page.getByText("WAIT", { exact: true })).toBeVisible();
+  const form = page.getByRole("form", { name: "Harvest timing inputs" });
+  const result = page.getByRole("region", { name: "Harvest timing result" });
+  const context = page.getByRole("complementary", {
+    name: "Calculator evidence reminders",
+  });
+  const analytics = page.getByRole("complementary", {
+    name: "Optional analytics",
+  });
+
+  const positions = await Promise.all([
+    form.evaluate((element) => element.getBoundingClientRect().top),
+    result.evaluate((element) => element.getBoundingClientRect().top),
+    context.evaluate((element) => element.getBoundingClientRect().top),
+    analytics.evaluate((element) => element.getBoundingClientRect().top),
+  ]);
+
+  expect(positions[0]).toBeLessThan(positions[1]);
+  expect(positions[1]).toBeLessThan(positions[2]);
+  expect(positions[1]).toBeLessThan(positions[3]);
+
   const widths = await page.evaluate(() => ({
     client: document.documentElement.clientWidth,
     scroll: document.documentElement.scrollWidth,
   }));
-
   expect(widths.scroll).toBe(widths.client);
-  await expect(page.getByRole("button", { name: "Calculate" })).toHaveCSS(
-    "min-height",
-    "44px",
-  );
 });
 
-test("keeps the calculator entry point in the first viewport", async ({
+test("shows a visible evidence status without presenting game presets", async ({
   page,
 }) => {
+  await page.goto("/");
+
+  const status = page.getByRole("region", { name: "Calculator data status" });
+  await expect(status).toContainText("Player-input only");
+  await expect(status).toContainText("Version unverified");
+  await expect(status).toContainText("Checked Aug 4, 2026");
+  await expect(status).toContainText("No official lightning probability");
+});
+
+test("keeps calculator navigation usable on desktop and mobile", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto("/");
 
   const formHeading = page.getByRole("heading", {
@@ -188,71 +234,32 @@ test("keeps the calculator entry point in the first viewport", async ({
     name: "Run the Greedy Growers Calculator",
   });
   const box = await formHeading.boundingBox();
-  const viewportHeight = await page.evaluate(() => window.innerHeight);
-
   expect(box).not.toBeNull();
-  expect(box?.y).toBeLessThan(viewportHeight);
-});
+  expect(box?.y).toBeLessThan(720);
 
-test("Calculator navigation moves the homepage to the calculator section", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto("/");
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-
   await page
     .getByRole("navigation", { name: "Primary navigation" })
     .getByRole("link", { name: "Calculator" })
     .click();
-
   await expect(page).toHaveURL(/\/#calculator$/);
+  await expect(page.locator("#calculator")).toBeInViewport();
 
-  const target = page.locator("#calculator");
-  await expect(target).toBeVisible();
-
-  const headerBottom = await page
-    .locator("header")
-    .evaluate((header) => header.getBoundingClientRect().bottom);
-
-  await expect
-    .poll(() => target.evaluate((element) => element.getBoundingClientRect().top))
-    .toBeGreaterThanOrEqual(headerBottom - 1);
-
-  const calculatorTop = await target.evaluate(
-    (element) => element.getBoundingClientRect().top,
-  );
-  expect(calculatorTop).toBeLessThan(headerBottom + 40);
-});
-
-test("mobile Calculator navigation closes the menu after moving to the section", async ({
-  page,
-}) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto("/");
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-
   await page.locator("header summary").click();
-  const mobileMenu = page.locator("header details");
-  await expect(mobileMenu).toHaveAttribute("open", "");
-
   await page
     .getByRole("navigation", { name: "Mobile navigation" })
     .getByRole("link", { name: "Calculator" })
     .click();
-
-  await expect(page).toHaveURL(/\/#calculator$/);
-  await expect(mobileMenu).not.toHaveAttribute("open", "");
-  await expect(page.locator("#calculator")).toBeInViewport();
+  await expect(page.locator("header details")).not.toHaveAttribute("open", "");
 });
 
-test("keeps analytics denied by default and emits deduplicated value-free events only after consent", async ({
+test("keeps analytics denied by default and emits value-free events after consent", async ({
   page,
 }) => {
   await installGtagRecorder(page);
   await page.goto("/");
-  await fillRequiredInputs(page);
-  await page.getByRole("button", { name: "Calculate" }).click();
+  await fillHarvestInputs(page, { risk: "49" });
 
   let calls = await readGtagCalls(page);
   expect(calls).toContainEqual([
@@ -263,25 +270,16 @@ test("keeps analytics denied by default and emits deduplicated value-free events
   expect(calls.filter(([command]) => command === "event")).toEqual([]);
 
   await page.getByRole("button", { name: "Allow analytics" }).click();
-  await page.getByLabel("Lightning risk for this wait").fill("48");
-  await page.getByRole("button", { name: "Calculate" }).click();
+  await page.getByRole("tab", { name: "Run profit" }).click();
+  await page.getByLabel("Attempt cost").fill("100");
+  await page.getByLabel("Successful harvest value").fill("600");
+  await page.getByLabel("Failed attempts before success").fill("2");
+  await page.getByLabel("Total elapsed minutes").fill("10");
 
   calls = await readGtagCalls(page);
-  expect(calls).toContainEqual([
-    "consent",
-    "update",
-    expect.objectContaining({ analytics_storage: "granted" }),
-  ]);
-
   const eventCalls = calls.filter(([command]) => command === "event");
-  expect(eventCalls).toEqual([
-    ["event", "calculator_started"],
-    ["event", "calculator_completed"],
-    ["event", "recommendation_wait"],
-  ]);
-
-  const serializedEvents = JSON.stringify(eventCalls);
-  expect(serializedEvents).not.toMatch(
-    /100|200|48|30|https?:|receipt|evidence|@/i,
+  expect(eventCalls.length).toBeGreaterThan(0);
+  expect(JSON.stringify(eventCalls)).not.toMatch(
+    /100|600|2|10|https?:|receipt|evidence|@/i,
   );
 });

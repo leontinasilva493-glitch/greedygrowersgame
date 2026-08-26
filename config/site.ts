@@ -117,7 +117,7 @@ export function createSiteConfig(
     name: "Greedy Growers Calculator",
     title: "Greedy Growers Calculator: Harvest Now or Wait?",
     description:
-      "Use the Greedy Growers Calculator to compare harvest value, wait value, and lightning risk, see the break-even point, and decide whether to harvest or wait.",
+      "Use the Greedy Growers Calculator to compare harvest timing and lightning risk, then calculate run profit after failed attempts with player-entered values.",
     origin: resolveOrigin(environment),
     locale: "en",
     themeColor: "#08110F",

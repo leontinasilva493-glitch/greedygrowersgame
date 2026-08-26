@@ -1,5 +1,13 @@
-import type { CalculatorInput, CalculatorResult } from "./types";
-import { calculatorInputSchema } from "./schema";
+import type {
+  CalculatorInput,
+  CalculatorResult,
+  HarvestThresholdInput,
+  HarvestThresholdResult,
+} from "./types";
+import {
+  calculatorInputSchema,
+  harvestThresholdInputSchema,
+} from "./schema";
 
 const EQUALITY_ULPS = 8;
 
@@ -9,6 +17,40 @@ function equalityTolerance(left: number, right: number): number {
     EQUALITY_ULPS *
     Math.max(1, Math.abs(left), Math.abs(right))
   );
+}
+
+export function calculateHarvestThreshold(
+  input: HarvestThresholdInput,
+): HarvestThresholdResult {
+  const parsed = harvestThresholdInputSchema.safeParse(input);
+  if (!parsed.success) {
+    return {
+      status: "invalid",
+      errors: parsed.error.issues.map((issue) => issue.message),
+    };
+  }
+
+  const { currentValue, futureValue, residualValue, waitCost } = parsed.data;
+  const waitEvAtZeroRisk = futureValue - waitCost;
+  const denominator = futureValue - residualValue;
+  const rawThreshold =
+    denominator > 0
+      ? (futureValue - waitCost - currentValue) / denominator
+      : null;
+  const breakEvenProbability =
+    rawThreshold !== null && rawThreshold >= 0 && rawThreshold <= 1
+      ? rawThreshold
+      : null;
+
+  return {
+    status: "valid",
+    harvestEv: currentValue,
+    waitEvAtZeroRisk,
+    breakEvenProbability,
+    canWaitingBeatHarvest:
+      waitEvAtZeroRisk >
+      currentValue + equalityTolerance(waitEvAtZeroRisk, currentValue),
+  };
 }
 
 export function calculateHarvestDecision(
@@ -36,15 +78,17 @@ export function calculateHarvestDecision(
     lightningProbability * residualValue -
     waitCost;
   const waitAdvantage = waitEv - harvestEv;
-  const denominator = futureValue - residualValue;
-  const rawThreshold =
-    denominator > 0
-      ? (futureValue - waitCost - currentValue) / denominator
-      : null;
+  const thresholdResult = calculateHarvestThreshold({
+    currentValue,
+    futureValue,
+    residualValue,
+    waitCost,
+  });
   const breakEvenProbability =
-    rawThreshold !== null && rawThreshold >= 0 && rawThreshold <= 1
-      ? rawThreshold
+    thresholdResult.status === "valid"
+      ? thresholdResult.breakEvenProbability
       : null;
+  const denominator = futureValue - residualValue;
   const recommendation =
     waitAdvantage > equalityTolerance(waitEv, harvestEv)
       ? "WAIT"

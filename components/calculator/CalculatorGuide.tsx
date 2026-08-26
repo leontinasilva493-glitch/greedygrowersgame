@@ -48,6 +48,35 @@ export function CalculatorGuide() {
         </p>
       </section>
 
+      <section className={sectionClass} aria-labelledby="observed-run-method">
+        <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-grow">
+          Observed run
+        </p>
+        <h2 id="observed-run-method" className={`${headingClass} mt-3`}>
+          Calculate Profit After Failed Attempts
+        </h2>
+        <p className={bodyClass}>
+          Run profit starts from one session you already completed. Enter the
+          cost paid for each attempt, the successful harvest value, every
+          failed attempt before it, and total elapsed minutes. The calculator
+          counts every attempt in total cost before reporting net profit and
+          profit per minute.
+        </p>
+        <div className="mt-5 border border-dashed border-survey-line bg-background px-4 py-4">
+          <p className="break-words font-mono text-sm leading-7 text-foreground">
+            Net after failures = harvest − attempt cost × (failed attempts + 1)
+          </p>
+          <p className="font-mono text-sm leading-7 text-foreground">
+            Net per minute = net after failures ÷ total elapsed minutes
+          </p>
+        </div>
+        <p className={bodyClass}>
+          Saved scenarios stay in the current browser tab and never become
+          public rankings or calculator presets. Share links expose only the
+          values encoded in the URL you choose to copy.
+        </p>
+      </section>
+
       <section className={sectionClass} aria-labelledby="calculator-inputs">
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-lightning">
           Inputs
@@ -69,10 +98,10 @@ export function CalculatorGuide() {
             future values and watch whether the recommendation changes.
           </InputExplanation>
           <InputExplanation title="Wait time and lightning risk">
-            Wait time defines the interval being evaluated. Lightning risk must
-            describe that same interval, not an entire play session. A risk
-            estimate for the next ten seconds should not be reused unchanged
-            for a much longer wait, because it represents a different scenario.
+            Wait time labels the interval being evaluated; it does not change
+            the formula or generate a probability. If you add a lightning-risk
+            estimate, it must describe that same interval, not an entire play
+            session.
           </InputExplanation>
           <InputExplanation title="Residual value and wait cost">
             Residual value is anything you expect to keep after a strike. Wait
@@ -155,9 +184,13 @@ export function CalculatorGuide() {
         </h2>
         <div className="mt-6 divide-y divide-survey-line border-y border-survey-line">
           <Faq question="What does the Greedy Growers Calculator calculate?">
-            It compares the expected value of harvesting now with the expected
-            value of waiting. The result depends on the current value, future
-            value, lightning risk, residual value, and wait cost you enter.
+            Harvest timing compares the expected value of harvesting now with
+            waiting. Run profit calculates the net result of a completed run
+            after its recorded failed attempts and elapsed time.
+          </Faq>
+          <Faq question="Does wait time create a lightning probability?">
+            No. Wait time labels the interval. Only a risk estimate you enter
+            can produce a direct WAIT or HARVEST NOW recommendation.
           </Faq>
           <Faq question="Does the calculator predict lightning?">
             No. It does not predict the next strike and does not apply an
