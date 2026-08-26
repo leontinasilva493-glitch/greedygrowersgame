@@ -20,8 +20,8 @@ export default function PrivacyPage() {
     <ContentPage
       eyebrow="Privacy / Current release"
       title="Privacy policy"
-      description="This notice describes the services actually active in the current site shell and the requirements that must be met before analytics or evidence intake can be enabled."
-      status="Last reviewed: 2026-07-26"
+      description="This notice describes the services active in the current site shell and the requirements that must be met before evidence intake can be enabled."
+      status="Last reviewed: 2026-08-26"
     >
       <ContentSection title="Calculator inputs">
         <p>
@@ -34,10 +34,12 @@ export default function PrivacyPage() {
 
       <ContentSection title="Analytics status">
         <EvidenceNote>
-          Google Analytics is not loaded by this release of the shared layout.
-          Setting an identifier alone does not activate tracking. If analytics is
-          later enabled, this notice and the site’s consent behavior must be
-          updated before collection begins.
+          Microsoft Clarity loads only after you choose Allow analytics. It can
+          collect page views, clicks, scrolling, device and browser details, and
+          masked session-replay data to help improve the site. Calculator values,
+          evidence URLs, moderation receipts, and direct identifiers are not sent
+          as custom analytics events. Choosing Keep analytics off leaves Clarity
+          unloaded.
         </EvidenceNote>
       </ContentSection>
 

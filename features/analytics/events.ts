@@ -12,14 +12,19 @@ export type AnalyticsEvent =
 export type AnalyticsConsentChoice = "granted" | "denied" | "unset";
 
 const CONSENT_KEY = "greedy-growers-analytics-consent";
+const CLARITY_PROJECT_ID = "y8aj6ax98g";
 export const ANALYTICS_CONSENT_EVENT = "greedy-growers:analytics-consent";
 
 const emittedActions = new Set<string>();
 let consentDefaultInitialized = false;
 let analyticsConfigured = false;
+let clarityConfigured = false;
+
+type ClarityFunction = ((...args: unknown[]) => void) & { q?: unknown[][] };
 
 declare global {
   interface Window {
+    clarity?: ClarityFunction;
     dataLayer?: unknown[][];
     gtag?: (...args: unknown[]) => void;
   }
@@ -46,6 +51,24 @@ function gtagForEvents(): ((...args: unknown[]) => void) | null {
   return window.gtag ?? (analyticsId() ? createQueueBackedGtag() : null);
 }
 
+function enableClarity(): void {
+  if (clarityConfigured) return;
+
+  clarityConfigured = true;
+  window.clarity ??= ((...args: unknown[]) => {
+    window.clarity!.q ??= [];
+    window.clarity!.q.push(args);
+  }) as ClarityFunction;
+
+  if (!document.querySelector(`script[data-greedy-clarity="${CLARITY_PROJECT_ID}"]`)) {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.clarity.ms/tag/${CLARITY_PROJECT_ID}`;
+    script.dataset.greedyClarity = CLARITY_PROJECT_ID;
+    document.head.append(script);
+  }
+}
+
 export function readAnalyticsConsent(): AnalyticsConsentChoice {
   if (typeof window === "undefined") return "unset";
   const stored = window.localStorage.getItem(CONSENT_KEY);
@@ -67,11 +90,15 @@ export function initializeDeniedAnalyticsConsent(): void {
 }
 
 export function enableAnalytics(): void {
+  if (typeof window === "undefined" || readAnalyticsConsent() !== "granted") return;
+
+  enableClarity();
+
   const id = analyticsId();
-  if (!id || typeof window === "undefined") return;
+  if (!id) return;
 
   const gtag = createQueueBackedGtag();
-  if (analyticsConfigured || readAnalyticsConsent() !== "granted") return;
+  if (analyticsConfigured) return;
 
   analyticsConfigured = true;
   if (!document.querySelector(`script[data-greedy-ga="${id}"]`)) {

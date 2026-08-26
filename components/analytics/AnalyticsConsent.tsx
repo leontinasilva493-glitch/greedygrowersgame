@@ -40,8 +40,9 @@ export function AnalyticsConsent() {
             Optional analytics
           </h2>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Analytics is off by default. If enabled, we send event names only -
-            never calculator values, URLs, receipts, evidence, or identifiers.
+            Analytics is off by default. If enabled, Microsoft Clarity can record
+            page interactions, while calculator values, evidence, and receipts
+            remain excluded from custom analytics events.
           </p>
           {choice !== "unset" ? (
             <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-foreground">

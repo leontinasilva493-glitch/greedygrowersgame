@@ -15,7 +15,6 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { Analytics } from "../analytics/Analytics";
 import { AnalyticsConsent } from "../analytics/AnalyticsConsent";
 import {
   Accordion,
@@ -418,7 +417,6 @@ export function CalculatorExperience({
 
   return (
     <>
-      <Analytics />
       {intro}
       <CalculatorStatusStrip />
 

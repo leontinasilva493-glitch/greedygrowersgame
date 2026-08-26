@@ -32,7 +32,8 @@ npm run evidence:validate
 ## Environment variables
 
 - `NEXT_PUBLIC_SITE_URL`: optional canonical-origin override. Production builds default to `https://greedygrowersgame.com`; any production override must use HTTPS.
-- `NEXT_PUBLIC_GA_ID`: optional consent-gated GA property.
+- `NEXT_PUBLIC_GA_ID`: optional consent-gated GA property. Microsoft Clarity uses
+  the consent-gated project ID embedded in the analytics module.
 - `NEXT_PUBLIC_SUPPORT_EMAIL`: real support/deletion contact; leave unset rather than using a placeholder.
 - `DATA_SUBMISSION_WEBHOOK_URL` and `DATA_SUBMISSION_WEBHOOK_TOKEN`: server-only moderation inbox.
 - `SUBMISSION_RETENTION_DAYS`: approved pending-submission retention. The form stays disabled when it is absent.
@@ -89,7 +90,7 @@ approved recording IDs. The Lightning Guide additionally requires
 
 ## Analytics and privacy
 
-Analytics consent is denied by default. Events contain event names only, not calculator values, evidence URLs, receipts, or identifiers. The submission form collects pseudonymous tree/session IDs and evidence fields, not names, handles, or email addresses.
+Analytics consent is denied by default. Microsoft Clarity loads only after the user opts in and can collect page interactions and masked session replays. Custom events contain event names only, not calculator values, evidence URLs, receipts, or identifiers. The submission form collects pseudonymous tree/session IDs and evidence fields, not names, handles, or email addresses.
 
 ## Deployment and rollback
 
