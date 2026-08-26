@@ -219,45 +219,9 @@ test("page has no horizontal overflow at the active viewport", async ({ page }) 
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
 });
 
-test("homepage recommends the complete Big Walk guide collection safely", async ({
-  page,
-}) => {
+test("homepage does not promote unrelated external game guides", async ({ page }) => {
   await page.goto("/");
 
-  const recommendation = page.locator('[data-related-game="big-walk"]');
-  await expect(recommendation).toHaveCount(1);
-  await expect(
-    recommendation.getByRole("heading", {
-      level: 2,
-      name: "Continue with another co-op adventure",
-    }),
-  ).toBeVisible();
-
-  const expectedLinks = [
-    ["Big Walk walkthrough", "https://bigwalkwalkthrough.com/"],
-    ["Big Walk puzzle guide", "https://bigwalkwalkthrough.com/puzzles"],
-    ["Big Walk walkthroughs", "https://bigwalkwalkthrough.com/walkthrough"],
-    ["First session tips", "https://bigwalkwalkthrough.com/beginner-guide"],
-    ["Big Walk multiplayer", "https://bigwalkwalkthrough.com/multiplayer"],
-    ["Big Walk trophy guide", "https://bigwalkwalkthrough.com/achievements"],
-    [
-      "All 7 purple challenges",
-      "https://bigwalkwalkthrough.com/puzzles/purple-challenges",
-    ],
-    [
-      "Find Big Walk players",
-      "https://bigwalkwalkthrough.com/multiplayer/how-to-find-players",
-    ],
-  ] as const;
-
-  const links = recommendation.locator("a");
-  await expect(links).toHaveCount(expectedLinks.length);
-
-  for (const [label, href] of expectedLinks) {
-    const link = recommendation.getByRole("link", { name: label, exact: true });
-    await expect(link).toHaveAttribute("href", href);
-    await expect(link).toHaveAttribute("target", "_blank");
-    await expect(link).toHaveAttribute("rel", /noopener/);
-    await expect(link).toHaveAttribute("rel", /noreferrer/);
-  }
+  await expect(page.locator("#related-game-guides")).toHaveCount(0);
+  await expect(page.locator("[data-related-game]")).toHaveCount(0);
 });
