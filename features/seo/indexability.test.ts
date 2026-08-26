@@ -26,6 +26,11 @@ describe("getPageIndexability", () => {
     expect(getPageIndexability("/", empty).index).toBe(true);
     expect(getPageIndexability("/guides", empty).includeInSitemap).toBe(true);
     expect(getPageIndexability("/about", empty).index).toBe(true);
+    expect(getPageIndexability("/guides/how-to-make-money", empty)).toMatchObject({
+      index: true,
+      follow: true,
+      includeInSitemap: true,
+    });
     expect(getPageIndexability("/guides/beginner-guide", empty)).toMatchObject({
       index: true,
       follow: true,
@@ -137,5 +142,29 @@ describe("getPageIndexability", () => {
         mutationsGuideVerified: true,
       } as IndexabilitySnapshot),
     ).toMatchObject({ index: true, follow: true, includeInSitemap: true });
+  });
+
+  it("opens each new system guide only through its own evidence gate", () => {
+    const routes = [
+      ["/guides/prediction-potion", "predictionPotionVerified"],
+      ["/pets", "petsGuideVerified"],
+      ["/guides/how-to-get-tickets", "ticketsGuideVerified"],
+      ["/guides/rebirth", "rebirthGuideVerified"],
+    ] as const;
+
+    for (const [route, flag] of routes) {
+      expect(getPageIndexability(route, empty)).toMatchObject({
+        index: false,
+        follow: true,
+        includeInSitemap: false,
+      });
+      expect(
+        getPageIndexability(route, {
+          ...empty,
+          currentVersion: "2026.08.25",
+          [flag]: true,
+        }),
+      ).toMatchObject({ index: true, follow: true, includeInSitemap: true });
+    }
   });
 });

@@ -7,6 +7,11 @@ const publicRoutes = [
   "/guides/beginner-guide",
   "/guides/mutations",
   "/guides/when-to-harvest",
+  "/guides/prediction-potion",
+  "/guides/how-to-get-tickets",
+  "/guides/how-to-make-money",
+  "/guides/rebirth",
+  "/pets",
   "/codes",
   "/updates",
   "/seeds",
@@ -49,6 +54,11 @@ test("robots and sitemap expose only eligible production URLs", async ({ request
   expect(xml).not.toContain("/seeds</loc>");
   expect(xml).not.toContain("/lightning</loc>");
   expect(xml).not.toContain("/guides/mutations</loc>");
+  expect(xml).not.toContain("/guides/prediction-potion</loc>");
+  expect(xml).not.toContain("/pets</loc>");
+  expect(xml).not.toContain("/guides/how-to-get-tickets</loc>");
+  expect(xml).not.toContain("/guides/rebirth</loc>");
+  expect(xml).toContain("/guides/how-to-make-money</loc>");
   expect(xml).not.toContain("/data-status</loc>");
 });
 
@@ -58,6 +68,10 @@ test("evidence-driven pages remain noindex while Phase 0 is closed", async ({ pa
     "/seeds/compare",
     "/lightning",
     "/guides/mutations",
+    "/guides/prediction-potion",
+    "/guides/how-to-get-tickets",
+    "/guides/rebirth",
+    "/pets",
     "/data-status",
   ]) {
     await page.goto(route);
@@ -150,7 +164,7 @@ test("homepage exposes focused metadata, a sequential outline, and substantial s
   );
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    "Use the Greedy Growers Calculator to compare harvest value, wait value, and lightning risk, see the break-even point, and decide whether to harvest or wait.",
+    "Use the Greedy Growers Calculator to compare harvest timing and lightning risk, then calculate run profit after failed attempts with player-entered values.",
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
