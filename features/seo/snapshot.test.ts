@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import { evidenceManifestSchema } from "@/features/evidence/manifest";
 
-import { isLightningGuideVerified, isMutationsGuideVerified } from "./snapshot";
+import {
+  isLightningGuideVerified,
+  isMutationsGuideVerified,
+  isSystemGuideVerified,
+} from "./snapshot";
 
 describe("indexability snapshot evidence bindings", () => {
   it("does not treat an unrelated official source as lightning guide evidence", () => {
@@ -87,5 +91,53 @@ describe("mutations guide evidence bindings", () => {
 
     expect(isMutationsGuideVerified(manifest, sources, "unverified")).toBe(false);
     expect(isMutationsGuideVerified(manifest, sources, "2026.08.03")).toBe(true);
+  });
+});
+
+describe("new system guide evidence bindings", () => {
+  it("requires a current version plus reviewed gameplay and independent support", () => {
+    const manifest = evidenceManifestSchema.parse({
+      auditDate: "2026-08-25",
+      versionBasis: { kind: "unverified", label: "unverified", sourceIds: [] },
+      publicationApprovals: {
+        beginnerGuideReviewed: false,
+        predictionPotionGuideReviewed: true,
+        predictionPotionGuideSourceIds: ["potion-gameplay", "potion-report"],
+      },
+      recordings: [],
+    });
+    const sources = [
+      {
+        id: "potion-gameplay",
+        type: "gameplay" as const,
+        title: "Prediction Potion capture",
+        url: "https://evidence.example/prediction-potion.mp4",
+        capturedAt: "2026-08-25T00:00:00.000Z",
+      },
+      {
+        id: "potion-report",
+        type: "editorial" as const,
+        title: "Independent item report",
+        url: "https://example.com/prediction-potion",
+        capturedAt: "2026-08-25T00:00:00.000Z",
+      },
+    ];
+
+    expect(
+      isSystemGuideVerified(
+        manifest,
+        sources,
+        "unverified",
+        "predictionPotion",
+      ),
+    ).toBe(false);
+    expect(
+      isSystemGuideVerified(
+        manifest,
+        sources,
+        "2026.08.25",
+        "predictionPotion",
+      ),
+    ).toBe(true);
   });
 });

@@ -9,6 +9,10 @@ export interface IndexabilitySnapshot {
   lightningGuideVerified: boolean;
   lightningModelEligible: boolean;
   mutationsGuideVerified: boolean;
+  predictionPotionVerified?: boolean;
+  petsGuideVerified?: boolean;
+  ticketsGuideVerified?: boolean;
+  rebirthGuideVerified?: boolean;
   codes: {
     redeemUiVerified: boolean;
     hasHttpsSource: boolean;
@@ -31,6 +35,7 @@ const INDEXED_FIXED_ROUTES = new Set([
   "/guides",
   "/guides/beginner-guide",
   "/guides/when-to-harvest",
+  "/guides/how-to-make-money",
 ]);
 
 const NOINDEX_FIXED_ROUTES = new Set([
@@ -78,6 +83,26 @@ export function getPageIndexability(
       return decision(
         snapshot.mutationsGuideVerified,
         "Requires independently reviewed current-version gameplay and editorial sources.",
+      );
+    case "/guides/prediction-potion":
+      return decision(
+        snapshot.predictionPotionVerified === true,
+        "Requires current-version gameplay plus independent support for acquisition, effect, consumption, duration, and version.",
+      );
+    case "/pets":
+      return decision(
+        snapshot.petsGuideVerified === true,
+        "Requires a reviewed current-version pet, egg, acquisition, and passive evidence set.",
+      );
+    case "/guides/how-to-get-tickets":
+      return decision(
+        snapshot.ticketsGuideVerified === true,
+        "Requires reviewed current-version earning, payout, refresh, and spending evidence.",
+      );
+    case "/guides/rebirth":
+      return decision(
+        snapshot.rebirthGuideVerified === true,
+        "Requires a reviewed current-version before-and-after record of cost, resets, rewards, and unlocks.",
       );
     case "/updates":
       return decision(

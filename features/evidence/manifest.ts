@@ -89,6 +89,14 @@ export const evidenceManifestSchema = z
         mutationsGuideSourceIds: z
           .array(z.string().trim().min(1))
           .default([]),
+        predictionPotionGuideReviewed: z.boolean().default(false),
+        predictionPotionGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
+        petsGuideReviewed: z.boolean().default(false),
+        petsGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
+        ticketsGuideReviewed: z.boolean().default(false),
+        ticketsGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
+        rebirthGuideReviewed: z.boolean().default(false),
+        rebirthGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
       })
       .superRefine((approval, context) => {
         if (
@@ -111,6 +119,20 @@ export const evidenceManifestSchema = z
             message: "A reviewed mutations guide must bind independent video and editorial sources.",
           });
         }
+        for (const [reviewed, sourceIds, path, label] of [
+          [approval.predictionPotionGuideReviewed, approval.predictionPotionGuideSourceIds, "predictionPotionGuideSourceIds", "Prediction Potion"],
+          [approval.petsGuideReviewed, approval.petsGuideSourceIds, "petsGuideSourceIds", "pets"],
+          [approval.ticketsGuideReviewed, approval.ticketsGuideSourceIds, "ticketsGuideSourceIds", "Tickets"],
+          [approval.rebirthGuideReviewed, approval.rebirthGuideSourceIds, "rebirthGuideSourceIds", "Rebirth"],
+        ] as const) {
+          if (reviewed && new Set(sourceIds).size < 2) {
+            context.addIssue({
+              code: "custom",
+              path: [path],
+              message: `A reviewed ${label} guide must bind gameplay evidence and independent support.`,
+            });
+          }
+        }
       })
       .default({
         beginnerGuideReviewed: false,
@@ -118,6 +140,14 @@ export const evidenceManifestSchema = z
         lightningGuideSourceIds: [],
         mutationsGuideReviewed: false,
         mutationsGuideSourceIds: [],
+        predictionPotionGuideReviewed: false,
+        predictionPotionGuideSourceIds: [],
+        petsGuideReviewed: false,
+        petsGuideSourceIds: [],
+        ticketsGuideReviewed: false,
+        ticketsGuideSourceIds: [],
+        rebirthGuideReviewed: false,
+        rebirthGuideSourceIds: [],
       }),
     recordings: z.array(recordingSchema),
   })

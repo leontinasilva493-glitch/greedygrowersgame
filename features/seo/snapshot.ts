@@ -58,6 +58,41 @@ export function isMutationsGuideVerified(
   );
 }
 
+export function isSystemGuideVerified(
+  manifest: EvidenceManifest,
+  sources: Source[],
+  currentVersion: string,
+  guide: "predictionPotion" | "pets" | "tickets" | "rebirth",
+) {
+  if (currentVersion === "unverified") return false;
+
+  const approval = manifest.publicationApprovals;
+  const reviewedByGuide = {
+    predictionPotion: approval.predictionPotionGuideReviewed,
+    pets: approval.petsGuideReviewed,
+    tickets: approval.ticketsGuideReviewed,
+    rebirth: approval.rebirthGuideReviewed,
+  };
+  const sourceIdsByGuide = {
+    predictionPotion: approval.predictionPotionGuideSourceIds,
+    pets: approval.petsGuideSourceIds,
+    tickets: approval.ticketsGuideSourceIds,
+    rebirth: approval.rebirthGuideSourceIds,
+  };
+  const sourceIds = [...new Set(sourceIdsByGuide[guide])];
+  if (!reviewedByGuide[guide] || sourceIds.length < 2) return false;
+
+  const sourceById = new Map(sources.map((source) => [source.id, source]));
+  const boundSources = sourceIds.map((sourceId) => sourceById.get(sourceId));
+  return (
+    boundSources.every((source) => source?.url.startsWith("https://")) &&
+    boundSources.some((source) => source?.type === "gameplay") &&
+    boundSources.some((source) =>
+      source ? ["official", "editorial"].includes(source.type) : false,
+    )
+  );
+}
+
 export async function getIndexabilitySnapshot(): Promise<IndexabilitySnapshot> {
   const [
     gameVersion,
@@ -127,6 +162,30 @@ export async function getIndexabilitySnapshot(): Promise<IndexabilitySnapshot> {
       currentEvidenceManifest,
       sources,
       gameVersion.version,
+    ),
+    predictionPotionVerified: isSystemGuideVerified(
+      currentEvidenceManifest,
+      sources,
+      gameVersion.version,
+      "predictionPotion",
+    ),
+    petsGuideVerified: isSystemGuideVerified(
+      currentEvidenceManifest,
+      sources,
+      gameVersion.version,
+      "pets",
+    ),
+    ticketsGuideVerified: isSystemGuideVerified(
+      currentEvidenceManifest,
+      sources,
+      gameVersion.version,
+      "tickets",
+    ),
+    rebirthGuideVerified: isSystemGuideVerified(
+      currentEvidenceManifest,
+      sources,
+      gameVersion.version,
+      "rebirth",
     ),
     codes: {
       redeemUiVerified: codes.redeemUiVerified,

@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BookOpen, Calculator, CloudLightning, Sparkles } from "lucide-react";
+import {
+  BookOpen,
+  Calculator,
+  CloudLightning,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react";
 
 import {
   ContentPage,
@@ -16,9 +22,9 @@ import {
 } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Greedy Growers Guides: Beginner, Harvest and Mutation Notes",
+  title: "Greedy Growers Guides: Beginner, Harvest and Money Methods",
   description:
-    "Start Greedy Growers with evidence-bounded beginner, harvest, and mutation guides plus a transparent calculator.",
+    "Start Greedy Growers with evidence-bounded beginner, harvest, money, and mutation guides plus a transparent calculator.",
   alternates: { canonical: "/guides" },
 };
 
@@ -55,6 +61,14 @@ const guides = [
       "Compare current third-party mutation reports with their source limits before treating a claimed multiplier as game data.",
     action: "Review mutation notes",
   },
+  {
+    href: "/guides/how-to-make-money",
+    icon: TrendingUp,
+    title: "How to make money",
+    description:
+      "Measure a complete run with every cost, failed attempt, harvest return, and elapsed minute instead of copying a best-seed claim.",
+    action: "Build a money route",
+  },
 ] as const;
 
 const linkClassName = "font-semibold text-lightning hover:underline";
@@ -65,7 +79,7 @@ export default function GuidesPage() {
       eyebrow="Start here / Greedy Growers guides"
       title="Greedy Growers guides"
       description="Choose a clear starting point, learn the confirmed loop, and make a transparent harvest decision without treating estimates as official game data."
-      status="Reviewed 2026-08-02 · Official-description facts and player-entered scenarios"
+      status="Reviewed 2026-08-25 · Official-description facts and player-entered scenarios"
     >
       <section aria-labelledby="published-guides">
         <h2
@@ -79,7 +93,7 @@ export default function GuidesPage() {
           matches what you need now, then return to the other guides when your
           next decision changes.
         </p>
-        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {guides.map(({ href, icon: Icon, title, description, action }) => (
             <Card key={href} className="flex h-full flex-col">
               <CardHeader>
@@ -154,6 +168,15 @@ export default function GuidesPage() {
             </Link>{" "}
             when a claimed weather or lightning effect would change the value you
             enter. Reported multipliers do not become calculator defaults.
+          </li>
+          <li>
+            <span className="font-semibold text-foreground">Measure the whole run.</span>{" "}
+            Use the{" "}
+            <Link href="/guides/how-to-make-money" className={linkClassName}>
+              money guide
+            </Link>{" "}
+            to include every paid attempt and elapsed minute. A repeatable net
+            result is more useful than one large harvest screenshot.
           </li>
         </ol>
       </ContentSection>

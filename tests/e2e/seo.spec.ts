@@ -7,6 +7,11 @@ const publicRoutes = [
   "/guides/beginner-guide",
   "/guides/mutations",
   "/guides/when-to-harvest",
+  "/guides/prediction-potion",
+  "/guides/how-to-get-tickets",
+  "/guides/how-to-make-money",
+  "/guides/rebirth",
+  "/pets",
   "/codes",
   "/updates",
   "/seeds",
@@ -49,6 +54,11 @@ test("robots and sitemap expose only eligible production URLs", async ({ request
   expect(xml).not.toContain("/seeds</loc>");
   expect(xml).not.toContain("/lightning</loc>");
   expect(xml).not.toContain("/guides/mutations</loc>");
+  expect(xml).not.toContain("/guides/prediction-potion</loc>");
+  expect(xml).not.toContain("/pets</loc>");
+  expect(xml).not.toContain("/guides/how-to-get-tickets</loc>");
+  expect(xml).not.toContain("/guides/rebirth</loc>");
+  expect(xml).toContain("/guides/how-to-make-money</loc>");
   expect(xml).not.toContain("/data-status</loc>");
 });
 
@@ -58,6 +68,10 @@ test("evidence-driven pages remain noindex while Phase 0 is closed", async ({ pa
     "/seeds/compare",
     "/lightning",
     "/guides/mutations",
+    "/guides/prediction-potion",
+    "/guides/how-to-get-tickets",
+    "/guides/rebirth",
+    "/pets",
     "/data-status",
   ]) {
     await page.goto(route);
@@ -150,7 +164,7 @@ test("homepage exposes focused metadata, a sequential outline, and substantial s
   );
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    "Use the Greedy Growers Calculator to compare harvest value, wait value, and lightning risk, see the break-even point, and decide whether to harvest or wait.",
+    "Use the Greedy Growers Calculator to compare harvest timing and lightning risk, then calculate run profit after failed attempts with player-entered values.",
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
@@ -205,45 +219,9 @@ test("page has no horizontal overflow at the active viewport", async ({ page }) 
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
 });
 
-test("homepage recommends the complete Big Walk guide collection safely", async ({
-  page,
-}) => {
+test("homepage does not promote unrelated external game guides", async ({ page }) => {
   await page.goto("/");
 
-  const recommendation = page.locator('[data-related-game="big-walk"]');
-  await expect(recommendation).toHaveCount(1);
-  await expect(
-    recommendation.getByRole("heading", {
-      level: 2,
-      name: "Continue with another co-op adventure",
-    }),
-  ).toBeVisible();
-
-  const expectedLinks = [
-    ["Big Walk walkthrough", "https://bigwalkwalkthrough.com/"],
-    ["Big Walk puzzle guide", "https://bigwalkwalkthrough.com/puzzles"],
-    ["Big Walk walkthroughs", "https://bigwalkwalkthrough.com/walkthrough"],
-    ["First session tips", "https://bigwalkwalkthrough.com/beginner-guide"],
-    ["Big Walk multiplayer", "https://bigwalkwalkthrough.com/multiplayer"],
-    ["Big Walk trophy guide", "https://bigwalkwalkthrough.com/achievements"],
-    [
-      "All 7 purple challenges",
-      "https://bigwalkwalkthrough.com/puzzles/purple-challenges",
-    ],
-    [
-      "Find Big Walk players",
-      "https://bigwalkwalkthrough.com/multiplayer/how-to-find-players",
-    ],
-  ] as const;
-
-  const links = recommendation.locator("a");
-  await expect(links).toHaveCount(expectedLinks.length);
-
-  for (const [label, href] of expectedLinks) {
-    const link = recommendation.getByRole("link", { name: label, exact: true });
-    await expect(link).toHaveAttribute("href", href);
-    await expect(link).toHaveAttribute("target", "_blank");
-    await expect(link).toHaveAttribute("rel", /noopener/);
-    await expect(link).toHaveAttribute("rel", /noreferrer/);
-  }
+  await expect(page.locator("#related-game-guides")).toHaveCount(0);
+  await expect(page.locator("[data-related-game]")).toHaveCount(0);
 });

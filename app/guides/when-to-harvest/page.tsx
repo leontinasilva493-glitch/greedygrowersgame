@@ -80,6 +80,13 @@ export default function WhenToHarvestPage() {
           answer changes across that range, harvest or shorten the wait instead
           of pretending the uncertainty is precise.
         </p>
+        <p>
+          Looking for the item? The{" "}
+          <Link href="/guides/prediction-potion" className={linkClassName}>
+            Prediction Potion evidence guide
+          </Link>
+          {" "}lists what must be verified first.
+        </p>
         <Link href="/guides/beginner-guide" className={linkClassName}>
           See the lightning-loss example in the beginner guide
         </Link>
