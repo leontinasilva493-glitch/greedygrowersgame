@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { observationSchema } from "./schemas";
+import { codesDatasetSchema, observationSchema } from "./schemas";
 import { validateDataBundle } from "./validation";
 
 const version = "2026-07-27";
@@ -47,6 +47,7 @@ const bundle = {
     lastChecked: "2026-07-27T00:00:00.000Z",
     active: [],
     expired: [],
+    reported: [],
     sourceIds: [],
   },
   gameVersion: {
@@ -57,6 +58,26 @@ const bundle = {
 };
 
 describe("canonical data validation", () => {
+  it("preserves reported code leads without promoting them to active codes", () => {
+    const parsed = codesDatasetSchema.parse({
+      redeemUiVerified: false,
+      lastChecked: "2026-08-28T00:00:00.000Z",
+      active: [],
+      expired: [],
+      reported: [
+        {
+          code: "ILOVECATS",
+          reward: "100 Tickets",
+          sourceIds: ["pcgamesn-codes", "dexerto-codes"],
+          checkedAt: "2026-08-28T00:00:00.000Z",
+        },
+      ],
+      sourceIds: ["pcgamesn-codes", "dexerto-codes"],
+    }) as unknown as { reported: Array<{ code: string }> };
+
+    expect(parsed.reported.map((entry) => entry.code)).toEqual(["ILOVECATS"]);
+  });
+
   it("accepts a consistent precommitted planned-stop observation", () => {
     expect(observationSchema.safeParse(observation).success).toBe(true);
   });

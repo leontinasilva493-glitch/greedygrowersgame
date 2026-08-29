@@ -111,6 +111,7 @@ export interface CodesDataset {
   lastChecked: string;
   active: CodeEntry[];
   expired: CodeEntry[];
+  reported: CodeEntry[];
   sourceIds: string[];
 }
 

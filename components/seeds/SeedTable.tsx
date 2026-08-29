@@ -181,7 +181,8 @@ export function SeedTable({
               <TableHead scope="col">Seed</TableHead>
               <TableHead scope="col">Rarity</TableHead>
               <TableHead scope="col">Acquisition</TableHead>
-              <TableHead scope="col">Cost</TableHead>
+              <TableHead scope="col">Reported price</TableHead>
+              <TableHead scope="col">Reported spawn</TableHead>
               <TableHead scope="col">Observed range</TableHead>
               <TableHead scope="col">Sessions</TableHead>
               <TableHead scope="col">Observations</TableHead>
@@ -193,7 +194,7 @@ export function SeedTable({
           <TableBody>
             {rows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} className="whitespace-normal py-8 text-center text-muted-foreground">
+                <TableCell colSpan={11} className="whitespace-normal py-8 text-center text-muted-foreground">
                   No seeds match the current filter set.
                 </TableCell>
               </TableRow>
@@ -215,6 +216,7 @@ export function SeedTable({
                     {row.acquisition ?? "Unknown"}
                   </TableCell>
                   <TableCell>{row.costLabel}</TableCell>
+                  <TableCell>{row.reportedSpawnLabel}</TableCell>
                   <TableCell className="whitespace-normal">
                     {row.rangeGatePassed && row.rangeLabel
                       ? row.rangeLabel
@@ -261,7 +263,8 @@ export function SeedTable({
                 </div>
               </div>
               <dl className="grid grid-cols-2 gap-px bg-survey-line">
-                <CardMetric label="Cost" value={row.costLabel} />
+                <CardMetric label="Reported price" value={row.costLabel} />
+                <CardMetric label="Reported spawn" value={row.reportedSpawnLabel} />
                 <CardMetric
                   label="Observed range"
                   value={

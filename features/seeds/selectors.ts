@@ -35,6 +35,7 @@ export interface SeedRow {
   cost: number | null;
   currency: string | null;
   costLabel: string;
+  reportedSpawnLabel: string;
   effectiveStatus: ReturnType<typeof getEffectiveStatus>;
   lastVerified: string;
   sourceIds: string[];
@@ -45,6 +46,10 @@ export interface SeedRow {
   rangeGatePassed: boolean;
   rangeLabel: string | null;
   isIndexableSeed: boolean;
+}
+
+function reportedFact(seed: Seed, key: string) {
+  return seed.facts.find((fact) => fact.key === key)?.value ?? null;
 }
 
 export interface PageIndexability {
@@ -228,7 +233,12 @@ export function buildSeedRows({
       costLabel:
         seed.cost !== undefined && seed.currency
           ? `${formatNumber(seed.cost)} ${seed.currency}`
-          : "Unknown",
+          : reportedFact(seed, "reported_price")
+            ? `${reportedFact(seed, "reported_price")} (reported)`
+            : "Unknown",
+      reportedSpawnLabel: reportedFact(seed, "reported_spawn_chance")
+        ? `${reportedFact(seed, "reported_spawn_chance")} (reported)`
+        : "Unknown",
       effectiveStatus,
       lastVerified: seed.lastVerified,
       sourceIds: seedSourceIds,

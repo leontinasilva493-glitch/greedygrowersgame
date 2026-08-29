@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/guides" },
 };
 
-const guides = [
+const startGuides = [
   {
     href: "/#calculator",
     icon: Calculator,
@@ -36,6 +36,7 @@ const guides = [
     description:
       "Compare harvesting now with one defined wait using values, costs, and interval risk that you enter yourself.",
     action: "Open calculator",
+    status: "Player-input tool",
   },
   {
     href: "/guides/beginner-guide",
@@ -44,6 +45,7 @@ const guides = [
     description:
       "Follow the small gameplay loop confirmed by the creator's public Roblox description, with unknown details marked clearly.",
     action: "Read beginner guide",
+    status: "Official-description loop",
   },
   {
     href: "/guides/when-to-harvest",
@@ -52,14 +54,7 @@ const guides = [
     description:
       "Compare a certain harvest with an uncertain wait using your own values, risk interval, and explicit assumptions.",
     action: "Read harvest guide",
-  },
-  {
-    href: "/guides/mutations",
-    icon: Sparkles,
-    title: "Mutation field notes",
-    description:
-      "Compare current third-party mutation reports with their source limits before treating a claimed multiplier as game data.",
-    action: "Review mutation notes",
+    status: "Player-input method",
   },
   {
     href: "/guides/how-to-make-money",
@@ -68,6 +63,37 @@ const guides = [
     description:
       "Measure a complete run with every cost, failed attempt, harvest return, and elapsed minute instead of copying a best-seed claim.",
     action: "Build a money route",
+    status: "Observed-run method",
+  },
+] as const;
+
+const researchGuides = [
+  {
+    href: "/guides/mutations",
+    icon: Sparkles,
+    title: "Mutation field notes",
+    description:
+      "Compare current third-party mutation reports with their source limits before treating a claimed multiplier as game data.",
+    action: "Review mutation notes",
+    status: "Third-party field note · noindex",
+  },
+  {
+    href: "/guides/farmers-market",
+    icon: BookOpen,
+    title: "Farmer's Market checklist",
+    description:
+      "Record one complete order, delivery, reward, and refresh cycle without publishing an unverified payout.",
+    action: "Open market checklist",
+    status: "Research note · noindex",
+  },
+  {
+    href: "/guides/seed-feeding-chair",
+    icon: Sparkles,
+    title: "Seed-feeding chair checklist",
+    description:
+      "Capture the exact request, seed consumption, progress state, and completion result before spending a rare seed.",
+    action: "Open chair checklist",
+    status: "Research note · noindex",
   },
 ] as const;
 
@@ -78,26 +104,29 @@ export default function GuidesPage() {
     <ContentPage
       eyebrow="Start here / Greedy Growers guides"
       title="Greedy Growers guides"
-      description="Choose a clear starting point, learn the confirmed loop, and make a transparent harvest decision without treating estimates as official game data."
-      status="Reviewed 2026-08-25 · Official-description facts and player-entered scenarios"
+      description="Choose a player-ready method first, then open evidence-gated research notes only when you need to inspect an unverified system."
+      status="Reviewed 2026-08-29 · Player-ready methods separated from research notes"
     >
       <section aria-labelledby="published-guides">
         <h2
           id="published-guides"
           className="font-display text-2xl font-semibold text-foreground"
         >
-          Choose your next step
+          Start and decide
         </h2>
         <p className="mt-4 max-w-[72ch] leading-7 text-muted-foreground">
           You do not need to read every page before playing. Pick the task that
           matches what you need now, then return to the other guides when your
           next decision changes.
         </p>
-        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          {guides.map(({ href, icon: Icon, title, description, action }) => (
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {startGuides.map(({ href, icon: Icon, title, description, action, status }) => (
             <Card key={href} className="flex h-full flex-col">
               <CardHeader>
                 <Icon aria-hidden="true" className="size-6 text-lightning" />
+                <p className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-grow">
+                  {status}
+                </p>
                 <CardTitle>{title}</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col">
@@ -115,6 +144,39 @@ export default function GuidesPage() {
           ))}
         </div>
       </section>
+
+      <ContentSection title="Research notes">
+        <p>
+          These pages answer one player question at a time, but they remain
+          outside the sitemap until current gameplay and independent support pass
+          their evidence gates. Use them as capture checklists, not as confirmed
+          mechanic guides.
+        </p>
+        <div className="grid gap-4 md:grid-cols-3">
+          {researchGuides.map(({ href, icon: Icon, title, description, action, status }) => (
+            <Card key={href} className="flex h-full flex-col">
+              <CardHeader>
+                <Icon aria-hidden="true" className="size-6 text-lightning" />
+                <p className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-risk">
+                  {status}
+                </p>
+                <CardTitle>{title}</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-1 flex-col">
+                <CardDescription className="text-base leading-7">
+                  {description}
+                </CardDescription>
+                <Link
+                  href={href}
+                  className="mt-5 inline-flex min-h-11 items-center font-semibold text-lightning hover:underline"
+                >
+                  {action}
+                </Link>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </ContentSection>
 
       <ContentSection title="Where should a new player start?">
         <p>

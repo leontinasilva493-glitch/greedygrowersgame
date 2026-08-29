@@ -179,6 +179,7 @@ export const codesDatasetSchema = z.object({
   lastChecked: isoDateTimeSchema,
   active: z.array(codeEntrySchema),
   expired: z.array(codeEntrySchema),
+  reported: z.array(codeEntrySchema).default([]),
   sourceIds: z.array(idSchema),
 });
 

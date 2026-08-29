@@ -9,10 +9,11 @@ import {
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About Greedy Growers Calculator",
   description:
-    "How Greedy Growers Calculator separates official descriptions, observed evidence, estimates, and unknowns.",
+    "Learn how Greedy Growers Calculator uses official Roblox information, labels community evidence, protects unknowns, and verifies guide updates.",
   alternates: { canonical: "/about" },
+  robots: { index: true, follow: true },
 };
 
 export default function AboutPage() {
@@ -44,6 +45,29 @@ export default function AboutPage() {
           A page written by this site is not automatically verified. Verification
           must point back to official material, repeatable gameplay, or reviewed
           evidence.
+        </EvidenceNote>
+      </ContentSection>
+
+      <ContentSection title="Official game and creator links">
+        <p>
+          The official Roblox experience page is the primary source for the
+          published game description and creator identity. Roblox currently
+          attributes the experience to Banjo Lady Games. That official page
+          does not publish a complete seed catalog, pet table, potion guide, or
+          patch notes, so those details require additional evidence.
+        </p>
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
+          <a href={siteConfig.robloxGameUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-lightning hover:underline">
+            Open the official Greedy Growers experience
+          </a>
+          <a href="https://www.roblox.com/communities/830072163/Banjo-Lady-Games" target="_blank" rel="noopener noreferrer" className="font-semibold text-lightning hover:underline">
+            Open the official Banjo Lady Games group
+          </a>
+        </div>
+        <EvidenceNote>
+          No official Discord or Trello link has been verified for publication.
+          Avoid login prompts or downloads from sites that imitate Roblox or
+          claim to be an official Greedy Growers resource without a creator link.
         </EvidenceNote>
       </ContentSection>
 

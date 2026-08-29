@@ -97,6 +97,16 @@ export const evidenceManifestSchema = z
         ticketsGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
         rebirthGuideReviewed: z.boolean().default(false),
         rebirthGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
+        bigTreeGuideReviewed: z.boolean().default(false),
+        bigTreeGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
+        fertilizerGuideReviewed: z.boolean().default(false),
+        fertilizerGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
+        wormsGuideReviewed: z.boolean().default(false),
+        wormsGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
+        farmersMarketGuideReviewed: z.boolean().default(false),
+        farmersMarketGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
+        seedChairGuideReviewed: z.boolean().default(false),
+        seedChairGuideSourceIds: z.array(z.string().trim().min(1)).default([]),
       })
       .superRefine((approval, context) => {
         if (
@@ -124,6 +134,11 @@ export const evidenceManifestSchema = z
           [approval.petsGuideReviewed, approval.petsGuideSourceIds, "petsGuideSourceIds", "pets"],
           [approval.ticketsGuideReviewed, approval.ticketsGuideSourceIds, "ticketsGuideSourceIds", "Tickets"],
           [approval.rebirthGuideReviewed, approval.rebirthGuideSourceIds, "rebirthGuideSourceIds", "Rebirth"],
+          [approval.bigTreeGuideReviewed, approval.bigTreeGuideSourceIds, "bigTreeGuideSourceIds", "big-tree"],
+          [approval.fertilizerGuideReviewed, approval.fertilizerGuideSourceIds, "fertilizerGuideSourceIds", "fertilizer"],
+          [approval.wormsGuideReviewed, approval.wormsGuideSourceIds, "wormsGuideSourceIds", "worms"],
+          [approval.farmersMarketGuideReviewed, approval.farmersMarketGuideSourceIds, "farmersMarketGuideSourceIds", "Farmer's Market"],
+          [approval.seedChairGuideReviewed, approval.seedChairGuideSourceIds, "seedChairGuideSourceIds", "seed-feeding chair"],
         ] as const) {
           if (reviewed && new Set(sourceIds).size < 2) {
             context.addIssue({
@@ -148,6 +163,16 @@ export const evidenceManifestSchema = z
         ticketsGuideSourceIds: [],
         rebirthGuideReviewed: false,
         rebirthGuideSourceIds: [],
+        bigTreeGuideReviewed: false,
+        bigTreeGuideSourceIds: [],
+        fertilizerGuideReviewed: false,
+        fertilizerGuideSourceIds: [],
+        wormsGuideReviewed: false,
+        wormsGuideSourceIds: [],
+        farmersMarketGuideReviewed: false,
+        farmersMarketGuideSourceIds: [],
+        seedChairGuideReviewed: false,
+        seedChairGuideSourceIds: [],
       }),
     recordings: z.array(recordingSchema),
   })

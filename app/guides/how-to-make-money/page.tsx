@@ -10,9 +10,9 @@ import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 const route = "/guides/how-to-make-money";
-const title = "How to Make Money Fast in Greedy Growers (Safe Routes)";
+const title = "Greedy Growers Money Guide: Profit per Run";
 const description =
-  "Build a repeatable Greedy Growers money loop using observed costs, harvest returns, cycle time, lightning losses, and your own calculator inputs.";
+  "Use this Greedy Growers money guide to compare profit per run, failed attempts, cycle time, and repeatability without relying on unverified best-seed claims.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
@@ -36,16 +36,16 @@ export default function MoneyGuidePage() {
   return (
     <ContentPage
       eyebrow="Guide 06 / Observed economy"
-      title="How to make money fast in Greedy Growers"
-      description="The fastest useful route is the one your account can repeat after costs, failed attempts, and time. Measure a complete cycle, then compare it with another cycle under the same rules."
-      status="Indexable method guide · Player-entered values · No game presets"
+      title="Greedy Growers money guide: measure profit per run"
+      description="Find the route that produces the strongest repeatable net result for your account. Record complete runs, compare profit per minute, and keep unverified prices or rankings out of the decision."
+      status="Indexable measurement guide · Player-entered values · No fixed game presets"
     >
       <ContentSection title="The direct answer">
         <p>
-          Start with a route you can afford to repeat. Record every purchase,
-          every failed attempt, the money actually received, and the full time
-          spent. Improve the route only when its observed net result or net per
-          minute beats the alternative across several comparable runs.
+          A useful Greedy Growers money route is one you can afford to repeat
+          and measure from start to finish. Record every purchase, every failed
+          attempt, the money actually received, and the total elapsed time. Then
+          compare net profit per minute across runs that used the same rules.
         </p>
         <p className="overflow-x-auto border border-dashed border-survey-line bg-surface px-4 py-4 font-mono text-sm text-foreground">
           Observed net result = money after the cycle − money before the cycle
@@ -53,11 +53,17 @@ export default function MoneyGuidePage() {
         <EvidenceNote>
           No seed is ranked as universally best. This project has no verified
           current-version price table, growth curve, mutation rate, or
-          lightning probability that could support that claim.
+          lightning probability that could support a universal route ranking.
         </EvidenceNote>
       </ContentSection>
 
-      <ContentSection title="Record one complete money cycle">
+      <ContentSection title="Build a three-run baseline">
+        <p>
+          Start with one affordable setup and repeat it three times before
+          changing anything. Three runs do not prove a permanent game rule, but
+          they make it harder for one lucky harvest or one failure to define the
+          whole route.
+        </p>
         <div className="overflow-x-auto border border-survey-line bg-surface">
           <table className="w-full min-w-[680px] border-collapse text-left text-sm">
             <thead className="bg-surface-raised text-foreground">
@@ -83,7 +89,7 @@ export default function MoneyGuidePage() {
         </p>
       </ContentSection>
 
-      <ContentSection title="Choose one of three routes">
+      <ContentSection title="Compare three money routes">
         <div className="grid gap-4 md:grid-cols-3">
           <article className="border-l-2 border-grow bg-surface px-4 py-4">
             <h3 className="font-display text-xl font-semibold text-foreground">Safe route</h3>
@@ -116,7 +122,12 @@ export default function MoneyGuidePage() {
         <InlineCta href="/#calculator">Open the calculator and choose Run profit</InlineCta>
       </ContentSection>
 
-      <ContentSection title="Improve the route one variable at a time">
+      <ContentSection title="Choose the faster repeatable route">
+        <p>
+          A route is faster only when it produces more observed net value in the
+          same amount of time and still leaves enough balance to run again. Use
+          the same start point, stop point, and accounting rules for both routes.
+        </p>
         <ol className="list-decimal space-y-3 pl-5">
           <li>Repeat the baseline until the result is not dominated by one lucky run.</li>
           <li>Change one input: purchase choice, wait interval, plot usage, or another visible action.</li>
@@ -130,7 +141,7 @@ export default function MoneyGuidePage() {
         </div>
       </ContentSection>
 
-      <ContentSection title="Money guide FAQ">
+      <ContentSection title="Greedy Growers money guide FAQ">
         <div className="space-y-5">
           <div>
             <h3 className="font-display text-xl font-semibold text-foreground">What is the best seed for money?</h3>
@@ -145,6 +156,15 @@ export default function MoneyGuidePage() {
             <p className="mt-2">Not necessarily. Compare net result per minute and check whether the route leaves enough money to repeat it.</p>
           </div>
         </div>
+      </ContentSection>
+
+      <ContentSection title="Use the result in your next run">
+        <p>
+          Keep the route with the stronger repeatable net result, then test one
+          change at a time. Rebuild the baseline after a game publish, a new
+          purchase option, or any system change that makes the old runs unlike
+          the next one.
+        </p>
       </ContentSection>
     </ContentPage>
   );

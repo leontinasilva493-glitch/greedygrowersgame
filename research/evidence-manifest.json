@@ -1,5 +1,5 @@
 {
-  "auditDate": "2026-08-04",
+  "auditDate": "2026-08-28",
   "versionBasis": {
     "kind": "unverified",
     "label": "unverified",
@@ -10,7 +10,25 @@
     "lightningGuideReviewed": false,
     "lightningGuideSourceIds": [],
     "mutationsGuideReviewed": false,
-    "mutationsGuideSourceIds": []
+    "mutationsGuideSourceIds": [],
+    "predictionPotionGuideReviewed": false,
+    "predictionPotionGuideSourceIds": [],
+    "petsGuideReviewed": false,
+    "petsGuideSourceIds": [],
+    "ticketsGuideReviewed": false,
+    "ticketsGuideSourceIds": [],
+    "rebirthGuideReviewed": false,
+    "rebirthGuideSourceIds": [],
+    "bigTreeGuideReviewed": false,
+    "bigTreeGuideSourceIds": [],
+    "fertilizerGuideReviewed": false,
+    "fertilizerGuideSourceIds": [],
+    "wormsGuideReviewed": false,
+    "wormsGuideSourceIds": [],
+    "farmersMarketGuideReviewed": false,
+    "farmersMarketGuideSourceIds": [],
+    "seedChairGuideReviewed": false,
+    "seedChairGuideSourceIds": []
   },
   "recordings": []
 }

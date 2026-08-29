@@ -84,7 +84,7 @@ export function validateDataBundle(bundle: DataBundle): string[] {
     change.sourceIds.forEach((id) => requireSource(id, change.id)),
   );
   bundle.codes.sourceIds.forEach((id) => requireSource(id, "codes"));
-  [...bundle.codes.active, ...bundle.codes.expired].forEach((code) =>
+  [...bundle.codes.active, ...bundle.codes.expired, ...bundle.codes.reported].forEach((code) =>
     code.sourceIds.forEach((id) => requireSource(id, `code ${code.code}`)),
   );
 

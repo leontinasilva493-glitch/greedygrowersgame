@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": "content-refresh-2026-08-28",
+    "changedAt": "2026-08-28T10:30:00.000Z",
+    "recordIds": ["roblox-publish-2026-08-27", "ILOVECATS"],
+    "sourceIds": ["official-game-api", "codes-pcgamesn-report", "codes-dexerto-report"],
+    "reviewer": "editorial-review",
+    "summary": "Refreshed the official publish signal and preserved the ILOVECATS claim as reported rather than active.",
+    "methodVersion": "evidence-ledger-v1"
+  }
+]

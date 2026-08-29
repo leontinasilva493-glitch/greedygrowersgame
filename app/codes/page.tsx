@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CircleAlert, ClipboardX } from "lucide-react";
+import { CircleAlert, ExternalLink, ShieldCheck } from "lucide-react";
 
 import {
   ContentPage,
@@ -7,68 +7,144 @@ import {
   EvidenceNote,
   InlineCta,
 } from "@/components/layout/ContentPage";
+import { dataRepository } from "@/features/data/repository";
 import { createGatedMetadata } from "@/features/seo/metadata";
 import { getPageIndexability } from "@/features/seo/indexability";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
+const route = "/codes";
+const title = "Greedy Growers Codes: Working & Reported";
+const description =
+  "Track working and reported Greedy Growers codes with dated source checks, claimed rewards, redemption safety, and clear gameplay-verification status.";
+
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
-    title: "Greedy Growers Codes — Verification Status",
-    description:
-      "Check whether Greedy Growers codes and a redemption interface have been verified from attributable evidence.",
-    canonical: "/codes",
-    route: "/codes",
+    title,
+    description,
+    canonical: route,
+    route,
     snapshot: await getIndexabilitySnapshot(),
   });
 }
 
 export default async function CodesPage() {
-  const gate = getPageIndexability("/codes", await getIndexabilitySnapshot());
+  const [snapshot, codes, sources] = await Promise.all([
+    getIndexabilitySnapshot(),
+    dataRepository.getCodes(),
+    dataRepository.getSources(),
+  ]);
+  const gate = getPageIndexability(route, snapshot);
+  const sourceById = new Map(sources.map((source) => [source.id, source]));
 
   return (
     <ContentPage
-      eyebrow="Codes / Evidence gate closed"
+      eyebrow="Codes / Freshness checked"
       title="Greedy Growers codes"
-      description="A useful codes page starts by proving that the current game has a redemption interface. That evidence is not available yet."
-      status={`${gate.reason} Page is ${gate.index ? "index" : "noindex"}.`}
+      description="No code is labelled active until a current in-game redemption succeeds. Independent reports are still useful leads, so they are listed separately with claimed rewards and source dates."
+      status={`Checked ${formatDate(codes.lastChecked)} · ${gate.reason} Page is ${gate.index ? "index" : "noindex"}.`}
     >
-      <section className="border border-survey-line bg-surface p-5 sm:p-7" aria-labelledby="codes-zero-state">
-        <ClipboardX aria-hidden="true" className="size-8 text-lightning" />
-        <h2 id="codes-zero-state" className="mt-4 font-display text-2xl font-semibold text-foreground">
-          No active Greedy Growers codes have been verified.
+      <section className="border border-survey-line bg-surface p-5 sm:p-7" aria-labelledby="codes-answer">
+        <ShieldCheck aria-hidden="true" className="size-8 text-lightning" />
+        <h2 id="codes-answer" className="mt-4 font-display text-2xl font-semibold text-foreground">
+          No active code has passed a current gameplay redemption check.
         </h2>
-        <p className="mt-3 max-w-2xl leading-7 text-muted-foreground">
-          We do not publish copied code lists, invented rewards, or redemption
-          steps from third-party guides. The current official evidence does not
-          establish where—or whether—codes can be redeemed.
+        <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">
+          Two independent editorial sources currently report the same code lead.
+          That agreement raises confidence that the lead is worth testing, but it
+          does not prove that the code still works in the current server build.
         </p>
       </section>
 
-      <ContentSection title="What would unlock this page">
-        <ul className="grid gap-2 pl-5 marker:text-grow">
-          <li>A current, continuous recording of the actual redemption UI.</li>
-          <li>At least one valid HTTPS source attributable to the game creator.</li>
-          <li>A fresh verification date and useful, unique instructions.</li>
-        </ul>
+      <ContentSection title="Reported Greedy Growers code leads">
+        <div className="overflow-x-auto border border-survey-line">
+          <table className="min-w-[720px] w-full text-left text-sm">
+            <thead className="bg-surface-raised text-foreground">
+              <tr>
+                <th className="px-4 py-3 font-semibold">Reported code</th>
+                <th className="px-4 py-3 font-semibold">Claimed reward</th>
+                <th className="px-4 py-3 font-semibold">Verification status</th>
+                <th className="px-4 py-3 font-semibold">Checked</th>
+                <th className="px-4 py-3 font-semibold">Sources</th>
+              </tr>
+            </thead>
+            <tbody>
+              {codes.reported.map((entry) => (
+                <tr key={entry.code} className="border-t border-survey-line align-top">
+                  <th scope="row" className="px-4 py-3 font-mono font-semibold text-foreground">
+                    {entry.code}
+                  </th>
+                  <td className="px-4 py-3 text-muted-foreground">{entry.reward ?? "Not reported"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    Reported by independent editorial sources; not gameplay-verified
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">{formatDate(entry.checkedAt)}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-2">
+                      {entry.sourceIds.map((sourceId) => {
+                        const source = sourceById.get(sourceId);
+                        return source ? (
+                          <a key={sourceId} href={source.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-8 items-center gap-1 border border-survey-line px-2 text-xs font-semibold text-lightning hover:border-lightning/60">
+                            {source.title}<ExternalLink aria-hidden="true" className="size-3" />
+                          </a>
+                        ) : null;
+                      })}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <EvidenceNote>
-          A Discord server name or third-party article cannot authenticate an
-          official code by itself.
+          Reported is not active. The code remains outside a copy button and
+          outside the active-code count until an uninterrupted current-version
+          recording shows the Settings field, submission, and resulting reward.
         </EvidenceNote>
+      </ContentSection>
+
+      <ContentSection title="How should I redeem a reported code safely?">
+        <ol className="list-decimal space-y-3 pl-5">
+          <li>Open Greedy Growers from the official Roblox experience page.</li>
+          <li>Inspect the current Settings menu for a code field; do not assume an older screenshot still matches.</li>
+          <li>Enter the lead exactly as shown and record the response before spending any claimed reward.</li>
+          <li>Never enter Roblox credentials on a third-party code website.</li>
+        </ol>
+        <p>
+          Editorial sources describe a Settings-and-Submit path, but this site
+          has not yet captured that interface in the current build. Treat the
+          steps above as a safe verification procedure rather than a promise.
+        </p>
+      </ContentSection>
+
+      <ContentSection title="Why is a Greedy Growers code not working?">
+        <ul className="grid gap-3 pl-5 marker:text-risk">
+          <li>The code may have expired after the last editorial check.</li>
+          <li>Capitalization or whitespace may not match the reported text.</li>
+          <li>The current server may be running a different publish than the source checked.</li>
+          <li>A tracker may have copied a claim without redeeming it.</li>
+          <li>The code may already have been redeemed on the account.</li>
+        </ul>
       </ContentSection>
 
       <div className="flex items-start gap-3 border-t border-dashed border-survey-line pt-6 text-sm text-muted-foreground">
         <CircleAlert aria-hidden="true" className="mt-1 size-5 shrink-0 text-risk" />
         <p>
-          Until the gate passes, this route stays out of the sitemap and contains
-          no copy button or redemption tutorial.
+          This route remains noindex while the redemption UI is unverified.
+          Fresh editorial agreement improves the research lead, not the evidence gate.
         </p>
       </div>
-      <div className="mt-5 space-y-4">
-        <InlineCta href="/guides">Read verified guides instead</InlineCta>
-        <div>
-          <InlineCta href="/updates">Check the sourced updates log</InlineCta>
-        </div>
+      <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3">
+        <InlineCta href="/updates">Check the official publish log</InlineCta>
+        <InlineCta href="/guides/how-to-get-tickets">Review Ticket evidence</InlineCta>
       </div>
     </ContentPage>
   );
+}
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(new Date(value));
 }

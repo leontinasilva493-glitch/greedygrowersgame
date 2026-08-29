@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.origin),
   title: {
     default: siteConfig.title,
-    template: "%s | Greedy Growers Calculator",
+    template: "%s | GG Calc",
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,

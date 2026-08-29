@@ -11,9 +11,9 @@ import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 const route = "/guides/how-to-get-tickets";
-const title = "How to Get Tickets in Greedy Growers Fast (All Methods)";
+const title = "How to Get Tickets in Greedy Growers";
 const description =
-  "Compare every verified way to earn Farmer’s Tickets, current payout rules, refresh timing, and what Tickets buy in Greedy Growers.";
+  "Check reported Greedy Growers Ticket methods, the evidence needed to verify each payout, and a complete loop for measuring rewards and refreshes.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
@@ -94,6 +94,22 @@ export default async function TicketsGuidePage() {
         </p>
       </ContentSection>
 
+      <ContentSection title="Reported Ticket code lead">
+        <p>
+          Two independent editorial pages currently report the code
+          <strong className="mx-1 text-foreground">ILOVECATS</strong>
+          with a claimed reward of 100 Tickets. This is a research lead, not a
+          verified working code: the project has not captured the live
+          redemption interface, success message, or balance change.
+        </p>
+        <EvidenceNote>
+          Check the codes page for the latest review date and source links. Do
+          not treat a third-party listing as proof that the code still works on
+          your account or in the current game build.
+        </EvidenceNote>
+        <InlineCta href="/codes">Review the reported code evidence</InlineCta>
+      </ContentSection>
+
       <ContentSection title="Separate Tickets from run profit">
         <p>
           Keep each currency in its own ledger. A Ticket reward should not be
@@ -114,7 +130,6 @@ export default async function TicketsGuidePage() {
         </p>
         <div className="flex flex-wrap gap-x-6 gap-y-2">
           <InlineCta href="/pets">Open the pet evidence hub</InlineCta>
-          <InlineCta href="/codes">Check code verification status</InlineCta>
         </div>
       </ContentSection>
 
