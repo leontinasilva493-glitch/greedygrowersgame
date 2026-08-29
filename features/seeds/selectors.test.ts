@@ -194,6 +194,42 @@ describe("seed selectors", () => {
     expect(filtered[0]?.seedId).toBe("seed-beta");
   });
 
+  it("shows source-labelled reported price and spawn chance without treating them as numeric facts", async () => {
+    const { buildSeedRows } = await loadSelectors();
+    const reportedSeed = createSeed({
+      id: "void-seed",
+      slug: "void-seed",
+      name: "Void Seed",
+      cost: undefined,
+      currency: undefined,
+      status: "needs_recheck",
+      indexing: "noindex",
+      indexingReason: "Community-reported Update 1.2 record",
+      facts: [
+        { key: "reported_price", value: "$1.75Qi", sourceIds: ["source-fact-b"] },
+        { key: "reported_spawn_chance", value: "1 in 1,000", sourceIds: ["source-fact-b"] },
+      ],
+    });
+
+    const [row] = buildSeedRows({
+      seeds: [reportedSeed],
+      sources,
+      observations: [],
+      growthMeasurements: [],
+      currentVersion,
+      filters: {
+        search: "",
+        rarity: "all",
+        sourceType: "all",
+        status: "all",
+      },
+      sort: "name-asc",
+    });
+
+    expect(row.costLabel).toBe("$1.75Qi (reported)");
+    expect(row.reportedSpawnLabel).toBe("1 in 1,000 (reported)");
+  });
+
   it("counts only current-version approved observations and growth measurements, and withholds ranges below the gate", async () => {
     const { buildSeedRows } = await loadSelectors();
 

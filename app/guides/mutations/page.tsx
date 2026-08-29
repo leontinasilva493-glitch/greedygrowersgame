@@ -23,9 +23,9 @@ const reportedMutations = [
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
-    title: "Greedy Growers Mutations: Reported Effects and Evidence",
+    title: "Greedy Growers Mutations & Weather",
     description:
-      "Compare third-party reports about Greedy Growers mutations, weather triggers, and value multipliers without treating reports as official game data.",
+      "Review reported Greedy Growers mutations, weather triggers, and value multipliers with clear source labels and a method for verifying each outcome.",
     canonical: "/guides/mutations",
     route: "/guides/mutations",
     snapshot: await getIndexabilitySnapshot(),
@@ -115,6 +115,21 @@ export default async function MutationsGuidePage() {
           editable in the calculator.
         </p>
         <InlineCta href="/guides/when-to-harvest">Read the harvest decision method</InlineCta>
+      </ContentSection>
+
+      <ContentSection title="Test weather, mutation, and value as separate steps">
+        <ol className="list-decimal space-y-3 pl-5">
+          <li>Record the weather name or visible environmental state before the tree changes.</li>
+          <li>Capture the exact mutation label shown by the game, not a visual guess.</li>
+          <li>Harvest or sell the same tree and record the displayed value and cash change.</li>
+          <li>Repeat the same setup before testing whether a worm, pet, or fertilizer changes the result.</li>
+        </ol>
+        <p>
+          This sequence prevents a reported multiplier from being attributed to
+          the wrong system. It also separates the mutation name from its chance
+          of appearing, which requires a much larger sample.
+        </p>
+        <InlineCta href="/guides/worms">Use the worm-effect verification checklist</InlineCta>
       </ContentSection>
 
       <ContentSection title="How this page earns a stronger confidence label">

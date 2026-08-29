@@ -140,4 +140,42 @@ describe("new system guide evidence bindings", () => {
       ),
     ).toBe(true);
   });
+
+  it.each([
+    ["farmersMarket", "farmersMarketGuideReviewed", "farmersMarketGuideSourceIds"],
+    ["seedChair", "seedChairGuideReviewed", "seedChairGuideSourceIds"],
+  ] as const)(
+    "keeps %s closed until reviewed gameplay and independent sources are current",
+    (guide, reviewedField, sourceField) => {
+      const manifest = evidenceManifestSchema.parse({
+        auditDate: "2026-08-29",
+        versionBasis: { kind: "unverified", label: "unverified", sourceIds: [] },
+        publicationApprovals: {
+          beginnerGuideReviewed: false,
+          [reviewedField]: true,
+          [sourceField]: ["system-gameplay", "system-report"],
+        },
+        recordings: [],
+      });
+      const sources = [
+        {
+          id: "system-gameplay",
+          type: "gameplay" as const,
+          title: "Current gameplay capture",
+          url: "https://evidence.example/system.mp4",
+          capturedAt: "2026-08-29T00:00:00.000Z",
+        },
+        {
+          id: "system-report",
+          type: "editorial" as const,
+          title: "Independent system report",
+          url: "https://example.com/system",
+          capturedAt: "2026-08-29T00:00:00.000Z",
+        },
+      ];
+
+      expect(isSystemGuideVerified(manifest, sources, "unverified", guide)).toBe(false);
+      expect(isSystemGuideVerified(manifest, sources, "2026.08.29", guide)).toBe(true);
+    },
+  );
 });

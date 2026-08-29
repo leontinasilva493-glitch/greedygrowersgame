@@ -150,6 +150,11 @@ describe("getPageIndexability", () => {
       ["/pets", "petsGuideVerified"],
       ["/guides/how-to-get-tickets", "ticketsGuideVerified"],
       ["/guides/rebirth", "rebirthGuideVerified"],
+      ["/guides/how-to-grow-big-trees", "bigTreeGuideVerified"],
+      ["/guides/fertilizer", "fertilizerGuideVerified"],
+      ["/guides/worms", "wormsGuideVerified"],
+      ["/guides/farmers-market", "farmersMarketGuideVerified"],
+      ["/guides/seed-feeding-chair", "seedChairGuideVerified"],
     ] as const;
 
     for (const [route, flag] of routes) {

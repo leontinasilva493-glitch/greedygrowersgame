@@ -11,9 +11,9 @@ import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 const route = "/guides/prediction-potion";
-const title = "Greedy Growers Prediction Potion: Effect & How to Get It";
+const title = "Greedy Growers Prediction Potion Guide";
 const description =
-  "Learn how the Prediction Potion works, where it comes from, when to use it, and what it does not predict, with current-version evidence.";
+  "Check what the Greedy Growers Prediction Potion may reveal, which community claims conflict, and the exact capture needed to verify its effect.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
@@ -78,6 +78,38 @@ export default async function PredictionPotionPage() {
             </tbody>
           </table>
         </div>
+      </ContentSection>
+
+      <ContentSection title="Why current Prediction Potion claims conflict">
+        <div className="overflow-x-auto border border-survey-line bg-surface">
+          <table className="w-full min-w-[660px] border-collapse text-left text-sm">
+            <thead className="bg-surface-raised text-foreground">
+              <tr>
+                <th className="px-4 py-3 font-semibold">Community claim</th>
+                <th className="px-4 py-3 font-semibold">What would verify it</th>
+                <th className="px-4 py-3 font-semibold">Current status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-t border-survey-line align-top">
+                <th className="px-4 py-3 font-semibold text-foreground">It reveals upcoming weather</th>
+                <td className="px-4 py-3">Item use, revealed field, and the later weather event in one continuous recording.</td>
+                <td className="px-4 py-3">Unverified</td>
+              </tr>
+              <tr className="border-t border-survey-line align-top">
+                <th className="px-4 py-3 font-semibold text-foreground">It reveals a tree&apos;s maximum size</th>
+                <td className="px-4 py-3">The value shown at use and the same tree&apos;s final recorded state.</td>
+                <td className="px-4 py-3">Unverified</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <EvidenceNote>
+          Neither claim is presented as game fact. The official Roblox
+          description does not define this item, and conflicting community
+          summaries are a reason to collect gameplay evidence, not to average
+          the claims together.
+        </EvidenceNote>
       </ContentSection>
 
       <ContentSection title="How to capture one complete use">

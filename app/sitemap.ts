@@ -16,6 +16,11 @@ const ROUTE_LAST_MODIFIED = new Map<string, Date>([
   ["/guides/how-to-get-tickets", new Date("2026-08-25T00:00:00.000Z")],
   ["/guides/rebirth", new Date("2026-08-25T00:00:00.000Z")],
   ["/pets", new Date("2026-08-25T00:00:00.000Z")],
+  ["/guides/how-to-grow-big-trees", new Date("2026-08-28T00:00:00.000Z")],
+  ["/guides/fertilizer", new Date("2026-08-28T00:00:00.000Z")],
+  ["/guides/worms", new Date("2026-08-28T00:00:00.000Z")],
+  ["/guides/farmers-market", new Date("2026-08-29T00:00:00.000Z")],
+  ["/guides/seed-feeding-chair", new Date("2026-08-29T00:00:00.000Z")],
 ]);
 const ROUTES = [
   "/",
@@ -28,6 +33,11 @@ const ROUTES = [
   "/guides/prediction-potion",
   "/guides/how-to-get-tickets",
   "/guides/rebirth",
+  "/guides/how-to-grow-big-trees",
+  "/guides/fertilizer",
+  "/guides/worms",
+  "/guides/farmers-market",
+  "/guides/seed-feeding-chair",
   "/pets",
   "/seeds",
   "/seeds/compare",

@@ -4,8 +4,73 @@
     "type": "official",
     "title": "Greedy Growers official Roblox experience page",
     "url": "https://www.roblox.com/games/74102906764176/Greedy-Growers",
-    "capturedAt": "2026-08-04T00:00:00.000Z",
+    "capturedAt": "2026-08-28T10:30:00.000Z",
     "notes": "Source for the creator-published seed, plot, growth, harvest, and lightning loop."
+  },
+  {
+    "id": "official-game-api",
+    "type": "official",
+    "title": "Roblox public game details API for Greedy Growers",
+    "url": "https://games.roblox.com/v1/games?universeIds=10440833423",
+    "capturedAt": "2026-08-28T10:30:00.000Z",
+    "notes": "Official source for identity, creator, device support, server size, and the latest experience publish timestamp. The timestamp does not describe patch contents."
+  },
+  {
+    "id": "official-creator-group",
+    "type": "official",
+    "title": "Banjo Lady Games creator group on Roblox",
+    "url": "https://www.roblox.com/communities/830072163/Banjo-Lady-Games",
+    "capturedAt": "2026-08-28T10:30:00.000Z",
+    "notes": "Roblox identifies this group as the creator. No Discord or Trello URL was promoted from this source during the review."
+  },
+  {
+    "id": "codes-pcgamesn-report",
+    "type": "editorial",
+    "title": "PCGamesN Greedy Growers codes report",
+    "url": "https://www.pcgamesn.com/roblox/greedy-growers-codes",
+    "capturedAt": "2026-08-28T10:30:00.000Z",
+    "notes": "Independent editorial report for the ILOVECATS lead, claimed reward, and reported Settings redemption path. Not first-party gameplay verification."
+  },
+  {
+    "id": "codes-dexerto-report",
+    "type": "editorial",
+    "title": "Dexerto Greedy Growers codes report",
+    "url": "https://www.dexerto.fr/roblox/codes-greedy-growers-1655975/",
+    "capturedAt": "2026-08-28T10:30:00.000Z",
+    "notes": "Second independent editorial report for the ILOVECATS lead and claimed 100 Ticket reward. Still requires an uninterrupted current-version redemption capture."
+  },
+  {
+    "id": "seed-list-allthingshow",
+    "type": "editorial",
+    "title": "AllThings.How Update 1.2 Greedy Growers seed list",
+    "url": "https://allthings.how/all-greedy-growers-seeds-rarity-spawn-chance-and-cost-update-1-2/",
+    "capturedAt": "2026-08-28T10:30:00.000Z",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "notes": "Source-labelled lead for 20 reported seed names, rarities, prices, and river spawn chances. The official page does not confirm the roster or values, and later publishes require a retest."
+  },
+  {
+    "id": "big-tree-rng-video",
+    "type": "gameplay",
+    "title": "Tree RNG is INSANE",
+    "url": "https://www.youtube.com/watch?v=q7NfWoI6Y54",
+    "capturedAt": "2026-08-28T10:30:00.000Z",
+    "notes": "Player video used as a demand and gameplay-context lead. It is not a probability sample."
+  },
+  {
+    "id": "pets-guide-video",
+    "type": "gameplay",
+    "title": "BEST PETS in Greedy Growers Roblox",
+    "url": "https://www.youtube.com/watch?v=JMa5Y_ApEa8",
+    "capturedAt": "2026-08-28T10:30:00.000Z",
+    "notes": "Third-party pets walkthrough and player-question source. Passive, stacking, and item claims remain unverified."
+  },
+  {
+    "id": "reddit-player-questions",
+    "type": "community",
+    "title": "Reddit discussion with Greedy Growers new-player questions",
+    "url": "https://www.reddit.com/r/growagarden/comments/1vxtc2a/i_wont_lie_i_didnt_expect_this_to_happen_so/",
+    "capturedAt": "2026-08-28T10:30:00.000Z",
+    "notes": "Demand lead for lightning loss and the seed-feeding chair. A discussion does not establish the mechanic."
   },
   {
     "id": "lightning-loss-video",

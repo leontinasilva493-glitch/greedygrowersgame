@@ -123,6 +123,27 @@ describe("phase zero evidence manifest", () => {
     expect(result.success).toBe(false);
   });
 
+  it.each([
+    ["farmersMarketGuideReviewed", "farmersMarketGuideSourceIds"],
+    ["seedChairGuideReviewed", "seedChairGuideSourceIds"],
+  ] as const)(
+    "requires gameplay and independent support when %s is approved",
+    (reviewedField, sourceField) => {
+      const result = evidenceManifestSchema.safeParse({
+        auditDate: "2026-08-29",
+        versionBasis: { kind: "unverified", label: "unverified", sourceIds: [] },
+        publicationApprovals: {
+          beginnerGuideReviewed: false,
+          [reviewedField]: true,
+          [sourceField]: ["single-source"],
+        },
+        recordings: [],
+      });
+
+      expect(result.success).toBe(false);
+    },
+  );
+
   it("rejects approved evidence without review metadata", () => {
     const result = evidenceManifestSchema.safeParse({
       auditDate: "2026-07-27",

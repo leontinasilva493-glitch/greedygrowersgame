@@ -1,1 +1,782 @@
-[]
+[
+  {
+    "id": "oak-seed",
+    "slug": "oak-seed",
+    "name": "Oak Seed",
+    "rarity": "Common",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "Free",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 5",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "pine-seed",
+    "slug": "pine-seed",
+    "name": "Pine Seed",
+    "rarity": "Common",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$25",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 5",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "apple-seed",
+    "slug": "apple-seed",
+    "name": "Apple Seed",
+    "rarity": "Rare",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$200",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 9",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "peach-seed",
+    "slug": "peach-seed",
+    "name": "Peach Seed",
+    "rarity": "Rare",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$350",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 9",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "fig-seed",
+    "slug": "fig-seed",
+    "name": "Fig Seed",
+    "rarity": "Rare",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$500",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 9",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "orange-seed",
+    "slug": "orange-seed",
+    "name": "Orange Seed",
+    "rarity": "Epic",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$10K",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 15",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "lemon-seed",
+    "slug": "lemon-seed",
+    "name": "Lemon Seed",
+    "rarity": "Epic",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$15K",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 15",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "avocado-seed",
+    "slug": "avocado-seed",
+    "name": "Avocado Seed",
+    "rarity": "Epic",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$20K",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 15",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "cherry-seed",
+    "slug": "cherry-seed",
+    "name": "Cherry Seed",
+    "rarity": "Legendary",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$2.5M",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 120",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "mango-seed",
+    "slug": "mango-seed",
+    "name": "Mango Seed",
+    "rarity": "Legendary",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$5M",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 120",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "coconut-seed",
+    "slug": "coconut-seed",
+    "name": "Coconut Seed",
+    "rarity": "Legendary",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$10M",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 120",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "banana-seed",
+    "slug": "banana-seed",
+    "name": "Banana Seed",
+    "rarity": "Mythic",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$3B",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 300",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "starfruit-seed",
+    "slug": "starfruit-seed",
+    "name": "Starfruit Seed",
+    "rarity": "Mythic",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$4.5B",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 300",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "dragon-fruit-seed",
+    "slug": "dragon-fruit-seed",
+    "name": "Dragon Fruit Seed",
+    "rarity": "Mythic",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$7B",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 300",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "glowing-seed",
+    "slug": "glowing-seed",
+    "name": "Glowing Seed",
+    "rarity": "Celestial",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$500B",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 400",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "blooming-seed",
+    "slug": "blooming-seed",
+    "name": "Blooming Seed",
+    "rarity": "Celestial",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$750B",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 400",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "magic-seed",
+    "slug": "magic-seed",
+    "name": "Magic Seed",
+    "rarity": "Secret",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$500T",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 660",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "pizza-seed",
+    "slug": "pizza-seed",
+    "name": "Pizza Seed",
+    "rarity": "Secret",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$850T",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 660",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "diamond-seed",
+    "slug": "diamond-seed",
+    "name": "Diamond Seed",
+    "rarity": "Divine",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$1Qi",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 1,000",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  },
+  {
+    "id": "void-seed",
+    "slug": "void-seed",
+    "name": "Void Seed",
+    "rarity": "Divine",
+    "acquisition": "River belt (editorial report)",
+    "facts": [
+      {
+        "key": "official_baseline",
+        "value": "Seeds are bought from the river and planted in a plot.",
+        "sourceIds": [
+          "official-game-page"
+        ]
+      },
+      {
+        "key": "reported_price",
+        "value": "$1.75Qi",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      },
+      {
+        "key": "reported_spawn_chance",
+        "value": "1 in 1,000",
+        "sourceIds": [
+          "seed-list-allthingshow"
+        ]
+      }
+    ],
+    "status": "needs_recheck",
+    "gameVersion": "Update 1.2 (editorial report)",
+    "lastVerified": "2026-08-17T00:00:00.000Z",
+    "sourceIds": [
+      "official-game-page",
+      "seed-list-allthingshow"
+    ],
+    "indexing": "noindex",
+    "indexingReason": "The name, rarity, price, and spawn chance are editorial reports that need current-version gameplay verification."
+  }
+]

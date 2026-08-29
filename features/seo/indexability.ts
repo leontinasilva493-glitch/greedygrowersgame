@@ -13,6 +13,11 @@ export interface IndexabilitySnapshot {
   petsGuideVerified?: boolean;
   ticketsGuideVerified?: boolean;
   rebirthGuideVerified?: boolean;
+  bigTreeGuideVerified?: boolean;
+  fertilizerGuideVerified?: boolean;
+  wormsGuideVerified?: boolean;
+  farmersMarketGuideVerified?: boolean;
+  seedChairGuideVerified?: boolean;
   codes: {
     redeemUiVerified: boolean;
     hasHttpsSource: boolean;
@@ -103,6 +108,31 @@ export function getPageIndexability(
       return decision(
         snapshot.rebirthGuideVerified === true,
         "Requires a reviewed current-version before-and-after record of cost, resets, rewards, and unlocks.",
+      );
+    case "/guides/how-to-grow-big-trees":
+      return decision(
+        snapshot.bigTreeGuideVerified === true,
+        "Requires current-version gameplay plus independent support for tree-size factors and outcomes.",
+      );
+    case "/guides/fertilizer":
+      return decision(
+        snapshot.fertilizerGuideVerified === true,
+        "Requires a reviewed current-version fertilizer panel, application record, and controlled outcome.",
+      );
+    case "/guides/worms":
+      return decision(
+        snapshot.wormsGuideVerified === true,
+        "Requires current-version worm acquisition, use, effect, duration, and consumption evidence.",
+      );
+    case "/guides/farmers-market":
+      return decision(
+        snapshot.farmersMarketGuideVerified === true,
+        "Requires a reviewed current-version order, delivery, reward, and refresh cycle.",
+      );
+    case "/guides/seed-feeding-chair":
+      return decision(
+        snapshot.seedChairGuideVerified === true,
+        "Requires a reviewed current-version request, seed consumption, progress, and completion record.",
       );
     case "/updates":
       return decision(

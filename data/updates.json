@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": "roblox-publish-2026-08-27",
+    "type": "game",
+    "publishedAt": "2026-08-27T11:39:48.1483969Z",
+    "gameVersion": "unverified",
+    "summary": "Roblox's official game API moved the experience updated timestamp to 2026-08-27T11:39:48.1483969Z. This is a verified publish signal, not a description of patch contents.",
+    "sourceIds": ["official-game-api"],
+    "invalidatesPriorData": true,
+    "status": "verified",
+    "reviewState": "approved"
+  }
+]

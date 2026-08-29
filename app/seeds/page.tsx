@@ -29,9 +29,9 @@ async function loadSeedsPageData() {
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
-    title: "Greedy Growers Seeds - Evidence Database",
+    title: "Greedy Growers Seed List, Prices & Rarities",
     description:
-      "Browse sourced Greedy Growers seed records with current-version counts, observed value ranges, and evidence links.",
+      "Browse a source-labelled Greedy Growers seed list with reported prices, rarities, river spawn chances, version warnings, and evidence status.",
     canonical: "/seeds",
     route: "/seeds",
     snapshot: await getIndexabilitySnapshot(),
@@ -57,6 +57,24 @@ export default async function SeedsPage() {
       status={`${gate.reason} Page is ${gate.index ? "index" : "noindex"}.`}
       visual={<GameScene asset={gameSceneAssets.seeds} preload />}
     >
+      <ContentSection title="What seeds are reported in Greedy Growers?">
+        <p>
+          An independent Update 1.2 editorial report lists 20 seeds from Oak
+          through Void. Roblox&apos;s official description confirms only that a
+          player buys a seed from the river and plants it in a plot; it does not
+          publish the roster, rarity, price, or spawn chance.
+        </p>
+        <p>
+          The table therefore labels price and spawn values as reported. A newer
+          Roblox publish occurred after the source article, so every entry stays
+          Needs Recheck and no seed receives an indexable detail page yet.
+        </p>
+        <EvidenceNote>
+          Reported price is not observed cost. Reported spawn chance is not a
+          measured probability. Neither field is used as a calculator default.
+        </EvidenceNote>
+      </ContentSection>
+
       <SeedTable
         seeds={seeds}
         sources={sources}
@@ -65,7 +83,7 @@ export default async function SeedsPage() {
         currentVersion={gameVersion.version}
       />
 
-      <ContentSection title="Methodology">
+      <ContentSection title="How is the seed list verified?">
         <p>
           Search and sort are interface tools only. They never promote stale,
           pending, rejected, or unsupported records into sample counts.
@@ -79,6 +97,22 @@ export default async function SeedsPage() {
           A seed can appear here for transparency while still remaining
           non-indexable for a detail page.
         </EvidenceNote>
+      </ContentSection>
+
+      <ContentSection title="What is the best seed in Greedy Growers?">
+        <p>
+          The current evidence cannot support one permanent best seed. Purchase
+          price, growth time, tree-size outcome, lightning exposure, mutation,
+          fertilizer cost, and failed attempts answer different questions and
+          have not been measured together in the current build.
+        </p>
+        <p>
+          Use the reported list to identify what exists, then compare one seed
+          at a time with the same start balance, stop rule, and elapsed-time
+          boundary. A future ranking should be split by budget and player goal,
+          not copied from the most expensive row.
+        </p>
+        <InlineCta href="/guides/how-to-grow-big-trees">Test tree size without fake odds</InlineCta>
       </ContentSection>
 
       <ContentSection title="Next step">

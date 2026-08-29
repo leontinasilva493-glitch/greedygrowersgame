@@ -11,9 +11,9 @@ import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 const route = "/pets";
-const title = "Greedy Growers Pets: All Pets, Eggs & Passives (2026)";
+const title = "Greedy Growers Pets, Eggs & Passives";
 const description =
-  "See every Greedy Growers pet, egg source, Ticket cost, passive effect, and verification date, plus how to hatch and equip pets.";
+  "Check the evidence status of Greedy Growers pets, eggs, passives, Ticket costs, equip behavior, and stacking before spending resources.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
@@ -108,6 +108,23 @@ export default async function PetsPage() {
         </p>
       </ContentSection>
 
+      <ContentSection title="Greedy Growers egg and hatching questions">
+        <div className="grid gap-4 md:grid-cols-3">
+          <article className="border-l-2 border-lightning bg-surface px-4 py-4">
+            <h3 className="font-display text-xl font-semibold text-foreground">Where do eggs come from?</h3>
+            <p className="mt-2 text-sm leading-6">No complete current source list has passed review. Capture the shop, task, reward, or drop screen together with the displayed requirement.</p>
+          </article>
+          <article className="border-l-2 border-grow bg-surface px-4 py-4">
+            <h3 className="font-display text-xl font-semibold text-foreground">How long does an egg take to hatch?</h3>
+            <p className="mt-2 text-sm leading-6">The current evidence does not establish a universal timer. Record the trigger, start time, visible countdown, and hatch result in one sequence.</p>
+          </article>
+          <article className="border-l-2 border-risk bg-surface px-4 py-4">
+            <h3 className="font-display text-xl font-semibold text-foreground">What happens when a duplicate pet hatches?</h3>
+            <p className="mt-2 text-sm leading-6">Duplicate handling is unknown until the resulting inventory, slots, passive text, and any merge or replacement prompt are captured.</p>
+          </article>
+        </div>
+      </ContentSection>
+
       <ContentSection title="Choose a pet without a fabricated tier list">
         <p>
           Start with the task the pet must help: protect working capital, shorten
@@ -120,6 +137,39 @@ export default async function PetsPage() {
           <InlineCta href="/guides/how-to-get-tickets">Plan the Ticket route</InlineCta>
           <InlineCta href="/submit-data">Submit a current pet capture</InlineCta>
         </div>
+      </ContentSection>
+
+      <ContentSection title="Test a pet passive against one goal">
+        <div className="overflow-x-auto border border-survey-line bg-surface">
+          <table className="w-full min-w-[700px] border-collapse text-left text-sm">
+            <thead className="bg-surface-raised text-foreground">
+              <tr>
+                <th className="px-4 py-3 font-semibold">Player goal</th>
+                <th className="px-4 py-3 font-semibold">Keep constant</th>
+                <th className="px-4 py-3 font-semibold">Measure</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ["Faster growth", "Same seed, plot, fertilizer, and timer", "Visible size or stage at the same elapsed time"],
+                ["Higher sale value", "Same seed and harvest point", "Cash before and after sale"],
+                ["Mutation support", "Same tree and weather window", "Named mutation shown by the game UI"],
+                ["Duplicate stacking", "One pet versus two copies", "The same visible output under both setups"],
+              ].map(([goal, controls, measure]) => (
+                <tr key={goal} className="border-t border-survey-line align-top">
+                  <th className="px-4 py-3 font-semibold text-foreground">{goal}</th>
+                  <td className="px-4 py-3">{controls}</td>
+                  <td className="px-4 py-3">{measure}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <EvidenceNote>
+          Community videos are useful for locating pet interfaces, but narration
+          and edited highlights do not establish hidden odds or stacking. Record
+          the visible in-game wording and a controlled before-and-after result.
+        </EvidenceNote>
       </ContentSection>
 
       <ContentSection title="Greedy Growers pets FAQ">

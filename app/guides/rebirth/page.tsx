@@ -11,9 +11,9 @@ import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 const route = "/guides/rebirth";
-const title = "Greedy Growers Rebirth Guide: Costs, Rewards & Reset Rules";
+const title = "Greedy Growers Rebirth Guide";
 const description =
-  "See verified Greedy Growers Rebirth costs, rewards, reset rules, unlocks, and the best time to rebirth without wasting progress.";
+  "Use a before-and-after Greedy Growers Rebirth checklist to verify costs, resets, persistent items, rewards, and unlocks without risking assumptions.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
@@ -112,6 +112,31 @@ export default async function RebirthGuidePage() {
           action, and it shows whether the rebuild starts with the state the
           confirmation panel promised.
         </p>
+      </ContentSection>
+
+      <ContentSection title="Rebirth persistence matrix">
+        <div className="overflow-x-auto border border-survey-line bg-surface">
+          <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+            <thead className="bg-surface-raised text-foreground">
+              <tr>
+                <th className="px-4 py-3 font-semibold">State</th>
+                <th className="px-4 py-3 font-semibold">Before</th>
+                <th className="px-4 py-3 font-semibold">After</th>
+                <th className="px-4 py-3 font-semibold">Current evidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              {["Money", "Seeds and inventory", "Pets and equipped effects", "Tickets", "Plots and unlocks"].map((state) => (
+                <tr key={state} className="border-t border-survey-line align-top">
+                  <th className="px-4 py-3 font-semibold text-foreground">{state}</th>
+                  <td className="px-4 py-3">Record visible value</td>
+                  <td className="px-4 py-3">Record immediately</td>
+                  <td className="px-4 py-3">Unknown until captured</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </ContentSection>
 
       <ContentSection title="Decide when a verified Rebirth is worth it">

@@ -62,7 +62,16 @@ export function isSystemGuideVerified(
   manifest: EvidenceManifest,
   sources: Source[],
   currentVersion: string,
-  guide: "predictionPotion" | "pets" | "tickets" | "rebirth",
+  guide:
+    | "predictionPotion"
+    | "pets"
+    | "tickets"
+    | "rebirth"
+    | "bigTree"
+    | "fertilizer"
+    | "worms"
+    | "farmersMarket"
+    | "seedChair",
 ) {
   if (currentVersion === "unverified") return false;
 
@@ -72,12 +81,22 @@ export function isSystemGuideVerified(
     pets: approval.petsGuideReviewed,
     tickets: approval.ticketsGuideReviewed,
     rebirth: approval.rebirthGuideReviewed,
+    bigTree: approval.bigTreeGuideReviewed,
+    fertilizer: approval.fertilizerGuideReviewed,
+    worms: approval.wormsGuideReviewed,
+    farmersMarket: approval.farmersMarketGuideReviewed,
+    seedChair: approval.seedChairGuideReviewed,
   };
   const sourceIdsByGuide = {
     predictionPotion: approval.predictionPotionGuideSourceIds,
     pets: approval.petsGuideSourceIds,
     tickets: approval.ticketsGuideSourceIds,
     rebirth: approval.rebirthGuideSourceIds,
+    bigTree: approval.bigTreeGuideSourceIds,
+    fertilizer: approval.fertilizerGuideSourceIds,
+    worms: approval.wormsGuideSourceIds,
+    farmersMarket: approval.farmersMarketGuideSourceIds,
+    seedChair: approval.seedChairGuideSourceIds,
   };
   const sourceIds = [...new Set(sourceIdsByGuide[guide])];
   if (!reviewedByGuide[guide] || sourceIds.length < 2) return false;
@@ -187,6 +206,36 @@ export async function getIndexabilitySnapshot(): Promise<IndexabilitySnapshot> {
       gameVersion.version,
       "rebirth",
     ),
+    bigTreeGuideVerified: isSystemGuideVerified(
+      currentEvidenceManifest,
+      sources,
+      gameVersion.version,
+      "bigTree",
+    ),
+    fertilizerGuideVerified: isSystemGuideVerified(
+      currentEvidenceManifest,
+      sources,
+      gameVersion.version,
+      "fertilizer",
+    ),
+    wormsGuideVerified: isSystemGuideVerified(
+      currentEvidenceManifest,
+      sources,
+      gameVersion.version,
+      "worms",
+    ),
+    farmersMarketGuideVerified: isSystemGuideVerified(
+      currentEvidenceManifest,
+      sources,
+      gameVersion.version,
+      "farmersMarket",
+    ),
+    seedChairGuideVerified: isSystemGuideVerified(
+      currentEvidenceManifest,
+      sources,
+      gameVersion.version,
+      "seedChair",
+    ),
     codes: {
       redeemUiVerified: codes.redeemUiVerified,
       hasHttpsSource: codes.sourceIds.some((id) =>
@@ -196,6 +245,7 @@ export async function getIndexabilitySnapshot(): Promise<IndexabilitySnapshot> {
       usefulContent:
         codes.active.length > 0 ||
         codes.expired.length > 0 ||
+        codes.reported.length > 0 ||
         codes.sourceIds.length > 0,
     },
   };
