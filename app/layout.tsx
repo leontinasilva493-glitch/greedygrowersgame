@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 
 import { Analytics } from "@/components/analytics/Analytics";
+import { AnalyticsConsent } from "@/components/analytics/AnalyticsConsent";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { siteConfig } from "@/config/site";
@@ -70,6 +71,9 @@ export default function RootLayout({
         <SiteHeader />
         <div id="main-content" className="min-w-0 flex-1" tabIndex={-1}>
           {children}
+        </div>
+        <div className="mx-auto w-full max-w-[1180px] px-4 sm:px-6">
+          <AnalyticsConsent />
         </div>
         <SiteFooter />
       </body>

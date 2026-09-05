@@ -190,7 +190,7 @@ test("keeps the live result directly after the form on mobile", async ({
     name: "Calculator evidence reminders",
   });
   const analytics = page.getByRole("complementary", {
-    name: "Optional analytics",
+    name: "Optional analytics & ads",
   });
 
   const positions = await Promise.all([
@@ -219,7 +219,7 @@ test("shows a visible evidence status without presenting game presets", async ({
   const status = page.getByRole("region", { name: "Calculator data status" });
   await expect(status).toContainText("Player-input only");
   await expect(status).toContainText("Version unverified");
-  await expect(status).toContainText("Checked Aug 4, 2026");
+  await expect(status).toContainText("Checked Aug 28, 2026");
   await expect(status).toContainText("No official lightning probability");
 });
 
@@ -269,7 +269,7 @@ test("keeps analytics denied by default and emits value-free events after consen
   ]);
   expect(calls.filter(([command]) => command === "event")).toEqual([]);
 
-  await page.getByRole("button", { name: "Allow analytics" }).click();
+  await page.getByRole("button", { name: "Allow analytics & ads" }).click();
   await page.getByRole("tab", { name: "Run profit" }).click();
   await page.getByLabel("Attempt cost").fill("100");
   await page.getByLabel("Successful harvest value").fill("600");

@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 
+import { AdsterraNativeBanner } from "@/components/ads/AdsterraNativeBanner";
+
 interface ContentPageProps {
   eyebrow: string;
   title: string;
@@ -43,6 +45,7 @@ export function ContentPage({
         ) : null}
         {visual ? <div className="relative z-10 mt-7 max-w-4xl">{visual}</div> : null}
       </header>
+      <AdsterraNativeBanner />
       <div className="mt-8 min-w-0">{children}</div>
     </main>
   );

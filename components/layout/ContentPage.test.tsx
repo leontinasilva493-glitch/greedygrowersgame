@@ -1,5 +1,9 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@/components/ads/AdsterraNativeBanner", () => ({
+  AdsterraNativeBanner: () => <aside aria-label="Advertisement" />,
+}));
 
 import { ContentPage } from "./ContentPage";
 
@@ -20,6 +24,7 @@ describe("ContentPage", () => {
     expect(markup.match(/<main/g)).toHaveLength(1);
     expect(markup.match(/<h1/g)).toHaveLength(1);
     expect(markup).toContain('aria-label="Risk scene"');
+    expect(markup).toContain('aria-label="Advertisement"');
     expect(markup.indexOf('aria-label="Risk scene"')).toBeLessThan(
       markup.indexOf("Page body"),
     );
