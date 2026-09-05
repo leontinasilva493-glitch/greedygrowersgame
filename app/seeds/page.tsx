@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import {
   ContentPage,
@@ -29,7 +30,7 @@ async function loadSeedsPageData() {
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
-    title: "Greedy Growers Seed List, Prices & Rarities",
+    title: "Greedy Growers Seeds: Prices, Rarity & Spawns",
     description:
       "Browse a source-labelled Greedy Growers seed list with reported prices, rarities, river spawn chances, version warnings, and evidence status.",
     canonical: "/seeds",
@@ -52,8 +53,8 @@ export default async function SeedsPage() {
   return (
     <ContentPage
       eyebrow="Seeds / Evidence-first directory"
-      title="Greedy Growers seeds"
-      description="This list stays useful even before every seed earns a detail page. Search, filter, and compare only what the current evidence can support."
+      title="Greedy Growers seeds: prices, rarity and spawn chance"
+      description="Look up the reported seed roster, price, rarity, and river spawn fields, then check the source and version status before using a value in your own run."
       status={`${gate.reason} Page is ${gate.index ? "index" : "noindex"}.`}
       visual={<GameScene asset={gameSceneAssets.seeds} preload />}
     >
@@ -73,6 +74,11 @@ export default async function SeedsPage() {
           Reported price is not observed cost. Reported spawn chance is not a
           measured probability. Neither field is used as a calculator default.
         </EvidenceNote>
+        <p>
+          Need one answer quickly? Search by seed name, filter the reported
+          rarity, or sort a reported price or spawn column below. Then open the
+          row&apos;s evidence state before treating the number as current.
+        </p>
       </ContentSection>
 
       <SeedTable
@@ -115,10 +121,54 @@ export default async function SeedsPage() {
         <InlineCta href="/guides/how-to-grow-big-trees">Test tree size without fake odds</InlineCta>
       </ContentSection>
 
+      <ContentSection title="Choose the seed question you are trying to answer">
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="border border-survey-line bg-surface-raised p-4">
+            <h3 className="font-semibold text-foreground">Plan a purchase or harvest</h3>
+            <p className="mt-2">
+              Use the reported list as a lookup, then carry only values you can
+              verify into the{" "}
+              <Link href="/" className="font-semibold text-lightning hover:underline">
+                harvest calculator
+              </Link>{" "}
+              or the{" "}
+              <Link
+                href="/guides/how-to-make-money"
+                className="font-semibold text-lightning hover:underline"
+              >
+                money-run method
+              </Link>
+              .
+            </p>
+          </div>
+          <div className="border border-survey-line bg-surface-raised p-4">
+            <h3 className="font-semibold text-foreground">Investigate a result</h3>
+            <p className="mt-2">
+              Record pets, fertilizer, weather, and other conditions separately.
+              Continue with the{" "}
+              <Link href="/pets" className="font-semibold text-lightning hover:underline">
+                pets evidence hub
+              </Link>{" "}
+              or the{" "}
+              <Link
+                href="/guides/fertilizer"
+                className="font-semibold text-lightning hover:underline"
+              >
+                fertilizer checklist
+              </Link>{" "}
+              instead of assigning every change to the seed.
+            </p>
+          </div>
+        </div>
+      </ContentSection>
+
       <ContentSection title="Next step">
         <InlineCta href="/seeds/compare">Compare two seeds side by side</InlineCta>
         <div className="mt-4">
           <InlineCta href="/">Open the harvest calculator</InlineCta>
+        </div>
+        <div className="mt-4">
+          <InlineCta href="/guides">Browse the Greedy Growers wiki hub</InlineCta>
         </div>
       </ContentSection>
     </ContentPage>

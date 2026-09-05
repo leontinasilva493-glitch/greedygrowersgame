@@ -41,6 +41,7 @@ const INDEXED_FIXED_ROUTES = new Set([
   "/guides/beginner-guide",
   "/guides/when-to-harvest",
   "/guides/how-to-make-money",
+  "/official-links",
 ]);
 
 const NOINDEX_FIXED_ROUTES = new Set([
@@ -99,6 +100,11 @@ export function getPageIndexability(
         snapshot.petsGuideVerified === true,
         "Requires a reviewed current-version pet, egg, acquisition, and passive evidence set.",
       );
+    case "/pets/majestic-egg":
+      return decision(
+        false,
+        "Requires a current acquisition capture plus reviewed egg, pet, hatch, and passive evidence.",
+      );
     case "/guides/how-to-get-tickets":
       return decision(
         snapshot.ticketsGuideVerified === true,
@@ -124,6 +130,11 @@ export function getPageIndexability(
         snapshot.wormsGuideVerified === true,
         "Requires current-version worm acquisition, use, effect, duration, and consumption evidence.",
       );
+    case "/guides/miracle-grow":
+      return decision(
+        false,
+        "Requires a current item card plus reviewed acquisition, target, effect, duration, consumption, and version evidence.",
+      );
     case "/guides/farmers-market":
       return decision(
         snapshot.farmersMarketGuideVerified === true,
@@ -133,6 +144,11 @@ export function getPageIndexability(
       return decision(
         snapshot.seedChairGuideVerified === true,
         "Requires a reviewed current-version request, seed consumption, progress, and completion record.",
+      );
+    case "/guides/weather-events":
+      return decision(
+        false,
+        "Requires current continuous captures for event identity, duration, target, mutation, and value effect.",
       );
     case "/updates":
       return decision(

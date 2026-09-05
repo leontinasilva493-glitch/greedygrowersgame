@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
+import { SourceLedger } from "@/components/content/SourceLedger";
 import {
   ContentPage,
   ContentSection,
   EvidenceNote,
   InlineCta,
 } from "@/components/layout/ContentPage";
+import { dataRepository } from "@/features/data/repository";
 import { getPageIndexability } from "@/features/seo/indexability";
 import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
@@ -33,7 +35,11 @@ const methodLedger = [
 ] as const;
 
 export default async function TicketsGuidePage() {
-  const pageGate = getPageIndexability(route, await getIndexabilitySnapshot());
+  const [snapshot, sources] = await Promise.all([
+    getIndexabilitySnapshot(),
+    dataRepository.getSources(),
+  ]);
+  const pageGate = getPageIndexability(route, snapshot);
 
   return (
     <ContentPage
@@ -77,6 +83,20 @@ export default async function TicketsGuidePage() {
               ))}
             </tbody>
           </table>
+        </div>
+      </ContentSection>
+
+      <ContentSection title="What current coverage agrees on—and what it cannot prove">
+        <p>
+          Recent competitor coverage repeatedly connects Tickets with the
+          Farmer&apos;s Market, codes, and pet eggs. The current source set does not
+          establish the exact market payout, refresh interval, egg prices,
+          whether balances persist through Rebirth, or whether any other earning
+          route exists. Those are separate fields to test, not one combined fact.
+        </p>
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
+          <InlineCta href="/guides/farmers-market">Capture a complete market order</InlineCta>
+          <InlineCta href="/pets/majestic-egg">Review a reported Ticket spending path</InlineCta>
         </div>
       </ContentSection>
 
@@ -148,6 +168,32 @@ export default async function TicketsGuidePage() {
             <p className="mt-2">Capture the same interface before and after its displayed timer or state change; do not infer a schedule from an old article.</p>
           </div>
         </div>
+      </ContentSection>
+
+      <ContentSection title="Sources and claim status">
+        <SourceLedger
+          sources={sources}
+          entries={[
+            {
+              sourceId: "official-game-page",
+              label: "Official baseline",
+              claimStatus: "No Ticket system detail published",
+              note: "The creator-controlled description does not define how Tickets are earned, spent, refreshed, or retained.",
+            },
+            {
+              sourceId: "tickets-competitor-report",
+              label: "Third-party guide",
+              claimStatus: "Reported market, code, and egg route",
+              note: "Useful for locating the interfaces to test. Payouts, timing, and prices remain unverified in this project.",
+            },
+            {
+              sourceId: "codes-pcgamesn-report",
+              label: "Independent editorial check",
+              claimStatus: "Reported code reward only",
+              note: "Supports one code lead but does not prove the broader Ticket economy or a current successful redemption.",
+            },
+          ]}
+        />
       </ContentSection>
     </ContentPage>
   );

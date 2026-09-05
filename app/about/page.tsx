@@ -69,6 +69,7 @@ export default function AboutPage() {
           Avoid login prompts or downloads from sites that imitate Roblox or
           claim to be an official Greedy Growers resource without a creator link.
         </EvidenceNote>
+        <InlineCta href="/official-links">Check Discord, Trello and wiki status</InlineCta>
       </ContentSection>
 
       <ContentSection title="Independence and trademarks">
