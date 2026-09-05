@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 
+import { SourceLedger } from "@/components/content/SourceLedger";
 import {
   ContentPage,
   ContentSection,
   EvidenceNote,
   InlineCta,
 } from "@/components/layout/ContentPage";
+import { dataRepository } from "@/features/data/repository";
 import { getPageIndexability } from "@/features/seo/indexability";
 import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 const route = "/pets";
-const title = "Greedy Growers Pets, Eggs & Passives";
+const title = "Greedy Growers Pets: Eggs, Passives & Best Uses";
 const description =
-  "Check the evidence status of Greedy Growers pets, eggs, passives, Ticket costs, equip behavior, and stacking before spending resources.";
+  "Use this Greedy Growers pets hub to check eggs, acquisition, equip behavior, passives, and goal-based uses without relying on an invented pet ranking.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
@@ -33,13 +35,33 @@ const captureFields = [
   ["Version binding", "Capture date, platform, and the current experience state for every record."],
 ] as const;
 
+const petWorkflow = [
+  ["Acquire", "Capture the shop, reward, task, or drop screen and every displayed requirement."],
+  ["Egg", "Record the egg identity, contents shown by the game, placement, and hatch sequence."],
+  ["Equip", "Show the available slots, selected pet, duplicates, and the state after rejoining."],
+  ["Passive", "Capture the complete wording, trigger, target, timer, and a controlled result."],
+] as const;
+
+const playerGoals = [
+  ["Growth", "Test the same seed and elapsed time with one pet variable.", "/guides/how-to-grow-big-trees", "Open the growth guide"],
+  ["Seeds", "Check whether a claim changes acquisition, planting, or a visible seed value.", "/seeds", "Open the seed lookup"],
+  ["Mutations", "Separate a pet trigger from weather and every other mutation condition.", "/guides/mutations", "Review mutation evidence"],
+  ["Eggs", "Verify the acquisition requirement and hatch result in one continuous capture.", "/pets/majestic-egg", "Review the Majestic Egg field note"],
+  ["Lightning", "Measure only a visible interaction; do not infer strike odds or protection.", "/guides/weather-events", "Review weather evidence"],
+  ["XP", "Capture the XP label, starting state, trigger, target, and resulting change.", "/submit-data", "Submit an XP capture"],
+] as const;
+
 export default async function PetsPage() {
-  const pageGate = getPageIndexability(route, await getIndexabilitySnapshot());
+  const [snapshot, sources] = await Promise.all([
+    getIndexabilitySnapshot(),
+    dataRepository.getSources(),
+  ]);
+  const pageGate = getPageIndexability(route, snapshot);
 
   return (
     <ContentPage
       eyebrow="Field index / Pets"
-      title="Greedy Growers pets: eggs, passives, and evidence"
+      title="Greedy Growers pets: eggs, passives, and best uses"
       description="No complete current-version pet catalog has passed review. This hub shows the exact fields needed for a useful pet list and keeps unverified names, prices, odds, and rankings out of the record."
       status={`${pageGate.reason} Page is ${pageGate.index ? "index" : "noindex"}.`}
     >
@@ -56,6 +78,47 @@ export default async function PetsPage() {
           appearing on several guide sites is a research lead, not a verified
           record for this page.
         </EvidenceNote>
+      </ContentSection>
+
+      <ContentSection title="Verify a pet from acquisition to passive">
+        <div className="grid gap-3 sm:grid-cols-2">
+          {petWorkflow.map(([step, detail], index) => (
+            <article key={step} className="border border-survey-line bg-surface px-4 py-4">
+              <p className="font-mono text-xs uppercase tracking-[0.14em] text-lightning">
+                Step {index + 1}
+              </p>
+              <h3 className="mt-2 font-display text-xl font-semibold text-foreground">
+                {step}
+              </h3>
+              <p className="mt-2 text-sm leading-6">{detail}</p>
+            </article>
+          ))}
+        </div>
+        <EvidenceNote>
+          Acquisition, egg, equip, and passive belong to one evidence chain.
+          A pet name or isolated passive screenshot cannot establish the full
+          record by itself.
+        </EvidenceNote>
+      </ContentSection>
+
+      <ContentSection title="Choose a pet task before comparing uses">
+        <p>
+          Start with the player outcome you can observe. These paths define the
+          next question to test; they do not claim that any pet improves it.
+          Role recommendations will appear only after comparable current-version
+          records use the same controls and measurements.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {playerGoals.map(([goal, detail, href, action]) => (
+            <article key={goal} className="border-l-2 border-grow bg-surface px-4 py-4">
+              <h3 className="font-display text-xl font-semibold text-foreground">{goal}</h3>
+              <p className="mt-2 text-sm leading-6">{detail}</p>
+              <div className="mt-2">
+                <InlineCta href={href}>{action}</InlineCta>
+              </div>
+            </article>
+          ))}
+        </div>
       </ContentSection>
 
       <ContentSection title="Verified pet catalog">
@@ -91,6 +154,15 @@ export default async function PetsPage() {
             </article>
           ))}
         </div>
+      </ContentSection>
+
+      <ContentSection title="Majestic Egg follow-up">
+        <p>
+          Recent editorial guides describe a Majestic Egg with several reported
+          acquisition routes and a five-pet pool. That cluster is useful enough
+          for its own field note, but it does not fill this hub&apos;s verified table
+          until the live egg and resulting pet card are captured together.
+        </p>
       </ContentSection>
 
       <ContentSection title="How to document an egg and hatch">
@@ -135,7 +207,7 @@ export default async function PetsPage() {
         </p>
         <div className="flex flex-wrap gap-x-6 gap-y-2">
           <InlineCta href="/guides/how-to-get-tickets">Plan the Ticket route</InlineCta>
-          <InlineCta href="/submit-data">Submit a current pet capture</InlineCta>
+          <InlineCta href="/guides">Browse the Greedy Growers wiki</InlineCta>
         </div>
       </ContentSection>
 
@@ -187,6 +259,32 @@ export default async function PetsPage() {
             <p className="mt-2">That behavior needs a controlled equip test with the same target and otherwise unchanged conditions.</p>
           </div>
         </div>
+      </ContentSection>
+
+      <ContentSection title="Sources and claim status">
+        <SourceLedger
+          sources={sources}
+          entries={[
+            {
+              sourceId: "official-game-page",
+              label: "Official baseline",
+              claimStatus: "No public pet catalog",
+              note: "The creator-controlled description confirms the core loop but does not publish eggs, pets, passives, odds, or stacking.",
+            },
+            {
+              sourceId: "pets-reddit-report",
+              label: "Community report",
+              claimStatus: "Player-interest and distribution signal",
+              note: "The forum post points to a pet guide; it is not an independent record of the live game UI.",
+            },
+            {
+              sourceId: "majestic-egg-allthings-report",
+              label: "Third-party guide",
+              claimStatus: "Reported pet and egg details",
+              note: "Useful for collecting names and questions to verify, not for filling a verified catalog or best-pet ranking.",
+            },
+          ]}
+        />
       </ContentSection>
     </ContentPage>
   );

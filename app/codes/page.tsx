@@ -13,9 +13,9 @@ import { getPageIndexability } from "@/features/seo/indexability";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 const route = "/codes";
-const title = "Greedy Growers Codes: Working & Reported";
+const title = "Greedy Growers Codes (Sep 2026): Reported";
 const description =
-  "Track working and reported Greedy Growers codes with dated source checks, claimed rewards, redemption safety, and clear gameplay-verification status.";
+  "Check reported Greedy Growers codes for September 2026, see working and expired status separately, and follow a safe current-game redemption check.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
@@ -35,11 +35,34 @@ export default async function CodesPage() {
   ]);
   const gate = getPageIndexability(route, snapshot);
   const sourceById = new Map(sources.map((source) => [source.id, source]));
+  const statusSummary = [
+    {
+      label: "Working",
+      count: codes.active.length,
+      detail:
+        codes.active.length > 0
+          ? "Passed the current gameplay redemption gate."
+          : "No current gameplay redemption has passed review.",
+    },
+    {
+      label: "Reported",
+      count: codes.reported.length,
+      detail: "Independent-source leads that still need a live redemption.",
+    },
+    {
+      label: "Expired",
+      count: codes.expired.length,
+      detail:
+        codes.expired.length > 0
+          ? "Recorded as failed or expired with dated evidence."
+          : "No code has a reviewed expired record yet.",
+    },
+  ] as const;
 
   return (
     <ContentPage
       eyebrow="Codes / Freshness checked"
-      title="Greedy Growers codes"
+      title="Greedy Growers codes: reported and working status"
       description="No code is labelled active until a current in-game redemption succeeds. Independent reports are still useful leads, so they are listed separately with claimed rewards and source dates."
       status={`Checked ${formatDate(codes.lastChecked)} · ${gate.reason} Page is ${gate.index ? "index" : "noindex"}.`}
     >
@@ -54,6 +77,31 @@ export default async function CodesPage() {
           does not prove that the code still works in the current server build.
         </p>
       </section>
+
+      <ContentSection title="Working, reported, and expired status">
+        <div className="grid gap-3 sm:grid-cols-3">
+          {statusSummary.map((item) => (
+            <article
+              key={item.label}
+              className="border border-survey-line bg-surface px-4 py-4"
+            >
+              <p className="font-mono text-xs uppercase tracking-[0.14em] text-lightning">
+                {item.label}
+              </p>
+              <p className="mt-2 font-display text-3xl font-semibold text-foreground">
+                {item.count}
+              </p>
+              <p className="mt-2 text-sm leading-6">{item.detail}</p>
+            </article>
+          ))}
+        </div>
+        <EvidenceNote>
+          Working means this project captured the current code field, response,
+          and reward change in one uninterrupted check. Reported means a lead is
+          ready to test. Expired requires a dated failed or expired result; it is
+          not inferred from age alone.
+        </EvidenceNote>
+      </ContentSection>
 
       <ContentSection title="Reported Greedy Growers code leads">
         <div className="overflow-x-auto border border-survey-line">
@@ -102,6 +150,42 @@ export default async function CodesPage() {
         </EvidenceNote>
       </ContentSection>
 
+      <ContentSection title="Working Greedy Growers codes">
+        {codes.active.length > 0 ? (
+          <ul className="grid gap-3">
+            {codes.active.map((entry) => (
+              <li key={entry.code} className="border border-survey-line bg-surface px-4 py-4">
+                <span className="font-mono font-semibold text-foreground">{entry.code}</span>
+                <span className="ml-3 text-sm">Verified {formatDate(entry.checkedAt)}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>
+            No gameplay-verified working code is available. Reported leads stay
+            outside this section until the complete redemption path is recorded.
+          </p>
+        )}
+      </ContentSection>
+
+      <ContentSection title="Expired Greedy Growers codes">
+        {codes.expired.length > 0 ? (
+          <ul className="grid gap-3">
+            {codes.expired.map((entry) => (
+              <li key={entry.code} className="border border-survey-line bg-surface px-4 py-4">
+                <span className="font-mono font-semibold text-foreground">{entry.code}</span>
+                <span className="ml-3 text-sm">Checked {formatDate(entry.checkedAt)}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>
+            No code has a reviewed expired record. An untested or old report is
+            still reported, not automatically expired.
+          </p>
+        )}
+      </ContentSection>
+
       <ContentSection title="How should I redeem a reported code safely?">
         <ol className="list-decimal space-y-3 pl-5">
           <li>Open Greedy Growers from the official Roblox experience page.</li>
@@ -113,6 +197,20 @@ export default async function CodesPage() {
           Editorial sources describe a Settings-and-Submit path, but this site
           has not yet captured that interface in the current build. Treat the
           steps above as a safe verification procedure rather than a promise.
+        </p>
+      </ContentSection>
+
+      <ContentSection title="What turns a report into a working code?">
+        <ol className="list-decimal space-y-3 pl-5">
+          <li>Record the current server and open the code field in Settings.</li>
+          <li>Show the relevant balance or inventory before submission.</li>
+          <li>Enter the exact reported text without cutting the recording.</li>
+          <li>Capture the game response and the resulting balance or inventory.</li>
+          <li>Bind the result to the check date before moving the code between statuses.</li>
+        </ol>
+        <p>
+          A working label describes that complete observation. It does not come
+          from the number of sites repeating the same code.
         </p>
       </ContentSection>
 
@@ -134,8 +232,10 @@ export default async function CodesPage() {
         </p>
       </div>
       <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3">
-        <InlineCta href="/updates">Check the official publish log</InlineCta>
         <InlineCta href="/guides/how-to-get-tickets">Review Ticket evidence</InlineCta>
+        <InlineCta href="/updates">Check the publish log</InlineCta>
+        <InlineCta href="/official-links">Open verified Roblox links</InlineCta>
+        <InlineCta href="/guides">Browse the Greedy Growers wiki</InlineCta>
       </div>
     </ContentPage>
   );

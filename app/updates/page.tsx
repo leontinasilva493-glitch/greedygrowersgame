@@ -125,6 +125,7 @@ export default async function UpdatesPage() {
         </p>
         <div className="flex flex-wrap gap-x-6 gap-y-3">
           <InlineCta href="/about">Open the official-source policy</InlineCta>
+          <InlineCta href="/official-links">Open verified official links</InlineCta>
           <InlineCta href="/data-status">Review the data gate</InlineCta>
         </div>
       </ContentSection>

@@ -11,9 +11,9 @@ import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
 
 const route = "/guides/worms";
-const title = "Greedy Growers Worms Guide";
+const title = "Greedy Growers Worms: What They Do & How to Get";
 const description =
-  "Check how to verify Greedy Growers worm names, acquisition, targets, effects, duration, and mutation claims without inventing drop rates or bonuses.";
+  "Learn what evidence is needed to identify, obtain, use, and test Greedy Growers worms without inventing drop rates, effects, or bonuses.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createGatedMetadata({
@@ -36,16 +36,16 @@ export default async function WormsGuidePage() {
   return (
     <ContentPage
       eyebrow="Guide 10 / Worm evidence"
-      title="What do worms do in Greedy Growers?"
-      description="Players search for worm effects and acquisition routes, but the official game description does not define this system. Use the evidence ledger and controlled test before trusting an outcome."
+      title="What do worms do and how do you get them in Greedy Growers?"
+      description="Players want to know where worms come from, what they target, how to use them, and whether they are consumed. Those answers remain unverified until one current acquisition and use sequence passes review."
       status={`Page is ${gate.index ? "index" : "noindex"}: ${gate.reason}`}
     >
       <ContentSection title="The direct answer">
         <p>
-          No current worm name, source, drop chance, target, duration, or effect
-          has passed this project&apos;s gameplay evidence review. The official
-          Roblox description does not document worms, so this page does not
-          present community terminology as creator-confirmed mechanics.
+          No current worm name, acquisition route, target, duration, consumption
+          behavior, or effect has passed this project&apos;s gameplay evidence
+          review. The official Roblox description does not document worms, so
+          this page cannot yet provide a confirmed effect or how-to-get answer.
         </p>
         <EvidenceNote>
           Keep “not collected” separate from “zero.” An absent verified worm
@@ -77,12 +77,14 @@ export default async function WormsGuidePage() {
         </div>
       </ContentSection>
 
-      <ContentSection title="How do I verify a worm effect?">
+      <ContentSection title="How do I capture one complete worm use?">
         <ol className="list-decimal space-y-3 pl-5">
-          <li>Capture the exact worm name, item card, source, and visible cost.</li>
-          <li>Record the target tree before applying or equipping the worm.</li>
+          <li>Start with the exact worm name, full item card, and inventory count.</li>
+          <li>Show the uninterrupted action or screen that supplies the worm.</li>
+          <li>Record the selected target and its visible state before use.</li>
           <li>Keep the seed, pet, fertilizer, timer, and comparison method unchanged.</li>
-          <li>Record the full action and every visible state change without edits.</li>
+          <li>Record the full use action and every visible response without edits.</li>
+          <li>Show the target, inventory, timer, and charges again after the action.</li>
           <li>Repeat the baseline and worm run before describing a consistent effect.</li>
         </ol>
         <p>
@@ -90,7 +92,6 @@ export default async function WormsGuidePage() {
           weather state and the exact mutation label. A changed tree appearance
           by itself does not prove which system caused it.
         </p>
-        <InlineCta href="/guides/mutations">Check the mutation evidence ledger</InlineCta>
       </ContentSection>
 
       <ContentSection title="How to report a drop or acquisition route">
@@ -101,6 +102,19 @@ export default async function WormsGuidePage() {
           one successful clip cannot establish odds.
         </p>
         <InlineCta href="/submit-data">Submit a current worm capture</InlineCta>
+      </ContentSection>
+
+      <ContentSection title="Related systems to keep visible">
+        <p>
+          A worm test is only useful when other systems that could change the
+          same outcome remain visible. Record them rather than assuming the worm
+          caused a change.
+        </p>
+        <div className="flex flex-wrap gap-x-6 gap-y-3">
+          <InlineCta href="/pets">Hold the pet loadout constant</InlineCta>
+          <InlineCta href="/guides/mutations">Compare exact mutation labels</InlineCta>
+          <InlineCta href="/guides/weather-events">Record the named weather state</InlineCta>
+        </div>
       </ContentSection>
     </ContentPage>
   );

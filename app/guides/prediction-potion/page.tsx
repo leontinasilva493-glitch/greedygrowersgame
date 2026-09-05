@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
+import { SourceLedger } from "@/components/content/SourceLedger";
 import {
   ContentPage,
   ContentSection,
   EvidenceNote,
   InlineCta,
 } from "@/components/layout/ContentPage";
+import { dataRepository } from "@/features/data/repository";
 import { getPageIndexability } from "@/features/seo/indexability";
 import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
@@ -34,7 +36,11 @@ const verificationRows = [
 ] as const;
 
 export default async function PredictionPotionPage() {
-  const pageGate = getPageIndexability(route, await getIndexabilitySnapshot());
+  const [snapshot, sources] = await Promise.all([
+    getIndexabilitySnapshot(),
+    dataRepository.getSources(),
+  ]);
+  const pageGate = getPageIndexability(route, snapshot);
 
   return (
     <ContentPage
@@ -57,6 +63,38 @@ export default async function PredictionPotionPage() {
           current-version sources. Until then, this guide stays out of search
           and the sitemap.
         </EvidenceNote>
+      </ContentSection>
+
+      <ContentSection title="Sources and claim status">
+        <p>
+          These sources answer different questions. Roblox establishes the
+          baseline game identity and core loop; the forum shows player demand;
+          the third-party guide supplies a lead about the item. None of them is
+          a current, continuous recording of the potion being used.
+        </p>
+        <SourceLedger
+          sources={sources}
+          entries={[
+            {
+              sourceId: "official-game-page",
+              label: "Official baseline",
+              claimStatus: "Verified only for the public game description",
+              note: "The creator-controlled page does not define the Prediction Potion, its source, or its effect.",
+            },
+            {
+              sourceId: "reddit-player-questions",
+              label: "Community report",
+              claimStatus: "Demand signal only",
+              note: "The discussion confirms players are asking about Greedy Growers systems, but it does not document a potion use.",
+            },
+            {
+              sourceId: "prediction-potion-competitor-report",
+              label: "Third-party guide",
+              claimStatus: "Reported and explicitly unverified",
+              note: "Useful for locating the reported Spin Wheel route and weather claim; both still need in-game proof.",
+            },
+          ]}
+        />
       </ContentSection>
 
       <ContentSection title="What must be verified before you rely on it">
@@ -137,6 +175,8 @@ export default async function PredictionPotionPage() {
         <div className="flex flex-wrap gap-x-6 gap-y-2">
           <InlineCta href="/guides/when-to-harvest">Read the harvest risk method</InlineCta>
           <InlineCta href="/#calculator">Run your own scenario</InlineCta>
+          <InlineCta href="/guides/weather-events">Review reported weather fields</InlineCta>
+          <InlineCta href="/pets/majestic-egg">Check the reported wheel reward</InlineCta>
         </div>
       </ContentSection>
 

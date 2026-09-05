@@ -37,6 +37,7 @@ const footerGroups = [
       { label: "Guides", href: "/guides" },
       { label: "Codes", href: "/codes" },
       { label: "Updates", href: "/updates" },
+      { label: "Official links", href: "/official-links" },
       { label: "About", href: "/about" },
     ],
   },

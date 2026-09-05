@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { SourceLedger } from "@/components/content/SourceLedger";
 import {
   ContentPage,
   ContentSection,
@@ -7,6 +8,7 @@ import {
   InlineCta,
 } from "@/components/layout/ContentPage";
 import { siteConfig } from "@/config/site";
+import { dataRepository } from "@/features/data/repository";
 import { getPageIndexability } from "@/features/seo/indexability";
 import { createGatedMetadata } from "@/features/seo/metadata";
 import { getIndexabilitySnapshot } from "@/features/seo/snapshot";
@@ -36,7 +38,11 @@ const orderFields = [
 ] as const;
 
 export default async function FarmersMarketPage() {
-  const gate = getPageIndexability(route, await getIndexabilitySnapshot());
+  const [snapshot, sources] = await Promise.all([
+    getIndexabilitySnapshot(),
+    dataRepository.getSources(),
+  ]);
+  const gate = getPageIndexability(route, snapshot);
 
   return (
     <ContentPage
@@ -114,6 +120,16 @@ export default async function FarmersMarketPage() {
         <InlineCta href="/guides/how-to-get-tickets">Review the Ticket evidence ledger</InlineCta>
       </ContentSection>
 
+      <ContentSection title="Reported market loop versus verified fields">
+        <p>
+          Competitor pages describe a request board, growing the named fruit,
+          delivering it, receiving Tickets, and waiting for a refresh. This is
+          a useful interface map, but the request rules, eligible fruit state,
+          reward amount, refresh timing, and repeatability are still unverified.
+          Capture each field instead of copying a claimed maximum payout.
+        </p>
+      </ContentSection>
+
       <ContentSection title="Farmer's Market FAQ">
         <div className="space-y-5">
           <div>
@@ -138,6 +154,32 @@ export default async function FarmersMarketPage() {
           keeping the relevant interface readable.
         </p>
         <InlineCta href="/submit-data">Submit a Farmer&apos;s Market capture</InlineCta>
+      </ContentSection>
+
+      <ContentSection title="Sources and claim status">
+        <SourceLedger
+          sources={sources}
+          entries={[
+            {
+              sourceId: "official-game-page",
+              label: "Official baseline",
+              claimStatus: "No market mechanic published",
+              note: "The public game description confirms the seed-to-harvest loop but does not describe requests, deliveries, Tickets, or refreshes.",
+            },
+            {
+              sourceId: "tickets-competitor-report",
+              label: "Third-party guide",
+              claimStatus: "Reported market loop and values",
+              note: "Used to identify the panel and transaction fields to capture. It is not a reviewed current gameplay record.",
+            },
+            {
+              sourceId: "reddit-player-questions",
+              label: "Community report",
+              claimStatus: "Player-question signal only",
+              note: "Forum discussion helps prioritize confusing systems but does not establish a complete Farmer's Market transaction.",
+            },
+          ]}
+        />
       </ContentSection>
     </ContentPage>
   );

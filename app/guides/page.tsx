@@ -22,9 +22,9 @@ import {
 } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Greedy Growers Guides: Beginner, Harvest and Money Methods",
+  title: "Greedy Growers Wiki: Codes, Seeds, Pets & Guides",
   description:
-    "Start Greedy Growers with evidence-bounded beginner, harvest, money, and mutation guides plus a transparent calculator.",
+    "Browse a Greedy Growers wiki hub for codes, seeds, pets, items, weather, harvest decisions, updates, and evidence-bounded guides.",
   alternates: { canonical: "/guides" },
 };
 
@@ -95,6 +95,87 @@ const researchGuides = [
     action: "Open chair checklist",
     status: "Research note · noindex",
   },
+  {
+    href: "/pets/majestic-egg",
+    icon: Sparkles,
+    title: "Majestic Egg source map",
+    description:
+      "Compare the three reported acquisition routes and five reported pets before spending Robux, Tickets, or progression time.",
+    action: "Review Majestic Egg",
+    status: "Third-party field note · noindex",
+  },
+  {
+    href: "/guides/weather-events",
+    icon: CloudLightning,
+    title: "Weather event field map",
+    description:
+      "Separate event identity, target, mutation, and value claims while recording one complete weather window.",
+    action: "Review weather events",
+    status: "Third-party field note · noindex",
+  },
+] as const;
+
+const taskGroups = [
+  {
+    title: "Start",
+    status: "Player-ready",
+    description: "Learn the confirmed core loop before opening system-specific notes.",
+    links: [{ href: "/guides/beginner-guide", label: "Beginner guide" }],
+  },
+  {
+    title: "Codes & Rewards",
+    status: "Check evidence",
+    description: "Separate reported codes and reward routes from verified outcomes.",
+    links: [
+      { href: "/codes", label: "Codes status" },
+      { href: "/guides/how-to-get-tickets", label: "Tickets checklist" },
+    ],
+  },
+  {
+    title: "Seeds & Economy",
+    status: "Reported data",
+    description: "Look up source-labelled seed fields without turning them into profit claims.",
+    links: [
+      { href: "/seeds", label: "Seed directory" },
+      { href: "/seeds/compare", label: "Seed comparison" },
+    ],
+  },
+  {
+    title: "Pets & Items",
+    status: "Research",
+    description: "Check the capture fields needed before comparing passives or item effects.",
+    links: [
+      { href: "/pets", label: "Pets and eggs" },
+      { href: "/guides/miracle-grow", label: "Miracle Grow checklist" },
+    ],
+  },
+  {
+    title: "Weather & Mutations",
+    status: "Research",
+    description: "Keep event identity, target, mutation, and outcome claims separate.",
+    links: [
+      { href: "/guides/weather-events", label: "Weather events" },
+      { href: "/guides/mutations", label: "Mutation field notes" },
+    ],
+  },
+  {
+    title: "Harvest & Calculator",
+    status: "Player-input methods",
+    description: "Compare a defined harvest decision using your own observable values.",
+    links: [
+      { href: "/#calculator", label: "Harvest calculator" },
+      { href: "/guides/when-to-harvest", label: "When to harvest" },
+    ],
+  },
+  {
+    title: "Updates & Official Links",
+    status: "Source check",
+    description: "Check the current publish signal and creator-owned Roblox destinations.",
+    links: [
+      { href: "/updates", label: "Publish status" },
+      { href: "/official-links", label: "Official link status" },
+    ],
+  },
 ] as const;
 
 const linkClassName = "font-semibold text-lightning hover:underline";
@@ -102,11 +183,39 @@ const linkClassName = "font-semibold text-lightning hover:underline";
 export default function GuidesPage() {
   return (
     <ContentPage
-      eyebrow="Start here / Greedy Growers guides"
-      title="Greedy Growers guides"
-      description="Choose a player-ready method first, then open evidence-gated research notes only when you need to inspect an unverified system."
-      status="Reviewed 2026-08-29 · Player-ready methods separated from research notes"
+      eyebrow="Wiki hub / Greedy Growers guides"
+      title="Greedy Growers wiki and guide hub"
+      description="Choose the player task you need now. Each route shows whether it is a player-input method, a source-labelled directory, or an evidence-gated research note."
+      status="Reviewed 2026-09-05 · Player-ready methods separated from research notes"
     >
+      <ContentSection title="Browse by player task">
+        <p>
+          This is the canonical Greedy Growers guide index. Start with your
+          current question instead of reading the site in order; research routes
+          remain labelled and outside the sitemap until their evidence gates pass.
+        </p>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {taskGroups.map(({ title, status, description, links }) => (
+            <div key={title} className="border border-survey-line bg-surface-raised p-4">
+              <p className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-lightning">
+                {status}
+              </p>
+              <h3 className="mt-2 font-display text-xl font-semibold text-foreground">
+                {title}
+              </h3>
+              <p className="mt-2">{description}</p>
+              <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+                {links.map((link) => (
+                  <Link key={link.href} href={link.href} className={linkClassName}>
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </ContentSection>
+
       <section aria-labelledby="published-guides">
         <h2
           id="published-guides"
@@ -152,7 +261,7 @@ export default function GuidesPage() {
           their evidence gates. Use them as capture checklists, not as confirmed
           mechanic guides.
         </p>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {researchGuides.map(({ href, icon: Icon, title, description, action, status }) => (
             <Card key={href} className="flex h-full flex-col">
               <CardHeader>

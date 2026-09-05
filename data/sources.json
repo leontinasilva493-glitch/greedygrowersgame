@@ -95,5 +95,69 @@
     "url": "https://progameguides.com/roblox/greedy-growers-mutations-multipliers-how-to-get/",
     "capturedAt": "2026-08-04T00:00:00.000Z",
     "notes": "Third-party editorial report published July 28, 2026. Reported values require independent current-version review."
+  },
+  {
+    "id": "prediction-potion-competitor-report",
+    "type": "editorial",
+    "title": "GreedyGrowers.codes Prediction Potion report",
+    "url": "https://greedygrowers.codes/prediction-potion/",
+    "capturedAt": "2026-08-30T09:00:00.000Z",
+    "notes": "Competitor page used to collect the reported Spin Wheel acquisition and weather-prediction claim. The page itself says the exact effect is not confirmed."
+  },
+  {
+    "id": "majestic-egg-allthings-report",
+    "type": "editorial",
+    "title": "AllThings.How Majestic Egg guide",
+    "url": "https://allthings.how/greedy-growers-how-to-get-the-majestic-egg/",
+    "capturedAt": "2026-08-30T09:00:00.000Z",
+    "notes": "Independent editorial report for the Shop, Spin Wheel, and Magpie routes plus the reported five-pet pool. Costs, odds, and passives still need current gameplay verification."
+  },
+  {
+    "id": "majestic-egg-pgg-report",
+    "type": "editorial",
+    "title": "Pro Game Guides Majestic Egg guide",
+    "url": "https://progameguides.com/roblox/how-to-get-the-majestic-egg-in-greedy-growers/",
+    "capturedAt": "2026-08-30T09:00:00.000Z",
+    "notes": "Second editorial lead for Majestic Egg acquisition. Agreement between guide sites does not replace an in-game capture."
+  },
+  {
+    "id": "pets-reddit-report",
+    "type": "community",
+    "title": "Reddit Greedy Growers pets discussion",
+    "url": "https://www.reddit.com/r/RobloxGuides/comments/1vng84v/all_pets_in_greedy_growers_their_unique_traits/",
+    "capturedAt": "2026-08-30T09:00:00.000Z",
+    "notes": "Forum demand signal linking to a third-party pet list. It does not independently verify pet names, traits, odds, or stacking."
+  },
+  {
+    "id": "tickets-competitor-report",
+    "type": "editorial",
+    "title": "GreedyGrowersGame.wiki Tickets guide",
+    "url": "https://greedygrowersgame.wiki/pets/tickets-guide/",
+    "capturedAt": "2026-08-30T09:00:00.000Z",
+    "notes": "Competitor report for Farmer's Market, code, pet-currency, payout, and refresh claims. Exact values and persistence remain unverified."
+  },
+  {
+    "id": "weather-competitor-report",
+    "type": "editorial",
+    "title": "GreedyGrowersGame.wiki Weather Events guide",
+    "url": "https://greedygrowersgame.wiki/mutations/weather-events/",
+    "capturedAt": "2026-08-30T09:00:00.000Z",
+    "notes": "Competitor report for named weather events, durations, affected targets, and mutation relationships. These fields need current continuous gameplay evidence."
+  },
+  {
+    "id": "official-links-competitor-status",
+    "type": "editorial",
+    "title": "GreedyGrowers.wiki Trello, Discord and wiki status",
+    "url": "https://greedygrowers.wiki/trello/",
+    "capturedAt": "2026-08-30T09:00:00.000Z",
+    "notes": "Competitor status-page reference used to compare public link coverage. It does not make a Discord, Trello, or wiki official."
+  },
+  {
+    "id": "mutations-reddit-report",
+    "type": "community",
+    "title": "Reddit Greedy Growers mutation guide discussion",
+    "url": "https://www.reddit.com/r/RobloxGuides/comments/1v91s7s/greedy_growers_mutations_multiplier_guide/",
+    "capturedAt": "2026-08-30T09:00:00.000Z",
+    "notes": "Forum demand and distribution signal pointing to a third-party mutation list. It is not independent gameplay proof."
   }
 ]

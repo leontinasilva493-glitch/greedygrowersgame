@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 
 import { VideoEvidenceCard } from "@/components/content/VideoEvidenceCard";
+import { SourceLedger } from "@/components/content/SourceLedger";
 import {
   ContentPage,
   ContentSection,
   EvidenceNote,
   InlineCta,
 } from "@/components/layout/ContentPage";
+import { dataRepository } from "@/features/data/repository";
 import { mutationsGuideVideo } from "@/features/guides/video-evidence";
 import { createGatedMetadata } from "@/features/seo/metadata";
 import { getPageIndexability } from "@/features/seo/indexability";
@@ -33,7 +35,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function MutationsGuidePage() {
-  const snapshot = await getIndexabilitySnapshot();
+  const [snapshot, sources] = await Promise.all([
+    getIndexabilitySnapshot(),
+    dataRepository.getSources(),
+  ]);
   const gate = getPageIndexability("/guides/mutations", snapshot);
 
   return (
@@ -129,7 +134,21 @@ export default async function MutationsGuidePage() {
           the wrong system. It also separates the mutation name from its chance
           of appearing, which requires a much larger sample.
         </p>
-        <InlineCta href="/guides/worms">Use the worm-effect verification checklist</InlineCta>
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
+          <InlineCta href="/guides/weather-events">Open the weather event field map</InlineCta>
+          <InlineCta href="/guides/worms">Use the worm-effect verification checklist</InlineCta>
+        </div>
+      </ContentSection>
+
+      <ContentSection title="Reported lifecycle and stacking questions">
+        <p>
+          Current coverage does not agree strongly enough to publish whether a
+          mutation starts on a river seed, transfers from seed to plant and
+          fruit, lands directly on a growing tree, or stacks with a later event.
+          Record the label at every stage and keep each sale result tied to the
+          same crop instance. A mutation name and a value multiplier are separate
+          claims and can fail verification independently.
+        </p>
       </ContentSection>
 
       <ContentSection title="How this page earns a stronger confidence label">
@@ -141,6 +160,32 @@ export default async function MutationsGuidePage() {
         <div className="mt-5">
           <InlineCta href="/submit-data">Submit current-version evidence</InlineCta>
         </div>
+      </ContentSection>
+
+      <ContentSection title="Sources and claim status">
+        <SourceLedger
+          sources={sources}
+          entries={[
+            {
+              sourceId: "official-game-page",
+              label: "Official baseline",
+              claimStatus: "No mutation table published",
+              note: "The creator page confirms lightning risk but does not publish mutation names, triggers, chances, multipliers, or stacking.",
+            },
+            {
+              sourceId: "mutations-pgg-report",
+              label: "Third-party guide",
+              claimStatus: "Reported names, triggers, and multipliers",
+              note: "Editorial reference for the current table; every value remains excluded from calculator defaults.",
+            },
+            {
+              sourceId: "mutations-reddit-report",
+              label: "Community report",
+              claimStatus: "Demand and distribution signal",
+              note: "The forum post points to a guide but does not independently reproduce a current gameplay result.",
+            },
+          ]}
+        />
       </ContentSection>
     </ContentPage>
   );

@@ -36,6 +36,11 @@ describe("getPageIndexability", () => {
       follow: true,
       includeInSitemap: true,
     });
+    expect(getPageIndexability("/official-links", empty)).toMatchObject({
+      index: true,
+      follow: true,
+      includeInSitemap: true,
+    });
   });
 
   it("keeps legal and submission routes out of the index", () => {
@@ -171,5 +176,23 @@ describe("getPageIndexability", () => {
         }),
       ).toMatchObject({ index: true, follow: true, includeInSitemap: true });
     }
+  });
+
+  it("keeps new reported entity and weather pages noindex until explicit evidence gates exist", () => {
+    for (const route of [
+      "/pets/majestic-egg",
+      "/guides/weather-events",
+      "/guides/miracle-grow",
+    ]) {
+      expect(getPageIndexability(route, empty)).toMatchObject({
+        index: false,
+        follow: true,
+        includeInSitemap: false,
+      });
+    }
+
+    expect(getPageIndexability("/guides/miracle-grow", empty).reason).toBe(
+      "Requires a current item card plus reviewed acquisition, target, effect, duration, consumption, and version evidence.",
+    );
   });
 });
