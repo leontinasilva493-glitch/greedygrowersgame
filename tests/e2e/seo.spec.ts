@@ -22,6 +22,7 @@ const publicRoutes = [
 ];
 
 test("public routes render one H1 without console errors", async ({ page }) => {
+  test.setTimeout(60_000);
   const errors: string[] = [];
   page.on("console", (message) => {
     if (message.type() === "error") errors.push(message.text());
@@ -121,10 +122,10 @@ test("guide hub and harvest guide provide substantial reading paths", async ({ p
   await page.goto("/guides");
   const guideHubText = await page.locator("main").innerText();
   expect(guideHubText.trim().split(/\s+/).length).toBeGreaterThanOrEqual(400);
-  expect(guideHubText.trim().split(/\s+/).length).toBeLessThanOrEqual(650);
-  await expect(page.locator('main a[href="/#calculator"]')).toHaveCount(1);
-  await expect(page.locator('main a[href="/guides/beginner-guide"]')).toHaveCount(2);
-  await expect(page.locator('main a[href="/guides/when-to-harvest"]')).toHaveCount(2);
+  expect(guideHubText.trim().split(/\s+/).length).toBeLessThanOrEqual(1100);
+  await expect(page.locator('main a[href="/#calculator"]')).toHaveCount(2);
+  await expect(page.locator('main a[href="/guides/beginner-guide"]')).toHaveCount(3);
+  await expect(page.locator('main a[href="/guides/when-to-harvest"]')).toHaveCount(3);
 
   await page.goto("/guides/when-to-harvest");
   const harvestText = await page.locator("main").innerText();

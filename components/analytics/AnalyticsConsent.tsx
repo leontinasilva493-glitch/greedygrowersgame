@@ -1,25 +1,29 @@
 "use client";
 
 import { BarChart3, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { useSyncExternalStore } from "react";
 
 import {
+  ANALYTICS_CONSENT_EVENT,
   readAnalyticsConsent,
   setAnalyticsConsent,
   type AnalyticsConsentChoice,
 } from "../../features/analytics/events";
 import { Button } from "../ui/button";
 
-function initialChoice(): AnalyticsConsentChoice {
-  return typeof window === "undefined" ? "unset" : readAnalyticsConsent();
-}
-
 export function AnalyticsConsent() {
-  const [choice, setChoice] = useState<AnalyticsConsentChoice>(initialChoice);
+  const choice = useSyncExternalStore(
+    (onStoreChange) => {
+      window.addEventListener(ANALYTICS_CONSENT_EVENT, onStoreChange);
+      return () =>
+        window.removeEventListener(ANALYTICS_CONSENT_EVENT, onStoreChange);
+    },
+    readAnalyticsConsent,
+    (): AnalyticsConsentChoice => "unset",
+  );
 
   const choose = (granted: boolean) => {
     setAnalyticsConsent(granted);
-    setChoice(granted ? "granted" : "denied");
   };
 
   return (
@@ -37,17 +41,20 @@ export function AnalyticsConsent() {
             id="analytics-consent-title"
             className="font-display text-lg font-semibold text-foreground"
           >
-            Optional analytics
+            Optional analytics &amp; ads
           </h2>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Analytics is off by default. If enabled, Microsoft Clarity can record
-            page interactions, while calculator values, evidence, and receipts
-            remain excluded from custom analytics events.
+            Analytics and advertising are off by default. If enabled, Microsoft
+            Clarity can record page interactions. Adsterra can display one native
+            banner and open a popunder ad in another tab or window after a click
+            on eligible pages. Turning these services off reloads the page to stop
+            active popunder code. Calculator values, evidence,
+            and receipts remain excluded from custom analytics events.
           </p>
           {choice !== "unset" ? (
             <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-foreground">
               <BarChart3 aria-hidden="true" className="size-4 text-lightning" />
-              Analytics {choice === "granted" ? "enabled" : "kept off"}.
+              Optional services {choice === "granted" ? "enabled" : "kept off"}.
             </p>
           ) : null}
           <div className="mt-3 flex flex-col gap-2 sm:flex-row">
@@ -57,7 +64,7 @@ export function AnalyticsConsent() {
               variant={choice === "granted" ? "growth" : "default"}
               onClick={() => choose(true)}
             >
-              Allow analytics
+              Allow analytics &amp; ads
             </Button>
             <Button
               type="button"
@@ -65,7 +72,7 @@ export function AnalyticsConsent() {
               variant="outline"
               onClick={() => choose(false)}
             >
-              Keep analytics off
+              Keep optional services off
             </Button>
           </div>
         </div>

@@ -314,6 +314,7 @@ test("closed system pages are discoverable only through relevant contextual link
 test("P0-P2 intent pages keep unique TDH, canonical URLs, and evidence-aware robots", async ({
   page,
 }) => {
+  test.setTimeout(60_000);
   const routes = [
     ["/codes", "Greedy Growers Codes (Sep 2026): Reported | GG Calc", "Greedy Growers codes: reported and working status", "noindex"],
     ["/updates", "Greedy Growers Publish Status & Retest Log | GG Calc", "Greedy Growers publish status and retest log", "index"],

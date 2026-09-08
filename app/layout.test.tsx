@@ -4,6 +4,9 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("@/components/analytics/Analytics", () => ({
   Analytics: () => <div data-testid="global-analytics" />,
 }));
+vi.mock("@/components/analytics/AnalyticsConsent", () => ({
+  AnalyticsConsent: () => <div data-testid="global-consent" />,
+}));
 
 import RootLayout from "./layout";
 
@@ -16,5 +19,6 @@ describe("RootLayout", () => {
     );
 
     expect(markup).toContain('data-testid="global-analytics"');
+    expect(markup).toContain('data-testid="global-consent"');
   });
 });

@@ -4,6 +4,7 @@ import {
   CalculatorGuide,
   CalculatorIntro,
 } from "@/components/calculator";
+import { AdsterraNativeBanner } from "@/components/ads/AdsterraNativeBanner";
 import { webApplicationSchema, websiteSchema } from "@/features/seo/schema";
 
 function jsonLd(value: unknown) {
@@ -26,6 +27,7 @@ export default function Home() {
           intro={<CalculatorIntro />}
           supportingContext={<CalculatorContext />}
         />
+        <AdsterraNativeBanner />
         <CalculatorGuide />
       </main>
     </>

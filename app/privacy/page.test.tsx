@@ -8,6 +8,14 @@ describe("PrivacyPage", () => {
     const markup = renderToStaticMarkup(<PrivacyPage />);
 
     expect(markup).toContain("Microsoft Clarity");
-    expect(markup).toContain("only after you choose Allow analytics");
+    expect(markup).toContain("only after you choose Allow analytics &amp; ads");
+  });
+
+  it("discloses consent-gated Adsterra native advertising", () => {
+    const markup = renderToStaticMarkup(<PrivacyPage />);
+
+    expect(markup).toContain("Adsterra");
+    expect(markup).toContain("only after you choose Allow analytics &amp; ads");
+    expect(markup).toContain("profitableratecpmnetwork.com");
   });
 });
