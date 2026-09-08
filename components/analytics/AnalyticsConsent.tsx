@@ -45,8 +45,10 @@ export function AnalyticsConsent() {
           </h2>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
             Analytics and advertising are off by default. If enabled, Microsoft
-            Clarity can record page interactions and one Adsterra native banner
-            can load inside eligible content pages. Calculator values, evidence,
+            Clarity can record page interactions. Adsterra can display one native
+            banner and open a popunder ad in another tab or window after a click
+            on eligible pages. Turning these services off reloads the page to stop
+            active popunder code. Calculator values, evidence,
             and receipts remain excluded from custom analytics events.
           </p>
           {choice !== "unset" ? (

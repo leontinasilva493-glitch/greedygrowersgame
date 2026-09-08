@@ -21,7 +21,7 @@ export default function PrivacyPage() {
       eyebrow="Privacy / Current release"
       title="Privacy policy"
       description="This notice describes the services active in the current site shell and the requirements that must be met before evidence intake can be enabled."
-      status="Last reviewed: 2026-09-05"
+      status="Last reviewed: 2026-09-08"
     >
       <ContentSection title="Calculator inputs">
         <p>
@@ -39,10 +39,12 @@ export default function PrivacyPage() {
           masked session-replay data to help improve the site. Calculator values,
           evidence URLs, moderation receipts, and direct identifiers are not sent
           as custom analytics events. The same choice can load one Adsterra native
-          banner from profitableratecpmnetwork.com on eligible content pages.
+          banner and a Popunder script from profitableratecpmnetwork.com on eligible
+          content pages. Popunder ads can open another tab or window after a click.
           Adsterra may process device, browser, network, impression, and click data
           to select, deliver, measure, and protect advertising. Choosing Keep
-          optional services off leaves both third-party services unloaded.
+          optional services off prevents these services from loading. If Popunder
+          code is already active, the page reloads to discard its event handlers.
         </EvidenceNote>
       </ContentSection>
 

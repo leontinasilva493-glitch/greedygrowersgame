@@ -2,23 +2,17 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { isAdEligibleRoute } from "./routes";
 
 import {
   ANALYTICS_CONSENT_EVENT,
   readAnalyticsConsent,
 } from "@/features/analytics/events";
 
-const AD_CONTAINER_ID = "container-ad7a012e1693b7d27de84829a3838a5c";
+const AD_CONTAINER_ID = "container-2322cb92ec86eb448481967a11b7d7d6";
 const AD_SCRIPT_ID = "adsterra-native-banner-script";
 const AD_SCRIPT_URL =
-  "https://pl31052446.profitableratecpmnetwork.com/ad7a012e1693b7d27de84829a3838a5c/invoke.js";
-const AD_FREE_ROUTES = new Set([
-  "/contact",
-  "/data-status",
-  "/privacy",
-  "/submit-data",
-  "/terms",
-]);
+  "https://pl31199201.profitableratecpmnetwork.com/2322cb92ec86eb448481967a11b7d7d6/invoke.js";
 
 type LoadState = "loading" | "filled" | "empty";
 
@@ -35,7 +29,7 @@ export function AdsterraNativeBanner() {
     () => "unset",
   );
   const [loadState, setLoadState] = useState<LoadState>("loading");
-  const isEligible = !AD_FREE_ROUTES.has(pathname);
+  const isEligible = isAdEligibleRoute(pathname);
 
   useEffect(() => {
     const container = containerRef.current;
