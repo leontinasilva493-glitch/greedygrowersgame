@@ -41,14 +41,12 @@ export function AnalyticsConsent() {
             id="analytics-consent-title"
             className="font-display text-lg font-semibold text-foreground"
           >
-            Optional analytics &amp; ads
+            Optional analytics
           </h2>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Analytics and advertising are off by default. If enabled, Microsoft
-            Clarity can record page interactions. Adsterra can display one native
-            banner and open a popunder ad in another tab or window after a click
-            on eligible pages. Turning these services off reloads the page to stop
-            active popunder code. Calculator values, evidence,
+            Optional analytics are off by default. If enabled, Microsoft
+            Clarity can record page interactions. This choice does not control
+            advertising. Calculator values, evidence,
             and receipts remain excluded from custom analytics events.
           </p>
           {choice !== "unset" ? (
@@ -64,7 +62,7 @@ export function AnalyticsConsent() {
               variant={choice === "granted" ? "growth" : "default"}
               onClick={() => choose(true)}
             >
-              Allow analytics &amp; ads
+              Allow analytics
             </Button>
             <Button
               type="button"
@@ -72,7 +70,7 @@ export function AnalyticsConsent() {
               variant="outline"
               onClick={() => choose(false)}
             >
-              Keep optional services off
+              Keep analytics off
             </Button>
           </div>
         </div>

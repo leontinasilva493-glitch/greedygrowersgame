@@ -24,8 +24,8 @@ function run(existing = false) {
 }
 
 describe("Adsterra Popunder lifecycle", () => {
-  it("does not load without consent", () => { expect(run().append).not.toHaveBeenCalled(); });
-  it("loads the approved script into head after consent", () => {
+  it("loads automatically without consent", () => { expect(run().append).toHaveBeenCalledOnce(); });
+  it("loads the approved script into head", () => {
     state.consent = "granted";
     const result = run();
     expect(result.append).toHaveBeenCalledOnce();
@@ -39,9 +39,9 @@ describe("Adsterra Popunder lifecycle", () => {
     state.consent = "granted"; state.pathname = "/privacy";
     expect(run().append).not.toHaveBeenCalled();
   });
-  it("reloads to clear third-party handlers after consent withdrawal", () => {
+  it("ignores old analytics opt-out choices for advertising", () => {
     state.consent = "denied";
-    expect(run(true).reload).toHaveBeenCalledOnce();
+    expect(run().append).toHaveBeenCalledOnce();
   });
   it("clears existing handlers when entering an ad-free page", () => {
     state.consent = "granted"; state.pathname = "/terms";

@@ -1,13 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { isAdEligibleRoute } from "./routes";
-
-import {
-  ANALYTICS_CONSENT_EVENT,
-  readAnalyticsConsent,
-} from "@/features/analytics/events";
 
 const AD_CONTAINER_ID = "container-2322cb92ec86eb448481967a11b7d7d6";
 const AD_SCRIPT_ID = "adsterra-native-banner-script";
@@ -19,21 +14,12 @@ type LoadState = "loading" | "filled" | "empty";
 export function AdsterraNativeBanner() {
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
-  const consent = useSyncExternalStore(
-    (onStoreChange) => {
-      window.addEventListener(ANALYTICS_CONSENT_EVENT, onStoreChange);
-      return () =>
-        window.removeEventListener(ANALYTICS_CONSENT_EVENT, onStoreChange);
-    },
-    readAnalyticsConsent,
-    () => "unset",
-  );
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const isEligible = isAdEligibleRoute(pathname);
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || consent !== "granted" || !isEligible) return;
+    if (!container || !isEligible) return;
 
     container.replaceChildren();
     document.getElementById(AD_SCRIPT_ID)?.remove();
@@ -60,9 +46,9 @@ export function AdsterraNativeBanner() {
       script.remove();
       container.replaceChildren();
     };
-  }, [consent, isEligible, pathname]);
+  }, [isEligible, pathname]);
 
-  if (!isEligible || consent !== "granted") return null;
+  if (!isEligible) return null;
 
   return (
     <aside

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AnalyticsConsent } from "@/components/analytics/AnalyticsConsent";
 
 import {
   ContentPage,
@@ -21,7 +22,7 @@ export default function PrivacyPage() {
       eyebrow="Privacy / Current release"
       title="Privacy policy"
       description="This notice describes the services active in the current site shell and the requirements that must be met before evidence intake can be enabled."
-      status="Last reviewed: 2026-09-08"
+      status="Last reviewed: 2026-09-12"
     >
       <ContentSection title="Calculator inputs">
         <p>
@@ -34,18 +35,20 @@ export default function PrivacyPage() {
 
       <ContentSection title="Analytics and advertising status">
         <EvidenceNote>
-          Microsoft Clarity loads only after you choose Allow analytics &amp; ads. It can
+          Microsoft Clarity loads only when optional analytics are enabled. It can
           collect page views, clicks, scrolling, device and browser details, and
           masked session-replay data to help improve the site. Calculator values,
           evidence URLs, moderation receipts, and direct identifiers are not sent
-          as custom analytics events. The same choice can load one Adsterra native
-          banner and a Popunder script from profitableratecpmnetwork.com on eligible
+          as custom analytics events. Advertising loads automatically and is
+          independent of the analytics preference. One Adsterra native banner
+          and a Popunder script load from profitableratecpmnetwork.com on eligible
           content pages. Popunder ads can open another tab or window after a click.
           Adsterra may process device, browser, network, impression, and click data
-          to select, deliver, measure, and protect advertising. Choosing Keep
-          optional services off prevents these services from loading. If Popunder
-          code is already active, the page reloads to discard its event handlers.
+          to select, deliver, measure, and protect advertising. Legal and submission
+          pages do not load advertising. Entering an ad-free page may reload the
+          document to discard active Popunder event handlers.
         </EvidenceNote>
+        <AnalyticsConsent />
       </ContentSection>
 
       <ContentSection title="Evidence submissions">
