@@ -269,7 +269,9 @@ test("keeps analytics denied by default and emits value-free events after consen
   ]);
   expect(calls.filter(([command]) => command === "event")).toEqual([]);
 
-  await page.getByRole("button", { name: "Allow analytics & ads" }).click();
+  await page.goto("/privacy");
+  await page.getByRole("button", { name: "Allow analytics", exact: true }).click();
+  await page.goto("/");
   await page.getByRole("tab", { name: "Run profit" }).click();
   await page.getByLabel("Attempt cost").fill("100");
   await page.getByLabel("Successful harvest value").fill("600");
